@@ -174,7 +174,7 @@ public abstract class RequestPrintable implements Printable {
 
         // Align to the bottom right of the page
         barcode.doQuietZone(true);
-        barcode.setQuietZone(drawInfo.width + drawInfo.offsetX - dim.getWidth() - 10);
+        barcode.setQuietZone(drawInfo.width + drawInfo.offsetX - dim.getWidth() - 20);
         barcode.setVerticalQuietZone(drawInfo.height + drawInfo.offsetY - dim.getHeight() - 45);
 
         // Generate the barcode
