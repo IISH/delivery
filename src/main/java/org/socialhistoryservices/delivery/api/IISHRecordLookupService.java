@@ -363,7 +363,7 @@ public class IISHRecordLookupService implements RecordLookupService {
         return query;
     }
 
-    private Node getEADNode(Node node) {
+    private Node getEADNode(Node node) throws NoSuchPidException {
         try {
             String url = xp856uUrl.evaluate(node);
             if (url.endsWith("?locatt=view:ead")) {
@@ -379,11 +379,11 @@ public class IISHRecordLookupService implements RecordLookupService {
         }
         catch (IOException ex) {
             logger.debug("getEADNode(): API Connect Failed", ex);
-            return null;
+            throw new NoSuchPidException();
         }
         catch (XPathExpressionException ex) {
             logger.debug("getEADNode(): Invalid XPath", ex);
-            return null;
+            throw new NoSuchPidException();
         }
     }
 }
