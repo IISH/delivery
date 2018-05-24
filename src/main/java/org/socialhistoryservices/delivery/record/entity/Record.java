@@ -167,7 +167,7 @@ public class Record {
     public ExternalRecordInfo.Restriction getRestriction() {
         ExternalRecordInfo.Restriction restriction = externalInfo.getRestriction();
         if (restriction == ExternalRecordInfo.Restriction.DATE_RESTRICTED)
-            return ExternalRecordInfo.Restriction.OPEN;
+            return ExternalRecordInfo.Restriction.RESTRICTED;
         return restriction;
     }
 
