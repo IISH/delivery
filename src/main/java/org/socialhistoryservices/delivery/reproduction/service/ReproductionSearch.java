@@ -205,12 +205,15 @@ public class ReproductionSearch extends RequestSearch<HoldingReproduction> {
             Join<HoldingReproduction, Holding> hRoot = hrRoot.join(HoldingReproduction_.holding);
             Join<Holding, Record> recRoot = hRoot.join(Holding_.record);
             Join<Record, ExternalRecordInfo> eRoot = recRoot.join(Record_.externalInfo);
+            Join<Record, Record> prRoot = recRoot.join(Record_.parent, JoinType.LEFT);
+            Join<Record, Holding> phRoot = prRoot.join(Record_.holdings, JoinType.LEFT);
 
             Expression<Boolean> exSearch = cb.or(
                 cb.like(cb.lower(eRoot.get(ExternalRecordInfo_.title)), "%" + search + "%"),
                 cb.like(cb.lower(rRoot.<String>get(Reproduction_.customerName)), "%" + search + "%"),
                 cb.like(cb.lower(rRoot.<String>get(Reproduction_.customerEmail)), "%" + search + "%"),
-                cb.like(cb.lower(hRoot.<String>get(Holding_.signature)), "%" + search + "%")
+                cb.like(cb.lower(hRoot.<String>get(Holding_.signature)), "%" + search + "%"),
+                cb.like(cb.lower(phRoot.<String>get(Holding_.signature)), "%" + search + "%")
             );
 
             where = (where != null) ? cb.and(where, exSearch) : exSearch;

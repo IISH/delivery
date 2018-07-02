@@ -201,7 +201,12 @@
       ${holding.record.title?html}
 	  <#if holdingReservation.comment??> - ${holdingReservation.comment}</#if>
     </td>
-	<td>${holding.signature?html}</td>
+	  <td>
+      <#if holding.record.parent??>
+        ${holding.record.parent.holdings[0].signature?html} /
+      </#if>
+      ${holding.signature?html}
+    </td>
     <td>${reservation.visitorName?html}</td>
       <td>${reservation.date?string(delivery.dateFormat)}</td>
     <#assign yes>

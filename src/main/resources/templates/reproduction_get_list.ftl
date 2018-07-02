@@ -220,7 +220,12 @@
               ${holding.record.title?html}
                 <#if holdingReproduction.comment??> - ${holdingReproduction.comment}</#if>
               </td>
-              <td>${holding.signature?html}</td>
+              <td>
+                <#if holding.record.parent??>
+                  ${holding.record.parent.holdings[0].signature?html} /
+                </#if>
+                ${holding.signature?html}
+              </td>
               <td>${reproduction.customerName?html}</td>
               <td>${reproduction.creationDate?string(delivery.dateFormat)}</td>
 

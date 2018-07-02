@@ -120,6 +120,8 @@ public class ReservationSearch extends RequestSearch<HoldingReservation> {
             Join<HoldingReservation, Holding> hRoot = hrRoot.join(HoldingReservation_.holding);
             Join<Holding, Record> rRoot = hRoot.join(Holding_.record);
             Join<Record, ExternalRecordInfo> eRoot = rRoot.join(Record_.externalInfo);
+            Join<Record, Record> prRoot = rRoot.join(Record_.parent, JoinType.LEFT);
+            Join<Record, Holding> phRoot = prRoot.join(Record_.holdings, JoinType.LEFT);
             Expression<Boolean> exSearch = cb.or(
                 cb.like(cb.lower(eRoot.get(ExternalRecordInfo_.title)),
                     "%" + search + "%"),
@@ -130,7 +132,9 @@ public class ReservationSearch extends RequestSearch<HoldingReservation> {
                         .visitorEmail)),
                     "%" + search + "%"),
                 cb.like(cb.lower(hRoot.<String>get(Holding_.signature)),
-                    "%" + search + "%")
+                    "%" + search + "%"),
+                cb.like(cb.lower(phRoot.<String>get(Holding_.signature)),
+                        "%" + search + "%")
             );
             where = where != null ? cb.and(where, exSearch) : exSearch;
         }
