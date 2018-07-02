@@ -329,6 +329,10 @@ public class RecordController extends ErrorHandlingController {
                     "record you want to add is available in the SRW API?");
             }
         }
+        else {
+            // Add holding/other API info if present
+            records.updateExternalInfo(r, true);
+        }
         model.addAttribute("record", r);
         return "record_edit";
     }

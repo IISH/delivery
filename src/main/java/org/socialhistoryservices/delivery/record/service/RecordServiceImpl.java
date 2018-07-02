@@ -196,7 +196,7 @@ public class RecordServiceImpl implements RecordService {
             // Update archive holding info
             record.setArchiveHoldingInfo(ahi);
 
-            // Update the holdings, merge exisiting holdings, add new holdings, do not remove old holdings
+            // Update the holdings, merge existing holdings, add new holdings, do not remove old holdings
             for (String signature : ehMap.keySet()) {
                 boolean found = false;
                 ExternalHoldingInfo ehi = ehMap.get(signature);
