@@ -54,8 +54,7 @@ public class ReservationSearch extends RequestSearch<HoldingReservation> {
             cq.where(where);
         }
 
-        Join<HoldingReservation, Holding> hRoot = hrRoot.join
-            (HoldingReservation_.holding);
+        Join<HoldingReservation, Holding> hRoot = hrRoot.join(HoldingReservation_.holding);
 
         if (!isCount) {
             cq.orderBy(parseSortFilter(p, cb, hrRoot, resRoot, hRoot));
@@ -98,8 +97,7 @@ public class ReservationSearch extends RequestSearch<HoldingReservation> {
                     break;
             }
         }
-        if (containsSortDir &&
-            p.get("sort_dir")[0].toLowerCase().equals("asc")) {
+        if (containsSortDir && p.get("sort_dir")[0].toLowerCase().equals("asc")) {
             return cb.asc(e);
         }
         return cb.desc(e);
@@ -125,18 +123,13 @@ public class ReservationSearch extends RequestSearch<HoldingReservation> {
             Join<Record, Record> prRoot = rRoot.join(Record_.parent, JoinType.LEFT);
             Join<Record, Holding> phRoot = prRoot.join(Record_.holdings, JoinType.LEFT);
             Expression<Boolean> exSearch = cb.or(
-                cb.like(cb.lower(eRoot.get(ExternalRecordInfo_.title)),
-                    "%" + search + "%"),
-                cb.like(cb.lower(resRoot.get(Reservation_
-                        .visitorName)),
-                    "%" + search + "%"),
-                cb.like(cb.lower(resRoot.get(Reservation_
-                        .visitorEmail)),
-                    "%" + search + "%"),
-                cb.like(cb.lower(hRoot.get(Holding_.signature)),
-                    "%" + search + "%"),
-                cb.like(cb.lower(phRoot.<String>get(Holding_.signature)),
-                        "%" + search + "%")
+                    cb.like(cb.lower(eRoot.get(ExternalRecordInfo_.title)), "%" + search + "%"),
+                    cb.like(cb.lower(resRoot.get(Reservation_
+                            .visitorName)), "%" + search + "%"),
+                    cb.like(cb.lower(resRoot.get(Reservation_
+                            .visitorEmail)), "%" + search + "%"),
+                    cb.like(cb.lower(hRoot.get(Holding_.signature)), "%" + search + "%"),
+                    cb.like(cb.lower(phRoot.<String>get(Holding_.signature)), "%" + search + "%")
             );
             where = where != null ? cb.and(where, exSearch) : exSearch;
         }
@@ -160,8 +153,8 @@ public class ReservationSearch extends RequestSearch<HoldingReservation> {
                 return where;
             }
             Expression<Boolean> exPrinted = cb.equal(
-                hrRoot.get(HoldingReservation_.printed),
-                Boolean.parseBoolean(p.get("printed")[0]));
+                    hrRoot.get(HoldingReservation_.printed),
+                    Boolean.parseBoolean(p.get("printed")[0]));
             where = where != null ? cb.and(where, exPrinted) : exPrinted;
         }
         return where;
@@ -184,13 +177,12 @@ public class ReservationSearch extends RequestSearch<HoldingReservation> {
             if (!status.equals("")) {
                 try {
                     Expression<Boolean> exStatus = cb.equal(
-                        resRoot.get(Reservation_.status),
-                        Reservation.Status.valueOf(status));
+                            resRoot.get(Reservation_.status), Reservation.Status.valueOf(status));
                     where = where != null ? cb.and(where, exStatus) : exStatus;
                 }
                 catch (IllegalArgumentException ex) {
                     throw new InvalidRequestException("No such status: " +
-                        status);
+                            status);
                 }
             }
         }
@@ -209,8 +201,8 @@ public class ReservationSearch extends RequestSearch<HoldingReservation> {
     private Expression<Boolean> addEmailFilter(Map<String, String[]> p, CriteriaBuilder cb, Join<HoldingReservation, Reservation> resRoot, Expression<Boolean> where) {
         if (p.containsKey("visitorEmail")) {
             Expression<Boolean> exEmail = cb.like(
-                resRoot.get(Reservation_.visitorEmail),
-                "%" + p.get("visitorEmail")[0].trim() + "%");
+                    resRoot.get(Reservation_.visitorEmail),
+                    "%" + p.get("visitorEmail")[0].trim() + "%");
             where = where != null ? cb.and(where, exEmail) : exEmail;
         }
         return where;
@@ -230,10 +222,8 @@ public class ReservationSearch extends RequestSearch<HoldingReservation> {
                                               Join<HoldingReservation, Reservation> resRoot,
                                               Expression<Boolean> where) {
         if (p.containsKey("visitorName")) {
-            Expression<Boolean> exName = cb.like(resRoot.get
-                    (Reservation_
-                        .visitorName),
-                "%" + p.get("visitorName")[0].trim() + "%");
+            Expression<Boolean> exName = cb.like(resRoot.get(Reservation_.visitorName),
+                    "%" + p.get("visitorName")[0].trim() + "%");
             where = where != null ? cb.and(where, exName) : exName;
         }
         return where;
