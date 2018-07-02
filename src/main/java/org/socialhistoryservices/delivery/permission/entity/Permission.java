@@ -153,7 +153,7 @@ public class Permission {
     }
 
     /** The Permission's explanation. */
-    @Column(name="explanation", columnDefinition="TEXT", nullable=true)
+    @Column(name="explanation", columnDefinition="TEXT")
     private String explanation;
 
     /**
@@ -174,7 +174,7 @@ public class Permission {
 
     /** The Permission's address. */
     @Size(max = 255)
-    @Column(name="address", nullable=true)
+    @Column(name="address")
     private String address;
 
     /**
@@ -268,7 +268,7 @@ public class Permission {
      * Default contstructor.
      */
     public Permission() {
-        recordPermissions = new ArrayList<RecordPermission>();
+        recordPermissions = new ArrayList<>();
         setRequestLocale(LocaleContextHolder.getLocale());
     }
 

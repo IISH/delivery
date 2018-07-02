@@ -8,48 +8,39 @@ import javax.persistence.criteria.CriteriaQuery;
 import java.util.Calendar;
 import java.util.List;
 
-/**
- * Created by Igor on 1/10/2017.
- */
 public interface ReservationDateExceptionService {
 
     /**
      * Add a ReservationDateException to the database.
      * @param obj ReservationDateException to add.
      */
-    public void addReservationDateException(ReservationDateException obj);
+    void addReservationDateException(ReservationDateException obj);
 
     /**
      * Remove a ReservationDateException from the database.
      * @param obj ReservationDateException to remove.
      */
-    public void removeReservationDateException(ReservationDateException obj);
-
-    /**
-     * Save changes to a ReservationDateException in the database.
-     * @param obj ReservationDateException to save.
-     */
-    public void saveReservationDateException(ReservationDateException obj);
+    void removeReservationDateException(ReservationDateException obj);
 
     /**
      * List all ReservationDateExceptions matching a built query.
      * @param q The criteria query to execute.
      * @return A list of matching ReservationDateExceptions.
      */
-    public List<ReservationDateException> listReservationDateExceptions(CriteriaQuery<ReservationDateException> q);
+    List<ReservationDateException> listReservationDateExceptions(CriteriaQuery<ReservationDateException> q);
 
     /**
      * Get a criteria builder for querying ReservationDateExceptions.
      * @return the CriteriaBuilder.
      */
-    public CriteriaBuilder getReservationDateExceptionCriteriaBuilder();
+    CriteriaBuilder getReservationDateExceptionCriteriaBuilder();
 
     /**
      * Get a ReservationDateException by id of the date exception.
      * @param id The id to search the ReservationDateException on.
      * @return A ReservationDateException matching the given id.
      */
-    public ReservationDateException getReservationDateExceptionsById(int id);
+    ReservationDateException getReservationDateExceptionsById(int id);
 
     /**
      * Checks whether the given ReservationDateException is valid. This by checking the description
@@ -58,26 +49,26 @@ public interface ReservationDateExceptionService {
      * @param result The result of the check.
      * @return A boolean value representing whether the ReservationDateException is valid.
      */
-    public Boolean isValid(ReservationDateException resExcept, BindingResult result);
+    Boolean isValid(ReservationDateException resExcept, BindingResult result);
 
     /**
      * Get all the ReservationDateException's dates known in the database.
      * @return all ReservationDateException's dates from the database.
      */
-    public List<Calendar> getExceptionDates();
+    List<Calendar> getExceptionDates();
 
     /**
      * Get all the ReservationDateExceptions from the database.
      * @return all ReservationDateExceptions from the database.
      */
-    public List<ReservationDateException> getReservationDateExceptions();
+    List<ReservationDateException> getReservationDateExceptions();
 
     /**
      * Get the reason for the ReservationDateException for the corresponding Calendar date.
      * @param cal Calendar with the date to be checked.
      * @return the reason for the ReservationDateException.
      */
-    public String getReasonForExceptionDate(Calendar cal);
+    String getReasonForExceptionDate(Calendar cal);
 
     /**
      * Checks whether the given ReservationDateException exists in the database. This by checking
@@ -86,7 +77,7 @@ public interface ReservationDateExceptionService {
      * @param result The BindingResult to hold any errors.
      * @return A boolean value representing whether the ReservationDateException already exists.
      */
-    public Boolean exceptionDateExists(ReservationDateException resExcept, BindingResult result);
+    Boolean exceptionDateExists(ReservationDateException resExcept, BindingResult result);
 
     /**
      * Checks whether the end date of the ReservationDateException is before the begin date.
@@ -94,5 +85,5 @@ public interface ReservationDateExceptionService {
      * @param result The BindingResult to hold any errors.
      * @return A boolean value representing whether the end date is before the begin date.
      */
-    public Boolean isEndDateBeforeBeginDate(ReservationDateException resExcept, BindingResult result);
+    Boolean isEndDateBeforeBeginDate(ReservationDateException resExcept, BindingResult result);
 }

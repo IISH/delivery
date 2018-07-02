@@ -1,7 +1,6 @@
 package org.socialhistoryservices.delivery.request.service;
 
-import org.socialhistoryservices.delivery.InvalidRequestException;
-import org.socialhistoryservices.delivery.reservation.entity.HoldingReservation;
+import org.socialhistoryservices.delivery.util.InvalidRequestException;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;

@@ -116,7 +116,7 @@ public class ReproductionCustomNoteDAOImpl implements ReproductionCustomNoteDAO 
 		cq.select(root);
 
 		List<ReproductionCustomNote> storedCustomNotes = list(cq);
-		List<ReproductionCustomNote> customNotes = new ArrayList<ReproductionCustomNote>();
+		List<ReproductionCustomNote> customNotes = new ArrayList<>();
 		for (ExternalRecordInfo.MaterialType materialType : ExternalRecordInfo.MaterialType.values()) {
 			boolean has = false;
 			for (ReproductionCustomNote storedCustomNote : storedCustomNotes) {

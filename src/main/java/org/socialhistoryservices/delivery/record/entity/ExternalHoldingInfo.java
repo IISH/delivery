@@ -45,7 +45,7 @@ public class ExternalHoldingInfo {
         this.barcode = barcode;
     }
 
-    @Column(name="serialnumbers", columnDefinition = "TEXT", nullable=true)
+    @Column(name="serialnumbers", columnDefinition = "TEXT")
     private String serialNumbers;
 
     /**

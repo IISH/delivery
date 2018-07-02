@@ -1,6 +1,6 @@
 package org.socialhistoryservices.delivery.reproduction.service;
 
-import org.socialhistoryservices.delivery.InvalidRequestException;
+import org.socialhistoryservices.delivery.util.InvalidRequestException;
 import org.socialhistoryservices.delivery.record.entity.*;
 import org.socialhistoryservices.delivery.reproduction.entity.HoldingReproduction;
 import org.socialhistoryservices.delivery.reproduction.entity.HoldingReproduction_;
@@ -30,7 +30,7 @@ public class ReproductionSearch extends RequestSearch<HoldingReproduction> {
     /**
      * Build the query.
      *
-     * @param rpRoot  The root entity.
+     * @param hrRoot  The root entity.
      * @param cq      The query to build upon.
      * @param isCount Whether the query is a count or not.
      */
@@ -74,18 +74,18 @@ public class ReproductionSearch extends RequestSearch<HoldingReproduction> {
                                               Expression<Boolean> where) {
         Date date = getDateFilter(p);
         if (date != null) {
-            Expression<Boolean> exDate = cb.between(rRoot.<Date>get(Reproduction_.date), date, date);
+            Expression<Boolean> exDate = cb.between(rRoot.get(Reproduction_.date), date, date);
             where = (where != null) ? cb.and(where, exDate) : exDate;
         }
         else {
             Date fromDate = getFromDateFilter(p);
             Date toDate = getToDateFilter(p);
             if (fromDate != null) {
-                Expression<Boolean> exDate = cb.greaterThanOrEqualTo(rRoot.<Date>get(Reproduction_.date), fromDate);
+                Expression<Boolean> exDate = cb.greaterThanOrEqualTo(rRoot.get(Reproduction_.date), fromDate);
                 where = (where != null) ? cb.and(where, exDate) : exDate;
             }
             if (toDate != null) {
-                Expression<Boolean> exDate = cb.lessThanOrEqualTo(rRoot.<Date>get(Reproduction_.date), toDate);
+                Expression<Boolean> exDate = cb.lessThanOrEqualTo(rRoot.get(Reproduction_.date), toDate);
                 where = (where != null) ? cb.and(where, exDate) : exDate;
             }
         }
@@ -105,7 +105,7 @@ public class ReproductionSearch extends RequestSearch<HoldingReproduction> {
                                               Join<HoldingReproduction, Reproduction> rRoot,
                                               Expression<Boolean> where) {
         if (p.containsKey("customerName")) {
-            Expression<Boolean> exName = cb.like(rRoot.<String>get(Reproduction_.customerName),
+            Expression<Boolean> exName = cb.like(rRoot.get(Reproduction_.customerName),
                 "%" + p.get("customerName")[0].trim() + "%");
             where = (where != null) ? cb.and(where, exName) : exName;
         }
@@ -148,7 +148,7 @@ public class ReproductionSearch extends RequestSearch<HoldingReproduction> {
             String status = p.get("status")[0].trim().toUpperCase();
             if (!status.equals("")) { // Tolerant to empty status
                 try {
-                    Expression<Boolean> exStatus = cb.equal(rRoot.<Reproduction.Status>get(Reproduction_.status),
+                    Expression<Boolean> exStatus = cb.equal(rRoot.get(Reproduction_.status),
                         Reproduction.Status.valueOf(status));
                     where = (where != null) ? cb.and(where, exStatus) : exStatus;
                 }
@@ -178,7 +178,7 @@ public class ReproductionSearch extends RequestSearch<HoldingReproduction> {
                 return where;
             }
 
-            Expression<Boolean> exPrinted = cb.equal(hrRoot.<Boolean>get(HoldingReproduction_.printed),
+            Expression<Boolean> exPrinted = cb.equal(hrRoot.get(HoldingReproduction_.printed),
                 Boolean.parseBoolean(p.get("printed")[0]));
             where = (where != null) ? cb.and(where, exPrinted) : exPrinted;
         }
@@ -210,9 +210,9 @@ public class ReproductionSearch extends RequestSearch<HoldingReproduction> {
 
             Expression<Boolean> exSearch = cb.or(
                 cb.like(cb.lower(eRoot.get(ExternalRecordInfo_.title)), "%" + search + "%"),
-                cb.like(cb.lower(rRoot.<String>get(Reproduction_.customerName)), "%" + search + "%"),
-                cb.like(cb.lower(rRoot.<String>get(Reproduction_.customerEmail)), "%" + search + "%"),
-                cb.like(cb.lower(hRoot.<String>get(Holding_.signature)), "%" + search + "%"),
+                cb.like(cb.lower(rRoot.get(Reproduction_.customerName)), "%" + search + "%"),
+                cb.like(cb.lower(rRoot.get(Reproduction_.customerEmail)), "%" + search + "%"),
+                cb.like(cb.lower(hRoot.get(Holding_.signature)), "%" + search + "%"),
                 cb.like(cb.lower(phRoot.<String>get(Holding_.signature)), "%" + search + "%")
             );
 
@@ -241,18 +241,26 @@ public class ReproductionSearch extends RequestSearch<HoldingReproduction> {
 
         if (containsSort) {
             String sort = p.get("sort")[0];
-            if (sort.equals("customerName"))
-                e = rRoot.get(Reproduction_.customerName);
-            else if (sort.equals("customerEmail"))
-                e = rRoot.get(Reproduction_.customerEmail);
-            else if (sort.equals("status"))
-                e = rRoot.get(Reproduction_.status);
-            else if (sort.equals("printed"))
-                e = hrRoot.get(HoldingReproduction_.printed);
-            else if (sort.equals("signature"))
-                e = hRoot.get(Holding_.signature);
-            else if (sort.equals("holdingStatus"))
-                e = hRoot.get(Holding_.status);
+            switch (sort) {
+                case "customerName":
+                    e = rRoot.get(Reproduction_.customerName);
+                    break;
+                case "customerEmail":
+                    e = rRoot.get(Reproduction_.customerEmail);
+                    break;
+                case "status":
+                    e = rRoot.get(Reproduction_.status);
+                    break;
+                case "printed":
+                    e = hrRoot.get(HoldingReproduction_.printed);
+                    break;
+                case "signature":
+                    e = hRoot.get(Holding_.signature);
+                    break;
+                case "holdingStatus":
+                    e = hRoot.get(Holding_.status);
+                    break;
+            }
         }
 
         if (containsSortDir && p.get("sort_dir")[0].toLowerCase().equals("asc"))

@@ -13,13 +13,13 @@ public interface RequestService {
      *
      * @param r Request to change status for.
      */
-    public void markRequest(Request r);
+    void markRequest(Request r);
 
     /**
      * Returns the active request with which this holding is associated.
      *
-     * @param h The Holding to get the active reservation of.
+     * @param holding The Holding to get the active reservation of.
      * @return The active request, or null if no active request exists.
      */
-    public Request getActiveFor(Holding holding);
+    Request getActiveFor(Holding holding);
 }

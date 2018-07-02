@@ -15,21 +15,21 @@ public interface ReproductionStandardOptionDAO {
 	 *
 	 * @param obj ReproductionStandardOption to add.
 	 */
-	public void add(ReproductionStandardOption obj);
+    void add(ReproductionStandardOption obj);
 
 	/**
 	 * Remove a ReproductionStandardOption from the database.
 	 *
 	 * @param obj ReproductionStandardOption to remove.
 	 */
-	public void remove(ReproductionStandardOption obj);
+    void remove(ReproductionStandardOption obj);
 
 	/**
 	 * Save changes to a ReproductionStandardOption in the database.
 	 *
 	 * @param obj ReproductionStandardOption to save.
 	 */
-	public void save(ReproductionStandardOption obj);
+    void save(ReproductionStandardOption obj);
 
 	/**
 	 * Retrieve the ReproductionStandardOption matching the given Id.
@@ -37,14 +37,14 @@ public interface ReproductionStandardOptionDAO {
 	 * @param id Id of the ReproductionStandardOption to retrieve.
 	 * @return The ReproductionStandardOption matching the Id.
 	 */
-	public ReproductionStandardOption getById(int id);
+    ReproductionStandardOption getById(int id);
 
 	/**
 	 * Get a criteria builder for querying ReproductionStandardOptions.
 	 *
 	 * @return the CriteriaBuilder.
 	 */
-	public CriteriaBuilder getCriteriaBuilder();
+    CriteriaBuilder getCriteriaBuilder();
 
 	/**
 	 * List all ReproductionStandardOptions matching a built query.
@@ -52,7 +52,7 @@ public interface ReproductionStandardOptionDAO {
 	 * @param q The criteria query to execute
 	 * @return A list of matching ReproductionStandardOptions.
 	 */
-	public List<ReproductionStandardOption> list(CriteriaQuery<ReproductionStandardOption> q);
+    List<ReproductionStandardOption> list(CriteriaQuery<ReproductionStandardOption> q);
 
 	/**
 	 * Get a single ReproductionStandardOption matching a built query.
@@ -60,12 +60,12 @@ public interface ReproductionStandardOptionDAO {
 	 * @param query The query to match by.
 	 * @return The matching ReproductionStandardOption.
 	 */
-	public ReproductionStandardOption get(CriteriaQuery<ReproductionStandardOption> query);
+    ReproductionStandardOption get(CriteriaQuery<ReproductionStandardOption> query);
 
 	/**
 	 * List all ReproductionStandardOptions.
 	 *
 	 * @return A list of ReproductionStandardOptions.
 	 */
-	public List<ReproductionStandardOption> listAll();
+    List<ReproductionStandardOption> listAll();
 }

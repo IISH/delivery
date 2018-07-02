@@ -2,18 +2,15 @@ package org.socialhistoryservices.delivery.request.controller;
 
 import org.socialhistoryservices.delivery.record.dao.HoldingDAO;
 import org.socialhistoryservices.delivery.record.entity.Holding;
-import org.socialhistoryservices.delivery.record.service.RecordService;
 import org.socialhistoryservices.delivery.reproduction.dao.HoldingReproductionDAO;
 import org.socialhistoryservices.delivery.reproduction.entity.HoldingReproduction;
 import org.socialhistoryservices.delivery.reproduction.entity.Reproduction;
-import org.socialhistoryservices.delivery.reproduction.service.ReproductionSearch;
 import org.socialhistoryservices.delivery.reproduction.service.ReproductionService;
 import org.socialhistoryservices.delivery.request.entity.Request;
 import org.socialhistoryservices.delivery.request.service.GeneralRequestService;
 import org.socialhistoryservices.delivery.reservation.dao.HoldingReservationDAO;
 import org.socialhistoryservices.delivery.reservation.entity.HoldingReservation;
 import org.socialhistoryservices.delivery.reservation.entity.Reservation;
-import org.socialhistoryservices.delivery.reservation.service.ReservationSearch;
 import org.socialhistoryservices.delivery.reservation.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,14 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -139,7 +130,7 @@ public class RequestController extends AbstractRequestController {
             model.addAttribute("requestActive", getRequestAsString(requestActive));
 
             // Also add information about the state of each of the reservation and/or reproduction holdings
-            Set<Holding> holdings = new HashSet<Holding>();
+            Set<Holding> holdings = new HashSet<>();
             if ((reservation != null) && (reservation.getHoldings() != null))
                 holdings.addAll(reservation.getHoldings());
             if ((reproduction != null) && (reproduction.getHoldings() != null))

@@ -316,7 +316,7 @@ public class Order {
         this.paymentMethod = message.getInteger("paymentmethod");
         this.createdAt = message.getDate("createdat");
         this.updatedAt = message.getDate("updatedat");
-        this.refundedAt = (message.getDate("refundedat") != null) ? message.getDate("refundedat") : null;
+        this.refundedAt = message.getDate("refundedat");
         this.description = message.getString("com");
     }
 

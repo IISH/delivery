@@ -79,7 +79,7 @@ public class HoldingReservation extends HoldingRequest {
 
     /** The Reservation's name. */
     @Size(max=255)
-    @Column(name="comment", nullable=true)
+    @Column(name="comment")
     private String comment;
 
     /**

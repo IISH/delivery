@@ -198,7 +198,7 @@ public class ArchiveReservationPrintable extends ReservationPrintable {
 
                 DrawValueInfo drawValueInfo = new DrawValueInfo(drawInfo);
                 drawValueInfo.value = getMessage("archiveHoldingInfo.more", "");
-                drawValueInfo.font = (smallFont) ? smallBoldFont : boldFont;;
+                drawValueInfo.font = (smallFont) ? smallBoldFont : boldFont;
                 drawValueInfo.underline = true;
                 drawKeyValue(drawValueInfo);
                 drawNewLine(drawInfo);

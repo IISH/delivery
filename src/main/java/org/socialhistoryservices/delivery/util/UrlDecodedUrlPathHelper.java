@@ -1,4 +1,4 @@
-package org.socialhistoryservices.delivery;
+package org.socialhistoryservices.delivery.util;
 
 import org.springframework.web.util.UrlPathHelper;
 
@@ -11,15 +11,15 @@ import java.net.URLDecoder;
  */
 public class UrlDecodedUrlPathHelper extends UrlPathHelper {
 
-
     /**
      * Compares the url decoded path instead of the encoded.
+     *
      * @param request The request.
      * @return The difference.
      */
     public String getPathWithinServletMapping(HttpServletRequest request) {
         String pathWithinApp = getPathWithinApplication(request);
-		String servletPath = getServletPath(request);
+        String servletPath = getServletPath(request);
         String decodedPathWithinApp;
 
         // If the URL decoded pathWithinApp is alright, return it.
@@ -29,7 +29,8 @@ public class UrlDecodedUrlPathHelper extends UrlPathHelper {
             if (decodedPathWithinApp.startsWith(servletPath)) {
                 // Normal case: URI contains servlet path.
                 return decodedPathWithinApp.substring(servletPath.length());
-            } else {
+            }
+            else {
                 // Special case: URI is different from servlet path.
                 // Can happen e.g. with index page: URI="/", servletPath="/index.html"
                 // Use path info if available, as it indicates an index page within
@@ -37,7 +38,8 @@ public class UrlDecodedUrlPathHelper extends UrlPathHelper {
                 String pathInfo = request.getPathInfo();
                 return (pathInfo != null ? pathInfo : servletPath);
             }
-        }catch (UnsupportedEncodingException e) {
+        }
+        catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
     }

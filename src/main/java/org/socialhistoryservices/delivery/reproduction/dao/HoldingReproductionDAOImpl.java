@@ -1,6 +1,5 @@
 package org.socialhistoryservices.delivery.reproduction.dao;
 
-import org.socialhistoryservices.delivery.record.entity.Holding;
 import org.socialhistoryservices.delivery.reproduction.entity.HoldingReproduction;
 import org.springframework.stereotype.Repository;
 

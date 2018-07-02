@@ -1,7 +1,7 @@
 package org.socialhistoryservices.delivery.user.controller;
 
-import org.socialhistoryservices.delivery.ErrorHandlingController;
-import org.socialhistoryservices.delivery.InvalidRequestException;
+import org.socialhistoryservices.delivery.util.ErrorHandlingController;
+import org.socialhistoryservices.delivery.util.InvalidRequestException;
 import org.socialhistoryservices.delivery.user.entity.Group;
 import org.socialhistoryservices.delivery.user.entity.User;
 import org.socialhistoryservices.delivery.user.service.UserService;

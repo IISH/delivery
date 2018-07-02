@@ -15,7 +15,7 @@ public interface HoldingReproductionDAO {
      *
      * @return the CriteriaBuilder.
      */
-    public CriteriaBuilder getCriteriaBuilder();
+    CriteriaBuilder getCriteriaBuilder();
 
     /**
      * List all HoldingReproductions matching a built query.
@@ -23,7 +23,7 @@ public interface HoldingReproductionDAO {
      * @param q The criteria query to execute
      * @return A list of matching HoldingReproductions.
      */
-    public List<HoldingReproduction> list(CriteriaQuery<HoldingReproduction> q);
+    List<HoldingReproduction> list(CriteriaQuery<HoldingReproduction> q);
 
     /**
      * List all HoldingReproductions matching a built query.
@@ -33,19 +33,19 @@ public interface HoldingReproductionDAO {
      * @param maxResults  The max number of results to obtain
      * @return A list of matching HoldingReproductions.
      */
-    public List<HoldingReproduction> list(CriteriaQuery<HoldingReproduction> q, int firstResult, int maxResults);
+    List<HoldingReproduction> list(CriteriaQuery<HoldingReproduction> q, int firstResult, int maxResults);
 
     /**
      * Count all HoldingReproductions matching a built query.
      * @param q The criteria query to execute
      * @return The number of counted results.
      */
-    public long count(CriteriaQuery<Long> q);
+    long count(CriteriaQuery<Long> q);
 
     /**
      * Retrieve the HoldingReproduction matching the given ID.
      * @param id ID of the HoldingReproduction to retrieve.
      * @return The HoldingReproduction matching the ID.
      */
-    public HoldingReproduction getById(int id);
+    HoldingReproduction getById(int id);
 }

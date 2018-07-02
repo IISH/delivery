@@ -11,9 +11,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by Igor on 1/9/2017.
- */
 @Entity
 @Table(name="reservation_date_exceptions")
 @Configurable
@@ -89,7 +86,7 @@ public class ReservationDateException{
      * @return the ReservationDateException's dates.
      */
     public List<Date> getDatesOfReservationDateException(){
-        List<Date> dates = new ArrayList<Date>();
+        List<Date> dates = new ArrayList<>();
         if(this.endDate != null){
             Calendar startCal = Calendar.getInstance();
             startCal.setTime(startDate);

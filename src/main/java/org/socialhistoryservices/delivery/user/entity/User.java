@@ -76,7 +76,7 @@ public class User implements UserDetails {
      * @return A collection of authorities (can be empty).
      */
     public Collection<GrantedAuthority> getAuthorities() {
-        Set<GrantedAuthority> roles = new HashSet<GrantedAuthority>();
+        Set<GrantedAuthority> roles = new HashSet<>();
         for (Group gr : getGroups()) {
             roles.addAll(gr.getPermissions());
         }
@@ -112,6 +112,6 @@ public class User implements UserDetails {
      */
     public User() {
         setUsername("");
-        groups = new HashSet<Group>();
+        groups = new HashSet<>();
     }
 }

@@ -3,11 +3,7 @@ package org.socialhistoryservices.delivery.api;
 import org.socialhistoryservices.delivery.record.entity.ExternalHoldingInfo;
 import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import java.util.HashMap;
 import java.util.Map;
 
 interface IISHRecordExtractor {
@@ -19,7 +15,7 @@ interface IISHRecordExtractor {
      * @return The metadata of the record, if found.
      * @throws NoSuchPidException Thrown when the PID does not exist.
      */
-    public ExternalRecordInfo getRecordMetadata(Node node) throws NoSuchPidException;
+    ExternalRecordInfo getRecordMetadata(Node node) throws NoSuchPidException;
 
     /**
      * Parses a node to metadata of a record.
@@ -29,7 +25,7 @@ interface IISHRecordExtractor {
      * @return The metadata of the record, if found.
      * @throws NoSuchPidException Thrown when the PID does not exist.
      */
-    public ExternalRecordInfo getRecordMetadata(Node node, String item) throws NoSuchPidException;
+    ExternalRecordInfo getRecordMetadata(Node node, String item) throws NoSuchPidException;
 
     /**
      * Get a map of holding signatures associated with this node,
@@ -39,7 +35,7 @@ interface IISHRecordExtractor {
      * @return A map of found (signature,holding info) tuples, or an empty map if none were found.
      * @throws NoSuchPidException Thrown when the PID does not exist.
      */
-    public Map<String, ExternalHoldingInfo> getHoldingMetadata(Node node) throws NoSuchPidException;
+    Map<String, ExternalHoldingInfo> getHoldingMetadata(Node node) throws NoSuchPidException;
 
     /**
      * Get a map of holding signatures associated with this node,
@@ -50,5 +46,5 @@ interface IISHRecordExtractor {
      * @return A map of found (signature,holding info) tuples, or an empty map if none were found.
      * @throws NoSuchPidException Thrown when the PID does not exist.
      */
-    public Map<String, ExternalHoldingInfo> getHoldingMetadata(Node node, String item) throws NoSuchPidException;
+    Map<String, ExternalHoldingInfo> getHoldingMetadata(Node node, String item) throws NoSuchPidException;
 }

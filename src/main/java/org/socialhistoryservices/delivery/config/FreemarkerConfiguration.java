@@ -1,9 +1,5 @@
 package org.socialhistoryservices.delivery.config;
 
-/**
- * Created by Igor on 3/14/2017.
- */
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

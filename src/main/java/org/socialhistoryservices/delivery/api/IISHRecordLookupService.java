@@ -372,8 +372,7 @@ public class IISHRecordLookupService implements RecordLookupService {
                 URLConnection conn = eadUrl.openConnection();
 
                 BufferedReader rdr = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                Node eadNode = (Node) xpOAI.evaluate(new InputSource(rdr), XPathConstants.NODE);
-                return eadNode;
+                return (Node) xpOAI.evaluate(new InputSource(rdr), XPathConstants.NODE);
             }
             return null;
         }

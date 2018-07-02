@@ -268,7 +268,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
      * @return A map with all custom notes for reproductions by material type name.
      */
     public Map<String, ReproductionCustomNote> getAllReproductionCustomNotesAsMap() {
-        Map<String, ReproductionCustomNote> customNotes = new HashMap<String, ReproductionCustomNote>();
+        Map<String, ReproductionCustomNote> customNotes = new HashMap<>();
         for (ReproductionCustomNote reproductionCustomNote : getAllReproductionCustomNotes()) {
             customNotes.put(reproductionCustomNote.getMaterialType().name(), reproductionCustomNote);
         }
@@ -354,7 +354,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
             for (HoldingReproduction hr : reproduction.getHoldingReproductions()) {
                 requests.updateHoldingStatus(hr.getHolding(), Holding.Status.AVAILABLE);
             }
-            reproduction.setHoldingReproductions(new ArrayList<HoldingReproduction>());
+            reproduction.setHoldingReproductions(new ArrayList<>());
         }
         else {
             // Delete holdings that were not provided.
@@ -481,8 +481,8 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
      */
     public void printItems(List<HoldingReproduction> hrs, boolean alwaysPrint) throws PrinterException {
         try {
-            Set<Reproduction> reproductions = new HashSet<Reproduction>();
-            List<RequestPrintable> requestPrintables = new ArrayList<RequestPrintable>();
+            Set<Reproduction> reproductions = new HashSet<>();
+            List<RequestPrintable> requestPrintables = new ArrayList<>();
             for (HoldingReproduction hr : hrs) {
                 // Only print a reproduction if an offer has to be prepared
                 // or when the status has changed to ACTIVE and the item is not yet digitally available
@@ -654,7 +654,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
      * @param reproduction The reproduction.
      */
     private void removeUnavailbleHoldings(Reproduction reproduction) {
-        List<HoldingReproduction> hrToRemove = new ArrayList<HoldingReproduction>();
+        List<HoldingReproduction> hrToRemove = new ArrayList<>();
         for (HoldingReproduction hr : reproduction.getHoldingReproductions()) {
             Holding h = hr.getHolding();
             if (!hr.isInSor() && (h.getStatus() != Holding.Status.AVAILABLE))
@@ -690,7 +690,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
         if (sorMetadata == null)
             return reproductionStandardOptions;
 
-        List<ReproductionStandardOption> notInSor = new ArrayList<ReproductionStandardOption>();
+        List<ReproductionStandardOption> notInSor = new ArrayList<>();
         for (ReproductionStandardOption standardOption : reproductionStandardOptions) {
             if (!sorMetadataMatchesStandardOption(sorMetadata, standardOption))
                 notInSor.add(standardOption);
@@ -708,7 +708,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
      */
     public List<ReproductionStandardOption> getStandardOptionsInSorOnlyCustom(Holding holding,
                                                                               List<ReproductionStandardOption> reproductionStandardOptions) {
-        List<ReproductionStandardOption> inSorOnlyCustom = new ArrayList<ReproductionStandardOption>();
+        List<ReproductionStandardOption> inSorOnlyCustom = new ArrayList<>();
         if (holding.getRecord().getExternalInfo().getMaterialType() == ExternalRecordInfo.MaterialType.BOOK) {
             SorMetadata sorMetadata = sorService.getMetadataForPid(holding.determinePid());
 
@@ -967,10 +967,10 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
             order.mapFromPayWayMessage(orderDetails);
             orderDAO.save(order);
 
-            return new AsyncResult<Order>(order);
+            return new AsyncResult<>(order);
         } catch (InvalidPayWayMessageException ivwme) {
             log.error(String.format("refreshOrder() : Failed to refresh the order with id %d", order.getId()));
-            return new AsyncResult<Order>(null);
+            return new AsyncResult<>(null);
         }
     }
 
@@ -992,10 +992,10 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
                 refreshOrder(order);
             }
 
-            return new AsyncResult<Order>(order);
+            return new AsyncResult<>(order);
         } catch (InvalidPayWayMessageException ivwme) {
             log.error(String.format("refundOrder() : Failed to refund the order with id %d", order.getId()));
-            return new AsyncResult<Order>(null);
+            return new AsyncResult<>(null);
         }
     }
 

@@ -3,9 +3,6 @@ package org.socialhistoryservices.delivery.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-/**
- * Created by Igor on 3/13/2017.
- */
 @Component
 @ConfigurationProperties(prefix = "delivery")
 public class DeliveryProperties {

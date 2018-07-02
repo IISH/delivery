@@ -48,7 +48,7 @@ public class ReservationDateExceptionController extends AbstractRequestControlle
                                                     ArrayList<ReservationDateException> resExceptions,
                                                     BindingResult result) {
         if(checked != null){
-            List<ReservationDateException> reservationDateExceptionList = new ArrayList<ReservationDateException>();
+            List<ReservationDateException> reservationDateExceptionList = new ArrayList<>();
             for(String s : checked) {
                 reservationDateExceptionList.add(reservationDateExceptions.getReservationDateExceptionsById(Integer.parseInt(s)));
             }
@@ -209,7 +209,7 @@ public class ReservationDateExceptionController extends AbstractRequestControlle
                                                             Expression<Boolean> where) {
         Date date = getDateFilter(p);
         if (date != null) {
-            Expression<Boolean> exDate = cb.equal(resRoot.<Date>get(ReservationDateException_.startDate), date);
+            Expression<Boolean> exDate = cb.equal(resRoot.get(ReservationDateException_.startDate), date);
             where = where != null ? cb.and(where, exDate) : exDate;
         }
         return where;
@@ -229,7 +229,7 @@ public class ReservationDateExceptionController extends AbstractRequestControlle
                                                           Expression<Boolean> where) {
         Date date = getDateFilter(p);
         if (date != null) {
-            Expression<Boolean> exDate = cb.equal(resRoot.<Date>get(ReservationDateException_.endDate), date);
+            Expression<Boolean> exDate = cb.equal(resRoot.get(ReservationDateException_.endDate), date);
             where = where != null ? cb.and(where, exDate) : exDate;
         }
         return where;

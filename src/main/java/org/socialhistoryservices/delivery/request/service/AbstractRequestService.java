@@ -2,7 +2,6 @@ package org.socialhistoryservices.delivery.request.service;
 
 import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
 import org.socialhistoryservices.delivery.record.entity.Holding;
-import org.socialhistoryservices.delivery.record.entity.Record;
 import org.socialhistoryservices.delivery.request.entity.HoldingRequest;
 import org.socialhistoryservices.delivery.request.entity.Request;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import org.springframework.validation.Validator;
 
 import javax.print.PrintService;
 import java.awt.print.Book;
-import java.awt.print.PageFormat;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.util.Iterator;

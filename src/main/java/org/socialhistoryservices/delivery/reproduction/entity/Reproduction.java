@@ -3,7 +3,6 @@ package org.socialhistoryservices.delivery.reproduction.entity;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 import org.socialhistoryservices.delivery.record.entity.Holding;
-import org.socialhistoryservices.delivery.reproduction.util.BigDecimalUtils;
 import org.socialhistoryservices.delivery.request.entity.HoldingRequest;
 import org.socialhistoryservices.delivery.request.entity.Request;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -532,7 +531,7 @@ public class Reproduction extends Request {
      */
     @Override
     public List<Holding> getHoldings() {
-        List<Holding> holdings = new ArrayList<Holding>();
+        List<Holding> holdings = new ArrayList<>();
         if (holdingReproductions != null) {
             for (HoldingReproduction holdingReproduction : holdingReproductions) {
                 holdings.add(holdingReproduction.getHolding());
@@ -646,7 +645,7 @@ public class Reproduction extends Request {
      * @return The total BTW for each BTW percentage.
      */
     public Map<String, BigDecimal> getTotalBTW() {
-        Map<String, BigDecimal> btwTotals = new TreeMap<String, BigDecimal>();
+        Map<String, BigDecimal> btwTotals = new TreeMap<>();
         for (HoldingReproduction hr : getHoldingReproductions()) {
             BigDecimal totalBtwPrice = BigDecimal.ZERO;
             if (btwTotals.containsKey(hr.getBtwPercentage().toString()))
@@ -747,7 +746,7 @@ public class Reproduction extends Request {
         setAdminstrationCostsBtwPercentage(0);
         setAdminstrationCostsBtwPrice(BigDecimal.ZERO);
         setRequestLocale(LocaleContextHolder.getLocale());
-        holdingReproductions = new ArrayList<HoldingReproduction>();
+        holdingReproductions = new ArrayList<>();
         token = UUID.randomUUID().toString();
     }
 }

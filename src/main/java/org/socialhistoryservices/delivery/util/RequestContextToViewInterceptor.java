@@ -1,4 +1,4 @@
-package org.socialhistoryservices.delivery;
+package org.socialhistoryservices.delivery.util;
 
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -14,13 +14,11 @@ import javax.servlet.http.HttpServletResponse;
  * retrieving context URIs.
  */
 public class RequestContextToViewInterceptor extends HandlerInterceptorAdapter {
-
     /**
      * Expose the request context to the views.
      */
-    public void postHandle(HttpServletRequest request,
-            HttpServletResponse response, Object handler,
-            ModelAndView model) {
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+                           ModelAndView model) {
         if (model != null) {
             UrlPathHelper uph = new UrlPathHelper();
             uph.setUrlDecode(false);

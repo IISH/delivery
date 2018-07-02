@@ -96,7 +96,7 @@ public class SharedObjectRepositoryService {
                     contentType = contentTypeElement.getTextContent();
                 }
 
-                Map<String, String> contentAttributes = new HashMap<String, String>();
+                Map<String, String> contentAttributes = new HashMap<>();
                 if ((contentElement != null) && contentElement.hasAttributes()) {
                     NamedNodeMap contentElementAttributes = contentElement.getAttributes();
                     for (int i = 0; i < contentElementAttributes.getLength(); i++) {
@@ -165,12 +165,12 @@ public class SharedObjectRepositoryService {
      * @return A map with the uses and their file PIDs.
      */
     private static Map<String, List<String>> getFilesMETSFromDocument(Document document) {
-        Map<String, List<String>> filePids = new HashMap<String, List<String>>();
+        Map<String, List<String>> filePids = new HashMap<>();
 
         Map<String, Set<String>> fptrsPerGroup = gettFptrsPerGroup(document);
         Map<Integer, Set<String>> fptrsOrdered = getFptrsOrdered(document);
         for (String fileGrp : fptrsPerGroup.keySet()) {
-            List<String> files = new ArrayList<String>();
+            List<String> files = new ArrayList<>();
 
             for (Integer order : fptrsOrdered.keySet()) {
                 Set<String> groupFptrs = fptrsPerGroup.get(fileGrp);
@@ -196,9 +196,9 @@ public class SharedObjectRepositoryService {
      * @return A map with all file pointers per group.
      */
     private static Map<String, Set<String>> gettFptrsPerGroup(Document document) {
-        Map<String, Set<String>> fptrsPerGroup = new TreeMap<String, Set<String>>();
+        Map<String, Set<String>> fptrsPerGroup = new TreeMap<>();
         for (Element fileGrpElement : getElements(document.getElementsByTagName("fileGrp"))) {
-            Set<String> fptrs = new HashSet<String>();
+            Set<String> fptrs = new HashSet<>();
             for (Element fptrElement : getElements(fileGrpElement.getElementsByTagName("file")))
                 fptrs.add(fptrElement.getAttribute("ID"));
             String fileGrpId = fileGrpElement.getAttribute("USE");
@@ -214,12 +214,12 @@ public class SharedObjectRepositoryService {
      * @return A map with all file pointers per sequence order.
      */
     private static Map<Integer, Set<String>> getFptrsOrdered(Document document) {
-        Map<Integer, Set<String>> fptrsPerPage = new TreeMap<Integer, Set<String>>();
+        Map<Integer, Set<String>> fptrsPerPage = new TreeMap<>();
         for (Element structMapElement : getElements(document.getElementsByTagName("structMap"))) {
             if (structMapElement.getAttribute("TYPE").equals("physical")) {
                 for (Element divElement : getElements(structMapElement.getElementsByTagName("div"))) {
                     if (divElement.getAttribute("TYPE").equals("page")) {
-                        Set<String> fptrs = new HashSet<String>();
+                        Set<String> fptrs = new HashSet<>();
                         for (Element fptrElement : getElements(divElement.getElementsByTagName("fptr")))
                             fptrs.add(fptrElement.getAttribute("FILEID"));
                         fptrsPerPage.put(Integer.parseInt(divElement.getAttribute("ORDER")), fptrs);
@@ -273,7 +273,7 @@ public class SharedObjectRepositoryService {
      * @return The elements.
      */
     private static List<Element> getElements(NodeList nodeList) {
-        List<Element> elements = new ArrayList<Element>();
+        List<Element> elements = new ArrayList<>();
         for (int i = 0; i < nodeList.getLength(); i++) {
             if (nodeList.item(i).getNodeType() == Node.ELEMENT_NODE) {
                 Element element = (Element) nodeList.item(i);

@@ -106,7 +106,7 @@ public class Group {
      * Set defaults.
      */
     public Group() {
-        permissions = new HashSet<Authority>();
+        permissions = new HashSet<>();
         setName("");
         setDescription("");
     }

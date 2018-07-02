@@ -1,4 +1,4 @@
-package org.socialhistoryservices.delivery.controller;
+package org.socialhistoryservices.delivery.home;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
+
 /**
  * Default controller when / is accessed.
  */

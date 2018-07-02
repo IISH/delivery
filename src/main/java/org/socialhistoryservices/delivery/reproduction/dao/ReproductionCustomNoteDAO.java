@@ -15,21 +15,21 @@ public interface ReproductionCustomNoteDAO {
      *
      * @param obj ReproductionCustomNote to add.
      */
-    public void add(ReproductionCustomNote obj);
+    void add(ReproductionCustomNote obj);
 
     /**
      * Remove a ReproductionCustomNote from the database.
      *
      * @param obj ReproductionCustomNote to remove.
      */
-    public void remove(ReproductionCustomNote obj);
+    void remove(ReproductionCustomNote obj);
 
     /**
      * Save changes to a ReproductionCustomNote in the database.
      *
      * @param obj ReproductionCustomNote to save.
      */
-    public void save(ReproductionCustomNote obj);
+    void save(ReproductionCustomNote obj);
 
     /**
      * Retrieve the ReproductionCustomNote matching the given Id.
@@ -37,14 +37,14 @@ public interface ReproductionCustomNoteDAO {
      * @param id Id of the ReproductionCustomNote to retrieve.
      * @return The ReproductionCustomNote matching the Id.
      */
-    public ReproductionCustomNote getById(int id);
+    ReproductionCustomNote getById(int id);
 
     /**
      * Get a criteria builder for querying ReproductionCustomNotes.
      *
      * @return the CriteriaBuilder.
      */
-    public CriteriaBuilder getCriteriaBuilder();
+    CriteriaBuilder getCriteriaBuilder();
 
     /**
      * List all ReproductionCustomNotes matching a built query.
@@ -52,7 +52,7 @@ public interface ReproductionCustomNoteDAO {
      * @param q The criteria query to execute
      * @return A list of matching ReproductionCustomNotes.
      */
-    public List<ReproductionCustomNote> list(CriteriaQuery<ReproductionCustomNote> q);
+    List<ReproductionCustomNote> list(CriteriaQuery<ReproductionCustomNote> q);
 
     /**
      * Get a single ReproductionCustomNote matching a built query.
@@ -60,12 +60,12 @@ public interface ReproductionCustomNoteDAO {
      * @param query The query to match by.
      * @return The matching ReproductionCustomNote.
      */
-    public ReproductionCustomNote get(CriteriaQuery<ReproductionCustomNote> query);
+    ReproductionCustomNote get(CriteriaQuery<ReproductionCustomNote> query);
 
     /**
      * List all ReproductionCustomNotes by material type.
      *
      * @return A list of ReproductionCustomNotes.
      */
-    public List<ReproductionCustomNote> listAll();
+    List<ReproductionCustomNote> listAll();
 }

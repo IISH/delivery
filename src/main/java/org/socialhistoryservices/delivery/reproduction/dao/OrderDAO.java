@@ -15,21 +15,21 @@ public interface OrderDAO {
 	 *
 	 * @param obj Order to add.
 	 */
-	public void add(Order obj);
+    void add(Order obj);
 
 	/**
 	 * Remove a Order from the database.
 	 *
 	 * @param obj Order to remove.
 	 */
-	public void remove(Order obj);
+    void remove(Order obj);
 
 	/**
 	 * Save changes to a Order in the database.
 	 *
 	 * @param obj Order to save.
 	 */
-	public void save(Order obj);
+    void save(Order obj);
 
 	/**
 	 * Retrieve the Order matching the given Id.
@@ -37,14 +37,14 @@ public interface OrderDAO {
 	 * @param id Id of the Order to retrieve.
 	 * @return The Order matching the Id.
 	 */
-	public Order getById(long id);
+    Order getById(long id);
 
 	/**
 	 * Get a criteria builder for querying Orders.
 	 *
 	 * @return the CriteriaBuilder.
 	 */
-	public CriteriaBuilder getCriteriaBuilder();
+    CriteriaBuilder getCriteriaBuilder();
 
 	/**
 	 * List all Orders matching a built query.
@@ -52,7 +52,7 @@ public interface OrderDAO {
 	 * @param q The criteria query to execute
 	 * @return A list of matching Orders.
 	 */
-	public List<Order> list(CriteriaQuery<Order> q);
+    List<Order> list(CriteriaQuery<Order> q);
 
 	/**
 	 * Get a single Order matching a built query.
@@ -60,5 +60,5 @@ public interface OrderDAO {
 	 * @param query The query to match by.
 	 * @return The matching Order.
 	 */
-	public Order get(CriteriaQuery<Order> query);
+    Order get(CriteriaQuery<Order> query);
 }

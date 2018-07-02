@@ -1,11 +1,9 @@
 package org.socialhistoryservices.delivery.request.controller;
 
-import org.hibernate.exception.ConstraintViolationException;
-import org.socialhistoryservices.delivery.ErrorHandlingController;
-import org.socialhistoryservices.delivery.InvalidRequestException;
-import org.socialhistoryservices.delivery.ResourceNotFoundException;
+import org.socialhistoryservices.delivery.util.ErrorHandlingController;
+import org.socialhistoryservices.delivery.util.InvalidRequestException;
+import org.socialhistoryservices.delivery.util.ResourceNotFoundException;
 import org.socialhistoryservices.delivery.api.NoSuchPidException;
-import org.socialhistoryservices.delivery.permission.entity.Permission;
 import org.socialhistoryservices.delivery.permission.service.PermissionService;
 import org.socialhistoryservices.delivery.record.entity.*;
 import org.socialhistoryservices.delivery.record.service.RecordService;
@@ -16,7 +14,6 @@ import org.socialhistoryservices.delivery.request.service.GeneralRequestService;
 import org.socialhistoryservices.delivery.request.util.BulkActionIds;
 import org.socialhistoryservices.delivery.reservation.entity.Reservation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.support.PagedListHolder;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.ui.Model;
@@ -68,7 +65,7 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
      */
     @ModelAttribute("holding_status_types")
     public Map<String, Holding.Status> holdingStatusTypes() {
-        Map<String, Holding.Status> data = new LinkedHashMap<String, Holding.Status>();
+        Map<String, Holding.Status> data = new LinkedHashMap<>();
         data.put("AVAILABLE", Holding.Status.AVAILABLE);
         data.put("RESERVED", Holding.Status.RESERVED);
         data.put("IN_USE", Holding.Status.IN_USE);
@@ -83,7 +80,7 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
      * @return A list of holdings.
      */
     protected List<Holding> uriPathToHoldings(String path) {
-        List<Holding> holdings = new ArrayList<Holding>();
+        List<Holding> holdings = new ArrayList<>();
         String[] tuples = getPidsFromURL(path);
         for (String tuple : tuples) {
             String[] elements = tuple.split(Pattern.quote(deliveryProperties.getHoldingSeparator()));
@@ -268,7 +265,7 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
      */
     protected List<Holding> searchMassCreate(Request request, String searchTitle, String searchSignature) {
         if ((searchTitle == null) && (searchSignature == null))
-            return new ArrayList<Holding>();
+            return new ArrayList<>();
 
         CriteriaBuilder cb = records.getRecordCriteriaBuilder();
         CriteriaQuery<Holding> cq = cb.createQuery(Holding.class);
@@ -286,7 +283,7 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
         Expression<Boolean> titleWhere = null;
         for (String s : lowSearchTitle) {
             Expression<Boolean> titleSearch =
-                    cb.like(cb.lower(eRoot.<String>get(ExternalRecordInfo_.title)), "%" + s + "%");
+                    cb.like(cb.lower(eRoot.get(ExternalRecordInfo_.title)), "%" + s + "%");
             titleWhere = (titleWhere == null) ? titleSearch : cb.and(titleWhere, titleSearch);
         }
 
@@ -295,7 +292,7 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
                 : new String[0];
         Expression<Boolean> sigWhere = null;
         for (String s : lowSearchSignature) {
-            Expression<Boolean> sigSearch = cb.like(cb.lower(hRoot.<String>get(Holding_.signature)), "%" + s + "%");
+            Expression<Boolean> sigSearch = cb.like(cb.lower(hRoot.get(Holding_.signature)), "%" + s + "%");
             sigWhere = sigWhere == null ? sigSearch : cb.and(sigWhere, sigSearch);
         }
 
@@ -324,7 +321,7 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
         List<Holding> holdings = records.listHoldings(cq);
 
         // Update the external data of the records, if necessary
-        Set<Record> r = new HashSet<Record>();
+        Set<Record> r = new HashSet<>();
         for (Holding holding : holdings) {
             Record record = holding.getRecord();
             if (!r.contains(record)) {
@@ -344,7 +341,7 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
      * @return A set of holdings.
      */
     protected Set<Holding> getHoldings(Collection<? extends HoldingRequest> holdingRequests) {
-        Set<Holding> holdings = new HashSet<Holding>();
+        Set<Holding> holdings = new HashSet<>();
         for (HoldingRequest hr : holdingRequests) {
             holdings.add(hr.getHolding());
         }
@@ -358,7 +355,7 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
      * @return A map with the requests for which the given holdings are active.
      */
     protected Map<String, Request> getHoldingActiveRequests(Collection<Holding> holdings) {
-        Map<String, Request> holdingActiveRequests = new HashMap<String, Request>();
+        Map<String, Request> holdingActiveRequests = new HashMap<>();
         for (Holding holding : holdings) {
             if (!holdingActiveRequests.containsKey(holding.toString())) {
                 Request request = requests.getActiveFor(holding);
@@ -376,7 +373,7 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
      * @return The ids.
      */
     protected List<BulkActionIds> getIdsFromBulk(List<String> bulk) {
-        List<BulkActionIds> bulkActionIds = new ArrayList<BulkActionIds>();
+        List<BulkActionIds> bulkActionIds = new ArrayList<>();
         for (String bulkIds : bulk) {
             String[] ids = bulkIds.split(":");
             if (ids.length == 2)

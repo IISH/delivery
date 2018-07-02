@@ -24,7 +24,7 @@ public class PayWayMessage extends TreeMap<String, Object> {
     public PayWayMessage() {
     }
 
-    public PayWayMessage(Map<? extends String, ? extends Object> message) {
+    public PayWayMessage(Map<? extends String, ?> message) {
         putAll(message);
     }
 

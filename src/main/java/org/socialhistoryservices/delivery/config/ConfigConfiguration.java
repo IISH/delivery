@@ -9,9 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import java.text.SimpleDateFormat;
 
-/**
- * Created by Igor on 3/6/2017.
- */
 @Configuration
 @EnableConfigurationProperties(DeliveryProperties.class)
 public class ConfigConfiguration {

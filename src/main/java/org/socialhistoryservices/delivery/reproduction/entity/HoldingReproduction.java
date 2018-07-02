@@ -80,8 +80,7 @@ public class HoldingReproduction extends HoldingRequest {
     public BigDecimal getCompletePriceWithoutTax(){
         double percentage = (double)this.btwPercentage/100 + 1;
         BigDecimal percentageDecimal = new BigDecimal(percentage);
-        BigDecimal priceWithoutTax = this.getCompletePriceWithDiscount().divide(percentageDecimal, 2, BigDecimal.ROUND_HALF_UP);
-        return priceWithoutTax;
+        return this.getCompletePriceWithDiscount().divide(percentageDecimal, 2, BigDecimal.ROUND_HALF_UP);
     }
 
     /**
@@ -215,7 +214,7 @@ public class HoldingReproduction extends HoldingRequest {
      * The comment on a specific holding in a reproduction.
      */
     @Size(max = 255)
-    @Column(name = "comment", nullable = true)
+    @Column(name = "comment")
     private String comment;
 
     /**
@@ -317,7 +316,7 @@ public class HoldingReproduction extends HoldingRequest {
     /**
      * The kind of custom reproduction the customer requires.
      */
-    @Column(name = "customreproductioncustomer", nullable = true, columnDefinition = "TEXT")
+    @Column(name = "customreproductioncustomer", columnDefinition = "TEXT")
     private String customReproductionCustomer;
 
     /**
@@ -341,7 +340,7 @@ public class HoldingReproduction extends HoldingRequest {
     /**
      * The kind of custom reproduction reply.
      */
-    @Column(name = "customreproductionreply", nullable = true, columnDefinition = "TEXT")
+    @Column(name = "customreproductionreply", columnDefinition = "TEXT")
     private String customReproductionReply;
 
     /**

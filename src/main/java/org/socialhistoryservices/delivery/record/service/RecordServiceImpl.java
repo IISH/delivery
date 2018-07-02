@@ -9,10 +9,7 @@ import org.socialhistoryservices.delivery.record.dao.HoldingDAO;
 import org.socialhistoryservices.delivery.record.dao.RecordDAO;
 import org.socialhistoryservices.delivery.record.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
@@ -260,7 +257,7 @@ public class RecordServiceImpl implements RecordService {
      * database.
      */
     public void createOrEdit(Record newRecord, Record oldRecord, BindingResult result)
-            throws NoSuchPidException, NoSuchParentException {
+            throws NoSuchParentException {
         String pid = newRecord.getPid();
 
         String itemSeparator = deliveryProperties.getItemSeparator();
@@ -343,7 +340,7 @@ public class RecordServiceImpl implements RecordService {
         r.setExternalInfo(lookup.getRecordMetaDataByPid(pid));
         r.setArchiveHoldingInfo(lookup.getArchiveHoldingInfoByPid(pid));
         r.setParent(parent);
-        List<Holding> hList = new ArrayList<Holding>();
+        List<Holding> hList = new ArrayList<>();
         for (Map.Entry<String, ExternalHoldingInfo> e :
             lookup.getHoldingMetadataByPid(pid).entrySet()) {
             Holding h = new Holding();

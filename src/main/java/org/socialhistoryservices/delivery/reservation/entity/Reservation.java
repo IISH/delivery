@@ -135,7 +135,7 @@ public class Reservation extends Request {
 
     /** The Reservation's return date (currently optional). */
     @Temporal(TemporalType.DATE)
-    @Column(name="return_date", nullable=true)
+    @Column(name="return_date")
     private Date returnDate;
 
     /**
@@ -219,7 +219,7 @@ public class Reservation extends Request {
      */
     @Override
     public List<Holding> getHoldings() {
-            List<Holding> holdings = new ArrayList<Holding>();
+            List<Holding> holdings = new ArrayList<>();
             if (holdingReservations != null) {
                     for (HoldingReservation holdingReservation : holdingReservations) {
                             holdings.add(holdingReservation.getHolding());
@@ -264,7 +264,7 @@ public class Reservation extends Request {
 
     /** The Reservation's comment. */
     @Size(max=255)
-    @Column(name="comment", nullable=true)
+    @Column(name="comment")
     private String comment;
 
     /**
@@ -299,6 +299,6 @@ public class Reservation extends Request {
     public Reservation() {
         setStatus(Status.PENDING);
         setCreationDate(new Date());
-        holdingReservations = new ArrayList<HoldingReservation>();
+        holdingReservations = new ArrayList<>();
     }
 }

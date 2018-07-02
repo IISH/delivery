@@ -1,8 +1,8 @@
 package org.socialhistoryservices.delivery.permission.controller;
 
 import org.apache.log4j.Logger;
-import org.socialhistoryservices.delivery.InvalidRequestException;
-import org.socialhistoryservices.delivery.ResourceNotFoundException;
+import org.socialhistoryservices.delivery.util.InvalidRequestException;
+import org.socialhistoryservices.delivery.util.ResourceNotFoundException;
 import org.socialhistoryservices.delivery.api.RecordLookupService;
 import org.socialhistoryservices.delivery.permission.entity.Permission;
 import org.socialhistoryservices.delivery.permission.entity.RecordPermission;
@@ -18,7 +18,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
 import org.springframework.web.bind.annotation.*;
@@ -118,110 +117,6 @@ public class PermissionController extends AbstractRequestController {
             obj.generateCode();
         }
         while (permissions.getPermissionByCode(obj.getCode()) != null);
-    }
-
-    /**
-     * Edit a permission.
-     * @param id The id of the permission to edit.
-     * @param form The submitted form to process.
-     * @param granted The (pid,granted) tuple map.
-     * @param motivations The (pid,motivation) tuple map.
-     */
-    private void editPermission(int id, PermissionForm form, Map<String,
-            Boolean> granted, Map<String, String> motivations) {
-
-        // Get the correct permission
-        Permission obj = permissions.getPermissionById(id);
-
-        if (obj == null) {
-            throw new ResourceNotFoundException();
-        }
-
-        // Validate the form
-        BindingResult res = new BeanPropertyBindingResult(form, "permission");
-        mvcValidator.validate(form, res);
-        if (res.hasErrors()) {
-            throw InvalidRequestException.create(res);
-        }
-
-        // Update the permission
-        form.fillInto(obj, df);
-
-        // Remove the removed record permissions from the permission.
-        removeRecordPermissions(granted, obj);
-
-        // Add/Update new record permissions.
-        addOrUpdateRecordPermissions(granted, motivations, obj);
-
-        // Save the changes.
-        permissions.savePermission(obj);
-    }
-
-    /**
-     * Add and/or update the record permissions. Basically: obj_records =
-     * UNION(granted_records, obj_records), and updating the already present
-     * record permissions to the status given by the granted parameter.
-     * @param granted The (pid, granted) tuple map.
-     * @param motivations The (pid,motivation) tuple map.
-     * @param obj The permission to edit.
-     */
-    private void addOrUpdateRecordPermissions(Map<String, Boolean> granted,
-                                              Map<String, String> motivations,
-                                              Permission obj) {
-        for (Map.Entry<String, Boolean> e : granted.entrySet()) {
-            Iterator<RecordPermission> it3 = obj.getRecordPermissions()
-                    .iterator();
-            boolean has = false;
-            while (it3.hasNext()) {
-                RecordPermission rp = it3.next();
-                Record r = rp.getRecord();
-                // Update
-                if (r.getPid().equals(e.getKey())) {
-                    rp.setGranted(e.getValue());
-                    if (motivations.containsKey(e.getKey())) {
-                        rp.setMotivation(motivations.get(e.getKey()));
-                    }
-                    has = true;
-                }
-            }
-
-            // Add a new permission if it did not exist yet.
-            if (!has) {
-                RecordPermission newRp = new RecordPermission();
-                Record r = records.getRecordByPid(e.getKey());
-                if (r == null) {
-                    throw new InvalidRequestException("Invalid PID provided " +
-                            "for record to get permission on.");
-                }
-                newRp.setRecord(r);
-                newRp.setPermission(obj);
-                newRp.setGranted(e.getValue());
-                if (motivations.containsKey(e.getKey())) {
-                    newRp.setMotivation(motivations.get(e.getKey()));
-                }
-                obj.addRecordPermission(newRp);
-            }
-        }
-    }
-
-    /**
-     * Removes all record permissions from Permission which are not in the
-     * granted parameter.
-     * Basically: obj_records = INTERSECT(object_records, granted_records).
-     * @param granted The (pid, granted) tuple map.
-     * @param obj The permission to edit.
-     */
-    private void removeRecordPermissions(Map<String, Boolean> granted,
-                                         Permission obj) {
-        Iterator<RecordPermission> it = obj.getRecordPermissions().iterator();
-        while (it.hasNext()) {
-            RecordPermission rp = it.next();
-            if (!granted.containsKey(rp.getRecord().getPid())) {
-                // Remove the record from the permission.
-                it.remove();
-            }
-
-        }
     }
 
     /**
@@ -399,7 +294,7 @@ public class PermissionController extends AbstractRequestController {
      * contains a record which is not restricted or a non-existing record.
      */
     private List<Record> getRestrictedRecordsFromPids(String[] pids) {
-        List<Record> recs = new ArrayList<Record>();
+        List<Record> recs = new ArrayList<>();
         for (String pid : pids) {
             if (pid.length() == 0) {
                 continue;

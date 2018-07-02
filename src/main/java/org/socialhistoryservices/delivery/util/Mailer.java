@@ -1,4 +1,4 @@
-package org.socialhistoryservices.delivery;
+package org.socialhistoryservices.delivery.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailPreparationException;

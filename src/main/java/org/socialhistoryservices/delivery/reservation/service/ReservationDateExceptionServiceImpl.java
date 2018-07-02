@@ -19,9 +19,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-/**
- * Created by Igor on 1/10/2017.
- */
 @Service
 @Transactional
 public class ReservationDateExceptionServiceImpl implements ReservationDateExceptionService{
@@ -32,6 +29,7 @@ public class ReservationDateExceptionServiceImpl implements ReservationDateExcep
     protected MessageSource messageSource;
 
     private Logger log = Logger.getLogger(getClass());
+
     /**
      * Add a ReservationDateException to the database.
      * @param obj ReservationDateException to add.
@@ -46,14 +44,6 @@ public class ReservationDateExceptionServiceImpl implements ReservationDateExcep
      */
     public void removeReservationDateException(ReservationDateException obj){
         reservationDateExceptionDAO.remove(obj);
-    }
-
-    /**
-     * Save changes to a ReservationDateException in the database.
-     * @param obj ReservationDateException to save.
-     */
-    public void saveReservationDateException(ReservationDateException obj){
-
     }
 
     /**
@@ -84,7 +74,7 @@ public class ReservationDateExceptionServiceImpl implements ReservationDateExcep
      */
     public List<Calendar> getExceptionDates(){
         List<ReservationDateException> result = getReservationDateExceptions();
-        List<Calendar> exceptionDates = new ArrayList<Calendar>();
+        List<Calendar> exceptionDates = new ArrayList<>();
         for(ReservationDateException res : result){
             if(res.getEndDate() == null){
                 Calendar cal = GregorianCalendar.getInstance();
@@ -116,8 +106,7 @@ public class ReservationDateExceptionServiceImpl implements ReservationDateExcep
         CriteriaQuery<ReservationDateException> query = builder.createQuery(ReservationDateException.class);
         Root<ReservationDateException> root = query.from(ReservationDateException.class);
         query.select(root);
-        List<ReservationDateException> result = listReservationDateExceptions(query);
-        return result;
+        return listReservationDateExceptions(query);
     }
 
     /**

@@ -1,6 +1,6 @@
 package org.socialhistoryservices.delivery.config;
 
-import org.socialhistoryservices.delivery.RequestContextToViewInterceptor;
+import org.socialhistoryservices.delivery.util.RequestContextToViewInterceptor;
 import org.socialhistoryservices.delivery.api.IISHRecordLookupService;
 import org.socialhistoryservices.delivery.api.PayWayService;
 import org.socialhistoryservices.delivery.api.SharedObjectRepositoryService;
@@ -14,9 +14,6 @@ import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.util.UrlPathHelper;
 
-/**
- * Created by Igor on 3/6/2017.
- */
 @Configuration
 @EnableConfigurationProperties(DeliveryProperties.class)
 public class RootContextConfiguration extends WebMvcConfigurerAdapter{
@@ -46,17 +43,15 @@ public class RootContextConfiguration extends WebMvcConfigurerAdapter{
 
     @Bean
     public PayWayService payWayService(){
-        PayWayService payWayService = new PayWayService(deliveryProperties.getPayWayAddress(),
+        return new PayWayService(deliveryProperties.getPayWayAddress(),
              deliveryProperties.getPayWayPassPhraseIn(),
             deliveryProperties.getPayWayPassPhraseOut(),
             deliveryProperties.getPayWayProjectName());
-        return payWayService;
     }
 
     @Bean
     public SharedObjectRepositoryService sharedObjectRepositoryService(){
-        SharedObjectRepositoryService sharedObjectRepositoryService = new SharedObjectRepositoryService(deliveryProperties.getSorAddress());
-        return sharedObjectRepositoryService;
+        return new SharedObjectRepositoryService(deliveryProperties.getSorAddress());
     }
 
     @Bean

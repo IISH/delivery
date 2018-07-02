@@ -1,8 +1,8 @@
 package org.socialhistoryservices.delivery.record.controller;
 
-import org.socialhistoryservices.delivery.ErrorHandlingController;
-import org.socialhistoryservices.delivery.InvalidRequestException;
-import org.socialhistoryservices.delivery.ResourceNotFoundException;
+import org.socialhistoryservices.delivery.util.ErrorHandlingController;
+import org.socialhistoryservices.delivery.util.InvalidRequestException;
+import org.socialhistoryservices.delivery.util.ResourceNotFoundException;
 import org.socialhistoryservices.delivery.api.NoSuchPidException;
 import org.socialhistoryservices.delivery.api.RecordLookupService;
 import org.socialhistoryservices.delivery.record.entity.*;
@@ -75,7 +75,7 @@ public class RecordController extends ErrorHandlingController {
      * @return The view name to render the result in.
      */
     private String get(String[] pids, Model model, HttpServletResponse response) {
-        List<Record> recs = new ArrayList<Record>();
+        List<Record> recs = new ArrayList<>();
         Map<String, List<Record>> reservedChilds = new HashMap<>();
 
         for (String pid : pids) {
@@ -185,7 +185,7 @@ public class RecordController extends ErrorHandlingController {
      */
     @ModelAttribute("usageRestriction_types")
     public Map<String,Holding.UsageRestriction> usageRestrictionTypes() {
-        Map<String,Holding.UsageRestriction> data = new HashMap<String,Holding.UsageRestriction>();
+        Map<String,Holding.UsageRestriction> data = new HashMap<>();
         data.put("OPEN", Holding.UsageRestriction.OPEN);
         data.put("CLOSED", Holding.UsageRestriction.CLOSED);
         return data;
@@ -225,7 +225,7 @@ public class RecordController extends ErrorHandlingController {
             } catch (NoSuchPidException e) {
             }
         }
-        Map<String, String> results = new HashMap<String, String>();
+        Map<String, String> results = new HashMap<>();
         model.addAttribute("results", results);
         return "record_home";
     }
@@ -270,7 +270,7 @@ public class RecordController extends ErrorHandlingController {
     }
     @Deprecated
     private Map<String, String> searchLocalHelper(String title) {
-        Map<String, String> results = new HashMap<String, String>();
+        Map<String, String> results = new HashMap<>();
         if (title == null) return results;
 
         CriteriaBuilder cb = records.getRecordCriteriaBuilder();
@@ -282,7 +282,7 @@ public class RecordController extends ErrorHandlingController {
         String[] lowSearchTitle = title.toLowerCase().replaceAll("\\s+", " ").split(" ");
         Expression<Boolean> titleWhere = null;
         for (String s : lowSearchTitle) {
-            Expression<Boolean> titleSearch = cb.like(cb.lower(eRoot.<String>get(ExternalRecordInfo_.title)),"%" + s + "%");
+            Expression<Boolean> titleSearch = cb.like(cb.lower(eRoot.get(ExternalRecordInfo_.title)),"%" + s + "%");
             titleWhere = titleWhere == null ? titleSearch : cb.and(titleWhere,
                     titleSearch);
         }
@@ -290,7 +290,7 @@ public class RecordController extends ErrorHandlingController {
         // Make sure only records that do not have a parent (i.e. whole
         // archives, serials, books) match.
         Expression<Boolean> where = cb.and(titleWhere,
-                cb.equal(rRoot.<Record>get(Record_.parent),
+                cb.equal(rRoot.get(Record_.parent),
                         cb.nullLiteral(Record.class)));
         cq.where(where);
 
@@ -371,10 +371,6 @@ public class RecordController extends ErrorHandlingController {
 
         try {
             records.createOrEdit(newRecord, oldRecord, result);
-        } catch (NoSuchPidException e) {
-            // Cannot get here with normal use.
-            throw new InvalidRequestException("No such PID. Are you sure the " +
-                    "record you want to add is available in the SRW API?");
         } catch (NoSuchParentException e) {
             // Cannot get here with normal use.
             throw new InvalidRequestException(e.getMessage());

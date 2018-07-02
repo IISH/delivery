@@ -128,7 +128,7 @@ public class MARCRecordExtractor implements IISHRecordExtractor {
      */
     @Override
     public Map<String, ExternalHoldingInfo> getHoldingMetadata(Node node) throws NoSuchPidException {
-        Map<String, ExternalHoldingInfo> retMap = new HashMap<String, ExternalHoldingInfo>();
+        Map<String, ExternalHoldingInfo> retMap = new HashMap<>();
 
         try {
             // TODO: 866 is not always available.
@@ -259,7 +259,7 @@ public class MARCRecordExtractor implements IISHRecordExtractor {
 
     private String evaluateGenres(Node node) {
         try {
-            Set<String> genres = new HashSet<String>();
+            Set<String> genres = new HashSet<>();
             NodeList nodeList = (NodeList) xpGenres.evaluate(node, XPathConstants.NODESET);
             for (int i = 0; i < nodeList.getLength(); i++) {
                 String genre = nodeList.item(i).getTextContent();

@@ -17,52 +17,52 @@ public interface RecordService {
      * Add a Record to the database.
      * @param obj Record to add.
      */
-    public void addRecord(Record obj);
+    void addRecord(Record obj);
 
     /**
      * Remove a Record from the database.
      * @param obj Record to remove.
      */
-    public void removeRecord(Record obj);
+    void removeRecord(Record obj);
 
     /**
      * Save changes to a Record in the database.
      * @param obj Record to save.
      */
-    public void saveRecord(Record obj);
+    void saveRecord(Record obj);
 
     /**
      * Save changes to a Holding in the database.
      * @param obj Holding to save.
      */
-    public void saveHolding(Holding obj);
+    void saveHolding(Holding obj);
 
     /**
      * Retrieve the Record matching the given Id.
      * @param id Id of the Record to retrieve.
      * @return The Record matching the Id.
      */
-    public Record getRecordById(int id);
+    Record getRecordById(int id);
 
     /**
      * Retrieve the Record matching the given pid.
      * @param pid Pid of the Record to retrieve.
      * @return The Record matching the pid. Null if none exist.
      */
-    public Record getRecordByPid(String pid);
+    Record getRecordByPid(String pid);
 
     /**
      * Get a criteria builder for querying Records.
      * @return the CriteriaBuilder.
      */
-    public CriteriaBuilder getRecordCriteriaBuilder();
+    CriteriaBuilder getRecordCriteriaBuilder();
 
     /**
      * List all Records matching a built query.
      * @param query The query to match by.
      * @return A list of matching Records.
      */
-    public List<Record> listRecords(CriteriaQuery<Record> query);
+    List<Record> listRecords(CriteriaQuery<Record> query);
 
     /**
      * List all Records.
@@ -70,35 +70,35 @@ public interface RecordService {
      * @param maxResults The max number of records to fetch.
      * @return A list of Records.
      */
-    public List<Record> listIterable(int offset, int maxResults);
+    List<Record> listIterable(int offset, int maxResults);
 
     /**
      * Get a single Record matching a built query.
      * @param query The query to match by.
      * @return The matching Record.
      */
-    public Record getRecord(CriteriaQuery<Record> query);
+    Record getRecord(CriteriaQuery<Record> query);
 
     /**
      * Retrieve the Holding matching the given Id.
      * @param id Id of the Holding to retrieve.
      * @return The Holding matching the Id.
      */
-    public Holding getHoldingById(int id);
+    Holding getHoldingById(int id);
 
     /**
      * List all Holdings matching a built query.
      * @param query The query to match by.
      * @return A list of matching Holdings.
      */
-    public List<Holding> listHoldings(CriteriaQuery<Holding> query);
+    List<Holding> listHoldings(CriteriaQuery<Holding> query);
 
 
     /**
      * Remove a Holding from the database.
      * @param obj Holding to remove.
      */
-    public void removeHolding(Holding obj);
+    void removeHolding(Holding obj);
 
     /**
      * Updates the external info of the given record, if necessary.
@@ -106,7 +106,7 @@ public interface RecordService {
      * @param hardRefresh Always update the external info.
      * @return Whether the record was updated.
      */
-    public boolean updateExternalInfo(Record record, boolean hardRefresh);
+    boolean updateExternalInfo(Record record, boolean hardRefresh);
 
     /**
      * Edit records.
@@ -120,9 +120,9 @@ public interface RecordService {
      * item separator (default .), but the parent record was not found in the
      * database.
      */
-    public void createOrEdit(Record newRecord,
-                                      Record oldRecord, BindingResult result)
-            throws NoSuchPidException, NoSuchParentException;
+    void createOrEdit(Record newRecord,
+                      Record oldRecord, BindingResult result)
+            throws NoSuchParentException;
 
     /**
      * Create a record, using the metadata from the IISH API to populate its
@@ -132,12 +132,12 @@ public interface RecordService {
      * @throws NoSuchPidException Thrown when the provided PID does not exist
      * in the API.
      */
-    public Record createRecordByPid(String pid) throws NoSuchPidException;
+    Record createRecordByPid(String pid) throws NoSuchPidException;
 
     /**
      * Get all child records of the given record that are currently reserved.
      * @param record The parent record.
      * @return A list of all reserved child records.
      */
-    public List<Record> getReservedChildRecords(Record record);
+    List<Record> getReservedChildRecords(Record record);
 }

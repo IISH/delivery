@@ -10,8 +10,8 @@ import java.util.List;
  * Provides a list of reproduction standard options.
  */
 public class ReproductionStandardOptions {
-    private List<ReproductionStandardOption> options = new ArrayList<ReproductionStandardOption>();
-    private List<ReproductionCustomNote> customNotes = new ArrayList<ReproductionCustomNote>();
+    private List<ReproductionStandardOption> options = new ArrayList<>();
+    private List<ReproductionCustomNote> customNotes = new ArrayList<>();
 
     public ReproductionStandardOptions() {
     }

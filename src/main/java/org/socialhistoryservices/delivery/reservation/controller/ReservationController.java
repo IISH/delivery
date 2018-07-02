@@ -1,7 +1,7 @@
 package org.socialhistoryservices.delivery.reservation.controller;
 
 import org.apache.log4j.Logger;
-import org.socialhistoryservices.delivery.ResourceNotFoundException;
+import org.socialhistoryservices.delivery.util.ResourceNotFoundException;
 import org.socialhistoryservices.delivery.permission.entity.Permission;
 import org.socialhistoryservices.delivery.permission.service.PermissionService;
 import org.socialhistoryservices.delivery.record.entity.*;
@@ -309,7 +309,7 @@ public class ReservationController extends AbstractRequestController {
         int maxItems = deliveryProperties.getReservationMaxItems();
         int maxChildren = deliveryProperties.getReservationMaxChildren();
 
-        Map<String, Integer> noOfRequests = new HashMap<String, Integer>();
+        Map<String, Integer> noOfRequests = new HashMap<>();
         for (HoldingRequest hr : request.getHoldingRequests()) {
             Record record = hr.getHolding().getRecord();
             if (record.getParent() != null)
@@ -341,7 +341,7 @@ public class ReservationController extends AbstractRequestController {
         if (holdings == null)
             return null;
 
-        List<HoldingReservation> hrs = new ArrayList<HoldingReservation>();
+        List<HoldingReservation> hrs = new ArrayList<>();
         for (Holding holding : holdings) {
             HoldingReservation hr = new HoldingReservation();
             hr.setHolding(holding);
@@ -427,7 +427,7 @@ public class ReservationController extends AbstractRequestController {
             return "redirect:/reservation/" + qs;
         }
 
-        List<HoldingReservation> hrs = new ArrayList<HoldingReservation>();
+        List<HoldingReservation> hrs = new ArrayList<>();
         for (BulkActionIds bulkActionIds : getIdsFromBulk(checked)) {
             Reservation r = reservations.getReservationById(bulkActionIds.getRequestId());
             for (HoldingReservation hr : r.getHoldingReservations()) {
@@ -468,7 +468,7 @@ public class ReservationController extends AbstractRequestController {
             return "redirect:/reservation/" + qs;
         }
 
-        List<HoldingReservation> hrs = new ArrayList<HoldingReservation>();
+        List<HoldingReservation> hrs = new ArrayList<>();
         for (BulkActionIds bulkActionIds : getIdsFromBulk(checked)) {
             Reservation r = reservations.getReservationById(bulkActionIds.getRequestId());
             for (HoldingReservation hr : r.getHoldingReservations()) {
@@ -616,7 +616,7 @@ public class ReservationController extends AbstractRequestController {
      */
     @ModelAttribute("status_types")
     public Map<String, Reservation.Status> statusTypes() {
-        Map<String, Reservation.Status> data = new LinkedHashMap<String, Reservation.Status>();
+        Map<String, Reservation.Status> data = new LinkedHashMap<>();
         data.put("PENDING", Reservation.Status.PENDING);
         data.put("ACTIVE", Reservation.Status.ACTIVE);
         data.put("COMPLETED", Reservation.Status.COMPLETED);
@@ -767,9 +767,9 @@ public class ReservationController extends AbstractRequestController {
 		Join<Record,ExternalRecordInfo> eriRoot = rRoot.join
 				(Record_.externalInfo);
 
-		Expression<Date> reservationDate = resRoot.<Date>get(Reservation_.date);
+		Expression<Date> reservationDate = resRoot.get(Reservation_.date);
 		Expression<ExternalRecordInfo.MaterialType> materialType =
-				eriRoot.<ExternalRecordInfo.MaterialType>get(ExternalRecordInfo_.materialType);
+				eriRoot.get(ExternalRecordInfo_.materialType);
 		Expression<Long> numberOfRequests = cb.count(materialType);
 
 	    Expression<Boolean> fromExpr = cb.greaterThanOrEqualTo(reservationDate, from);
@@ -777,7 +777,7 @@ public class ReservationController extends AbstractRequestController {
 
         cq.multiselect(materialType.alias("material"), numberOfRequests.alias("noRequests"));
         cq.where(cb.and(fromExpr, toExpr));
-		cq.groupBy(eriRoot.<ExternalRecordInfo.MaterialType>get(ExternalRecordInfo_.materialType));
+		cq.groupBy(eriRoot.get(ExternalRecordInfo_.materialType));
 		cq.orderBy(cb.desc(numberOfRequests));
 
 		List<Tuple> tuples = reservations.listTuples(cq);

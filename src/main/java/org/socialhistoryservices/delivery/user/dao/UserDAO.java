@@ -14,44 +14,44 @@ public interface UserDAO {
      * Add a User to the database.
      * @param obj User to add.
      */
-    public void add(User obj);
+    void add(User obj);
 
     /**
      * Remove a User from the database.
      * @param obj User to remove.
      */
-    public void remove(User obj);
+    void remove(User obj);
 
     /**
      * Save changes to a User in the database.
      * @param obj User to save.
      */
-    public void save(User obj);
+    void save(User obj);
 
     /**
      * Retrieve the User matching the given Id.
      * @param id Id of the User to retrieve.
      * @return The User matching the Id.
      */
-    public User getById(int id);
+    User getById(int id);
 
     /**
      * Get a criteria builder for querying Users.
      * @return the CriteriaBuilder.
      */
-    public CriteriaBuilder getCriteriaBuilder();
+    CriteriaBuilder getCriteriaBuilder();
 
     /**
      * List all Users matching a built query.
      * @param query The query to match by.
      * @return A list of matching Users.
      */
-    public List<User> list(CriteriaQuery<User> query);
+    List<User> list(CriteriaQuery<User> query);
 
     /**
      * Get a single User matching a built query.
      * @param query The query to match by.
      * @return The matching User.
      */
-    public User get(CriteriaQuery<User> query);
+    User get(CriteriaQuery<User> query);
 }

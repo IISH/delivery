@@ -24,8 +24,7 @@ body {
 }
 
 body > section {
-    margin: 0 10%;
-    margin-bottom: 100px;
+    margin: 0 10% 100px;
 }
 
 fieldset {
@@ -737,11 +736,8 @@ input.code {
 
 ul.holdingReservationDetails, ul.holdingReproductionDetails {
     list-style: none;
-    margin: 0;
-    margin-bottom: 1em;
-    margin-left: 15em;
-    padding: 0;
-    padding-top: 10px;
+    margin: 0 0 1em 15em;
+    padding: 10px 0 0;
     clear: both;
 }
 

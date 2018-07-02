@@ -1,6 +1,6 @@
 package org.socialhistoryservices.delivery.reproduction.service;
 
-import org.socialhistoryservices.delivery.TemplatePreparationException;
+import org.socialhistoryservices.delivery.util.TemplatePreparationException;
 import org.socialhistoryservices.delivery.api.SharedObjectRepositoryService;
 import org.socialhistoryservices.delivery.api.SorMetadata;
 import org.socialhistoryservices.delivery.config.DeliveryProperties;
@@ -107,8 +107,8 @@ public class ReproductionMailer extends RequestMailer {
             assert reproduction.getStatus() == Reproduction.Status.ACTIVE :
                 "Can only mail active and payed confirmation when Reproduction status is ACTIVE";
 
-            List<HoldingReproduction> inSor = new ArrayList<HoldingReproduction>();
-            List<HoldingReproduction> notInSor = new ArrayList<HoldingReproduction>();
+            List<HoldingReproduction> inSor = new ArrayList<>();
+            List<HoldingReproduction> notInSor = new ArrayList<>();
             for (HoldingReproduction hr : reproduction.getHoldingReproductions()) {
                 if (hr.isInSor())
                     inSor.add(hr);
@@ -140,11 +140,8 @@ public class ReproductionMailer extends RequestMailer {
                 ENGLISH_LOCALE);
             sendMail(subjectRepro, "mail/reproduction_active.mail.ftl", model, ENGLISH_LOCALE);
         }
-        catch (TemplatePreparationException tpe) {
+        catch (TemplatePreparationException | MessagingException tpe) {
             throw new MailPreparationException(tpe);
-        }
-        catch (MessagingException me) {
-            throw new MailPreparationException(me);
         }
     }
 
@@ -184,10 +181,10 @@ public class ReproductionMailer extends RequestMailer {
     private Map<String, List<String>> getSorDownloadURLs(List<HoldingReproduction> hrs) {
         String sorAddress = deliveryProperties.getSorAddress();
         String sorAccessToken = deliveryProperties.getSorAccessToken();
-        Map<String, List<String>> urlsForHolding = new HashMap<String, List<String>>();
+        Map<String, List<String>> urlsForHolding = new HashMap<>();
 
         for (HoldingReproduction hr : hrs) {
-            List<String> urls = new ArrayList<String>();
+            List<String> urls = new ArrayList<>();
             Holding holding = hr.getHolding();
 
             // Obtain the metadata from the SOR

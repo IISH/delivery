@@ -6,9 +6,7 @@ import org.socialhistoryservices.delivery.reproduction.entity.ReproductionStanda
 import org.socialhistoryservices.delivery.reservation.entity.HoldingReservation;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.List;
 
 /**
@@ -234,7 +232,7 @@ public class Holding {
         // In case of visuals, it matters whether it is a poster or not
         if (record.getExternalInfo().getMaterialType() == ExternalRecordInfo.MaterialType.VISUAL) {
             boolean genresContainsPoster = record.getExternalInfo().getGenresSet().contains("poster");
-            return standardOption.isPoster() ? genresContainsPoster : !genresContainsPoster;
+            return standardOption.isPoster() == genresContainsPoster;
         }
 
         return true;

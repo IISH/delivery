@@ -129,7 +129,7 @@ public class EADRecordExtractor implements IISHRecordExtractor {
      */
     @Override
     public Map<String, ExternalHoldingInfo> getHoldingMetadata(Node node, String item) throws NoSuchPidException {
-        Map<String, ExternalHoldingInfo> retMap = new HashMap<String, ExternalHoldingInfo>();
+        Map<String, ExternalHoldingInfo> retMap = new HashMap<>();
 
         Node itemNode = (item != null) ? findItemNode(node, item) : node;
         if (itemNode == null)

@@ -34,9 +34,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="${rc.contextPath}/logo.ico" />
     <style>
         header.main {
-            background-image: url("${rc.contextPath}/css/images/iish_logo_${rc.locale}.jpg");
-            background-repeat: no-repeat;
-            background-position: 50px 10px;
+          background: url("${rc.contextPath}/css/images/iish_logo_${rc.locale}.jpg") no-repeat 50px 10px;
         }
     </style>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>

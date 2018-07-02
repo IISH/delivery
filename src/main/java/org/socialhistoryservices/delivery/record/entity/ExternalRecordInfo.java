@@ -170,7 +170,7 @@ public class ExternalRecordInfo {
     }
 
     @Size(max=125)
-    @Column(name="author", nullable=true)
+    @Column(name="author")
     private String author;
 
     /**
@@ -191,7 +191,7 @@ public class ExternalRecordInfo {
     }
 
     @Size(max=30)
-    @Column(name="year", nullable=true)
+    @Column(name="year")
     private String displayYear;
 
     /**
@@ -249,7 +249,7 @@ public class ExternalRecordInfo {
      * @return the genres as a set.
      */
     public Set<String> getGenresSet() {
-        return new HashSet<String>(StringUtils.commaDelimitedListToSet(genres));
+        return new HashSet<>(StringUtils.commaDelimitedListToSet(genres));
     }
 
     /**

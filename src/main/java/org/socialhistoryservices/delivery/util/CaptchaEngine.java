@@ -1,4 +1,4 @@
-package org.socialhistoryservices.utils;
+package org.socialhistoryservices.delivery.util;
 
 import com.octo.captcha.component.image.backgroundgenerator.BackgroundGenerator;
 import com.octo.captcha.component.image.backgroundgenerator.UniColorBackgroundGenerator;
@@ -33,7 +33,6 @@ public class CaptchaEngine extends ListImageCaptchaEngine {
      */
     @Override
     protected void buildInitialFactories() {
-
         ImageDeformation backDef = new ImageDeformationByFilters(new ImageFilter[]{});
         ImageDeformation textDef = new ImageDeformationByFilters(new ImageFilter[]{});
         ImageDeformation postDef = new ImageDeformationByFilters(new ImageFilter[]{});

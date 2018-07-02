@@ -2,9 +2,9 @@ package org.socialhistoryservices.delivery.reproduction.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.socialhistoryservices.delivery.InvalidRequestException;
-import org.socialhistoryservices.delivery.ResourceNotFoundException;
-import org.socialhistoryservices.delivery.TemplatePreparationException;
+import org.socialhistoryservices.delivery.util.InvalidRequestException;
+import org.socialhistoryservices.delivery.util.ResourceNotFoundException;
+import org.socialhistoryservices.delivery.util.TemplatePreparationException;
 import org.socialhistoryservices.delivery.api.PayWayMessage;
 import org.socialhistoryservices.delivery.api.PayWayService;
 import org.socialhistoryservices.delivery.record.entity.*;
@@ -18,10 +18,7 @@ import org.socialhistoryservices.delivery.request.entity.Request;
 import org.socialhistoryservices.delivery.request.service.ClosedException;
 import org.socialhistoryservices.delivery.request.service.NoHoldingsException;
 import org.socialhistoryservices.delivery.request.util.BulkActionIds;
-import org.socialhistoryservices.delivery.reservation.entity.HoldingReservation;
-import org.socialhistoryservices.delivery.reservation.service.ReservationSearch;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.support.PagedListHolder;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -92,7 +89,7 @@ public class ReproductionController extends AbstractRequestController {
      */
     @ModelAttribute("status_types")
     public Map<String, Reproduction.Status> statusTypes() {
-        Map<String, Reproduction.Status> data = new LinkedHashMap<String, Reproduction.Status>();
+        Map<String, Reproduction.Status> data = new LinkedHashMap<>();
         data.put("WAITING_FOR_ORDER_DETAILS", Reproduction.Status.WAITING_FOR_ORDER_DETAILS);
         data.put("HAS_ORDER_DETAILS", Reproduction.Status.HAS_ORDER_DETAILS);
         data.put("CONFIRMED", Reproduction.Status.CONFIRMED);
@@ -110,7 +107,7 @@ public class ReproductionController extends AbstractRequestController {
      */
     @ModelAttribute("levels")
     public Map<String, ReproductionStandardOption.Level> levels() {
-        Map<String, ReproductionStandardOption.Level> data = new LinkedHashMap<String, ReproductionStandardOption.Level>();
+        Map<String, ReproductionStandardOption.Level> data = new LinkedHashMap<>();
         data.put("MASTER", ReproductionStandardOption.Level.MASTER);
         data.put("LEVEL1", ReproductionStandardOption.Level.LEVEL1);
         return data;
@@ -123,7 +120,7 @@ public class ReproductionController extends AbstractRequestController {
      */
     @ModelAttribute("materialTypes")
     public Map<String, ExternalRecordInfo.MaterialType> materialTypes() {
-        Map<String, ExternalRecordInfo.MaterialType> data = new LinkedHashMap<String, ExternalRecordInfo.MaterialType>();
+        Map<String, ExternalRecordInfo.MaterialType> data = new LinkedHashMap<>();
         data.put("ARTICLE", ExternalRecordInfo.MaterialType.ARTICLE);
         data.put("SERIAL", ExternalRecordInfo.MaterialType.SERIAL);
         data.put("BOOK", ExternalRecordInfo.MaterialType.BOOK);
@@ -264,7 +261,7 @@ public class ReproductionController extends AbstractRequestController {
             return "redirect:/reproduction/" + qs;
         }
 
-        List<HoldingReproduction> hrs = new ArrayList<HoldingReproduction>();
+        List<HoldingReproduction> hrs = new ArrayList<>();
         for (BulkActionIds bulkActionIds : getIdsFromBulk(checked)) {
             Reproduction r = reproductions.getReproductionById(bulkActionIds.getRequestId());
             for (HoldingReproduction hr : r.getHoldingReproductions()) {
@@ -299,7 +296,7 @@ public class ReproductionController extends AbstractRequestController {
         if (checked == null)
             return "redirect:/reproduction/" + qs;
 
-        List<HoldingReproduction> hrs = new ArrayList<HoldingReproduction>();
+        List<HoldingReproduction> hrs = new ArrayList<>();
         for (BulkActionIds bulkActionIds : getIdsFromBulk(checked)) {
             Reproduction r = reproductions.getReproductionById(bulkActionIds.getRequestId());
             for (HoldingReproduction hr : r.getHoldingReproductions()) {
@@ -430,7 +427,7 @@ public class ReproductionController extends AbstractRequestController {
         if (holdings == null)
             return null;
 
-        List<HoldingReproduction> hrs = new ArrayList<HoldingReproduction>();
+        List<HoldingReproduction> hrs = new ArrayList<>();
         for (Holding holding : holdings) {
             HoldingReproduction hr = new HoldingReproduction();
             hr.setHolding(holding);
@@ -508,11 +505,11 @@ public class ReproductionController extends AbstractRequestController {
      */
     private Map<String, List<ReproductionStandardOption>> getStandardReproductionOptions(List<Holding> holdings) {
         Map<String, List<ReproductionStandardOption>> reproductionStandardOptions =
-                new HashMap<String, List<ReproductionStandardOption>>();
+                new HashMap<>();
         List<ReproductionStandardOption> standardOptions = reproductions.getAllReproductionStandardOptions();
 
         for (Holding holding : holdings) {
-            List<ReproductionStandardOption> standardOptionsForHolding = new ArrayList<ReproductionStandardOption>();
+            List<ReproductionStandardOption> standardOptionsForHolding = new ArrayList<>();
             if (!holding.allowOnlyCustomReproduction()) {
                 for (ReproductionStandardOption standardOption : standardOptions) {
                     if (standardOption.isEnabled() && holding.acceptsReproductionOption(standardOption))
@@ -539,10 +536,10 @@ public class ReproductionController extends AbstractRequestController {
     private Map<String, List<ReproductionStandardOption>> getStandardOptionsNotAvailable(List<Holding> holdings,
                                                                                          Map<String, List<ReproductionStandardOption>> standardOptions) {
         Map<String, List<ReproductionStandardOption>> unavailableStandardOptions =
-                new HashMap<String, List<ReproductionStandardOption>>();
+                new HashMap<>();
 
         for (Holding holding : holdings) {
-            List<ReproductionStandardOption> unavailableForHolding = new ArrayList<ReproductionStandardOption>();
+            List<ReproductionStandardOption> unavailableForHolding = new ArrayList<>();
             if (holding.getStatus() != Holding.Status.AVAILABLE) {
                 unavailableForHolding =
                         reproductions.getStandardOptionsNotInSor(holding, standardOptions.get(holding.getSignature()));
@@ -561,14 +558,14 @@ public class ReproductionController extends AbstractRequestController {
      */
     private Map<String, List<ReproductionStandardOption>> getStandardOptionsAvailable(List<Holding> holdings) {
         Map<String, List<ReproductionStandardOption>> availableStandardOptions =
-                new HashMap<String, List<ReproductionStandardOption>>();
+                new HashMap<>();
         Map<String, List<ReproductionStandardOption>> reproductionStandardOptions =
                 getStandardReproductionOptions(holdings);
         Map<String, List<ReproductionStandardOption>> unavailableStandardOptions =
                 getStandardOptionsNotAvailable(holdings, reproductionStandardOptions);
 
         for (Holding h : holdings) {
-            List<ReproductionStandardOption> standardOptions = new ArrayList<ReproductionStandardOption>();
+            List<ReproductionStandardOption> standardOptions = new ArrayList<>();
             standardOptions.addAll(reproductionStandardOptions.get(h.getSignature()));
             standardOptions.removeAll(unavailableStandardOptions.get(h.getSignature()));
             availableStandardOptions.put(h.getSignature(), standardOptions);
@@ -588,7 +585,7 @@ public class ReproductionController extends AbstractRequestController {
                                                 Map<String, List<ReproductionStandardOption>> standardOptions,
                                                 Map<String, List<ReproductionStandardOption>> unavailableStandardOptions) {
         for (HoldingReproduction hr : reproduction.getHoldingReproductions()) {
-            List<ReproductionStandardOption> availableOptions = new ArrayList<ReproductionStandardOption>();
+            List<ReproductionStandardOption> availableOptions = new ArrayList<>();
             availableOptions.addAll(standardOptions.get(hr.getHolding().getSignature()));
             availableOptions.removeAll(unavailableStandardOptions.get(hr.getHolding().getSignature()));
 
@@ -677,7 +674,6 @@ public class ReproductionController extends AbstractRequestController {
     /**
      * Show the confirmation form of a reproduction.
      *
-     * @param req            The HTTP request.
      * @param reproductionId The id of the reproduction.
      * @param token          A token to prevent unauthorized access to the reproduction.
      * @param model          The model to add response attributes to.
@@ -809,7 +805,7 @@ public class ReproductionController extends AbstractRequestController {
      */
     @RequestMapping(value = "/order/accept", method = RequestMethod.GET)
     public String accept() {
-        LOGGER.debug(String.format("/reproduction/order/accept : Called order accept."));
+        LOGGER.debug("/reproduction/order/accept : Called order accept.");
         return "reproduction_order_accept";
     }
 
@@ -825,10 +821,10 @@ public class ReproductionController extends AbstractRequestController {
         if (reproduction != null) {
             changeStatusAfterPayment(reproduction);
             reproductions.saveReproduction(reproduction);
-            return new ResponseEntity<String>(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
 
-        return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -851,8 +847,8 @@ public class ReproductionController extends AbstractRequestController {
 
         Reproduction reproduction = getPayWayPost(requestParams);
         if (reproduction != null)
-            return new ResponseEntity<String>(HttpStatus.OK);
-        return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -875,8 +871,8 @@ public class ReproductionController extends AbstractRequestController {
 
         Reproduction reproduction = getPayWayPost(requestParams);
         if (reproduction != null)
-            return new ResponseEntity<String>(HttpStatus.OK);
-        return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -899,8 +895,8 @@ public class ReproductionController extends AbstractRequestController {
 
         Reproduction reproduction = getPayWayPost(requestParams);
         if (reproduction != null)
-            return new ResponseEntity<String>(HttpStatus.OK);
-        return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -1020,16 +1016,12 @@ public class ReproductionController extends AbstractRequestController {
                 }
                 return "redirect:/reproduction/" + originalReproduction.getId() + (!mailSuccess ? "?mail=error" : "");
             }
-        } catch (ClosedException e) {
+        } catch (ClosedException | ClosedForReproductionException e) {
             String msg = msgSource.getMessage("reproduction.error.restricted", null, "",
                     LocaleContextHolder.getLocale());
             result.addError(new ObjectError(result.getObjectName(), null, null, msg));
         } catch (NoHoldingsException e) {
             String msg = msgSource.getMessage("reproduction.error.noHoldings", null, "",
-                    LocaleContextHolder.getLocale());
-            result.addError(new ObjectError(result.getObjectName(), null, null, msg));
-        } catch (ClosedForReproductionException e) {
-            String msg = msgSource.getMessage("reproduction.error.restricted", null, "",
                     LocaleContextHolder.getLocale());
             result.addError(new ObjectError(result.getObjectName(), null, null, msg));
         }
@@ -1091,7 +1083,7 @@ public class ReproductionController extends AbstractRequestController {
         model.addAttribute("reproduction", newReproduction);
         model.addAttribute("holdingList", holdingList);
 
-        List<Holding> holdings = new ArrayList<Holding>();
+        List<Holding> holdings = new ArrayList<>();
         holdings.addAll(newReproduction.getHoldings());
         holdings.addAll(holdingList);
 
@@ -1112,7 +1104,6 @@ public class ReproductionController extends AbstractRequestController {
      * @param result          The object to save the validation errors.
      * @param searchTitle     The keywords to search for in the title.
      * @param searchSignature The keywords to search for in the signature.
-     * @param free            Whether this reproduction is for free.
      * @param mail            Whether or not to mail a reproduction confirmation.
      * @param model           The model to add attributes to.
      * @return The view to resolve.
@@ -1141,7 +1132,7 @@ public class ReproductionController extends AbstractRequestController {
                 }
                 return "redirect:/reproduction/" + newReproduction.getId() + (!mailSuccess ? "?mail=error" : "");
             }
-        } catch (ClosedException e) {
+        } catch (ClosedException | ClosedForReproductionException e) {
             String msg = msgSource.getMessage("reproduction.error.restricted", null, "",
                     LocaleContextHolder.getLocale());
             result.addError(new ObjectError(result.getObjectName(), null, null, msg));
@@ -1149,16 +1140,12 @@ public class ReproductionController extends AbstractRequestController {
             String msg = msgSource.getMessage("reproduction.error.noHoldings", null, "",
                     LocaleContextHolder.getLocale());
             result.addError(new ObjectError(result.getObjectName(), null, null, msg));
-        } catch (ClosedForReproductionException e) {
-            String msg = msgSource.getMessage("reproduction.error.restricted", null, "",
-                    LocaleContextHolder.getLocale());
-            result.addError(new ObjectError(result.getObjectName(), null, null, msg));
         }
 
         model.addAttribute("reproduction", newReproduction);
         model.addAttribute("holdingList", holdingList);
 
-        List<Holding> holdings = new ArrayList<Holding>();
+        List<Holding> holdings = new ArrayList<>();
         holdings.addAll(newReproduction.getHoldings());
         holdings.addAll(holdingList);
 
@@ -1179,7 +1166,7 @@ public class ReproductionController extends AbstractRequestController {
      * @return A map with the email responses for the custom reproductions.
      */
     private Map<String, String> createEmailResponse(Reproduction reproduction) {
-        Map<String, String> emailResponses = new HashMap<String, String>();
+        Map<String, String> emailResponses = new HashMap<>();
         for (HoldingReproduction hr : reproduction.getHoldingReproductions()) {
             if ((hr.getCustomReproductionCustomer() != null) && !hr.getCustomReproductionCustomer().isEmpty()) {
                 String response = reproduction.getCustomerName() + "\n";
@@ -1298,18 +1285,18 @@ public class ReproductionController extends AbstractRequestController {
         Join<Record, ExternalRecordInfo> eriRoot = rRoot.join(Record_.externalInfo);
 
         // Within the selected date range
-        Expression<Date> reproductionDate = repRoot.<Date>get(Reproduction_.date);
+        Expression<Date> reproductionDate = repRoot.get(Reproduction_.date);
         Expression<Boolean> fromExpr = cb.greaterThanOrEqualTo(reproductionDate, from);
         Expression<Boolean> toExpr = cb.lessThanOrEqualTo(reproductionDate, to);
 
         // Count the materials
         Expression<ExternalRecordInfo.MaterialType> materialType =
-                eriRoot.<ExternalRecordInfo.MaterialType>get(ExternalRecordInfo_.materialType);
+                eriRoot.get(ExternalRecordInfo_.materialType);
         Expression<Long> numberOfRequests = cb.count(materialType);
 
         cq.multiselect(materialType.alias("material"), numberOfRequests.alias("noRequests"));
         cq.where(cb.and(fromExpr, toExpr));
-        cq.groupBy(eriRoot.<ExternalRecordInfo.MaterialType>get(ExternalRecordInfo_.materialType));
+        cq.groupBy(eriRoot.get(ExternalRecordInfo_.materialType));
         cq.orderBy(cb.desc(numberOfRequests));
 
         return reproductions.listTuples(cq);
@@ -1331,12 +1318,12 @@ public class ReproductionController extends AbstractRequestController {
         Join<HoldingReproduction, Reproduction> repRoot = hrRoot.join(HoldingReproduction_.reproduction);
 
         // Within the selected date range
-        Expression<Date> reproductionDate = repRoot.<Date>get(Reproduction_.datePaymentAccepted);
+        Expression<Date> reproductionDate = repRoot.get(Reproduction_.datePaymentAccepted);
         Expression<Boolean> fromExpr = cb.greaterThanOrEqualTo(reproductionDate, from);
         Expression<Boolean> toExpr = cb.lessThanOrEqualTo(reproductionDate, to);
 
         // And only active or completed reproductions
-        Expression<Reproduction.Status> status = repRoot.<Reproduction.Status>get(Reproduction_.status);
+        Expression<Reproduction.Status> status = repRoot.get(Reproduction_.status);
         Expression<Boolean> statusExpr = cb.in(status)
                 .value(Reproduction.Status.ACTIVE)
                 .value(Reproduction.Status.COMPLETED)
@@ -1349,7 +1336,7 @@ public class ReproductionController extends AbstractRequestController {
         Expression<BigDecimal> btwPrice = hrRoot.get(HoldingReproduction_.btwPrice);
         Expression<Integer> btwPercentage = hrRoot.get(HoldingReproduction_.btwPercentage);
 
-        Expression<Number> totalAmount = cb.<Number>prod(amount, numberOfPages);
+        Expression<Number> totalAmount = cb.prod(amount, numberOfPages);
 
         Expression<Long> totalItems = cb.count(hrRoot);
         Expression<Number> sumTotalAmount = cb.sum(totalAmount);
@@ -1385,12 +1372,12 @@ public class ReproductionController extends AbstractRequestController {
         repRoot.fetch(Reproduction_.holdingReproductions, JoinType.LEFT);
 
         // Within the selected date range
-        Expression<Date> reproductionDate = repRoot.<Date>get(Reproduction_.datePaymentAccepted);
+        Expression<Date> reproductionDate = repRoot.get(Reproduction_.datePaymentAccepted);
         Expression<Boolean> fromExpr = cb.greaterThanOrEqualTo(reproductionDate, from);
         Expression<Boolean> toExpr = cb.lessThanOrEqualTo(reproductionDate, to);
 
         // And only active or completed reproductions
-        Expression<Reproduction.Status> status = repRoot.<Reproduction.Status>get(Reproduction_.status);
+        Expression<Reproduction.Status> status = repRoot.get(Reproduction_.status);
         Expression<Boolean> statusExpr = cb.in(status)
                 .value(Reproduction.Status.ACTIVE)
                 .value(Reproduction.Status.COMPLETED)
@@ -1398,7 +1385,7 @@ public class ReproductionController extends AbstractRequestController {
 
         query.where(cb.and(statusExpr, cb.and(fromExpr, toExpr)));
 
-        return new ArrayList<Reproduction>(new LinkedHashSet<Reproduction>(reproductions.listReproductions(query)));
+        return new ArrayList<>(new LinkedHashSet<>(reproductions.listReproductions(query)));
     }
 
     /**

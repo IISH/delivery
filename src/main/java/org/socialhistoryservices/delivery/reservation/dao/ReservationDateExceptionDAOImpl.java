@@ -10,10 +10,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import java.util.List;
 
-
-/**
- * Created by Igor on 1/10/2017.
- */
 @Repository
 public class ReservationDateExceptionDAOImpl implements ReservationDateExceptionDAO {
     private EntityManager entityManager;

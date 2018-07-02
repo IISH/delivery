@@ -1,6 +1,6 @@
 package org.socialhistoryservices.delivery.permission.service;
 
-import org.socialhistoryservices.delivery.Mailer;
+import org.socialhistoryservices.delivery.util.Mailer;
 import org.socialhistoryservices.delivery.permission.entity.Permission;
 import org.socialhistoryservices.delivery.permission.entity.RecordPermission;
 import org.springframework.mail.MailException;

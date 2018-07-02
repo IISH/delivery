@@ -5,7 +5,7 @@ import org.socialhistoryservices.delivery.user.dao.GroupDAO;
 import org.socialhistoryservices.delivery.user.dao.UserDAO;
 import org.socialhistoryservices.delivery.user.service.AuthoritiesPopulator;
 import org.socialhistoryservices.delivery.user.service.UserServiceImpl;
-import org.socialhistoryservices.utils.CaptchaEngine;
+import org.socialhistoryservices.delivery.util.CaptchaEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -20,9 +20,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
 import org.springframework.security.web.firewall.DefaultHttpFirewall;
 
-/**
- * Created by Igor on 3/3/2017.
- */
 @Configuration
 @EnableWebSecurity
 @EnableConfigurationProperties(DeliveryProperties.class)

@@ -23,7 +23,7 @@ public abstract class HoldingRequest {
     /**
      * Set the HoldingRequest's holding.
      *
-     * @param h the HoldingRequest's holding.
+     * @param holding the HoldingRequest's holding.
      */
     public abstract void setHolding(Holding holding);
 
@@ -37,7 +37,7 @@ public abstract class HoldingRequest {
     /**
      * Set the HoldingRequest's request.
      *
-     * @param h the HoldingRequest's request.
+     * @param request the HoldingRequest's request.
      */
     public abstract void setRequest(Request request);
 

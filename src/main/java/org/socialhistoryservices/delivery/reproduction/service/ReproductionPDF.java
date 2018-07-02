@@ -1,6 +1,6 @@
 package org.socialhistoryservices.delivery.reproduction.service;
 
-import org.socialhistoryservices.delivery.TemplatePreparationException;
+import org.socialhistoryservices.delivery.util.TemplatePreparationException;
 import org.socialhistoryservices.delivery.reproduction.entity.Reproduction;
 import org.socialhistoryservices.delivery.request.service.RequestPDF;
 import org.springframework.stereotype.Service;

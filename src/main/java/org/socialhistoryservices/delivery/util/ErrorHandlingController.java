@@ -1,4 +1,4 @@
-package org.socialhistoryservices.delivery;
+package org.socialhistoryservices.delivery.util;
 
 import com.octo.captcha.service.CaptchaService;
 import com.octo.captcha.service.CaptchaServiceException;
@@ -28,7 +28,6 @@ import java.util.Date;
  * runtime exceptions.
  */
 public class ErrorHandlingController {
-
     @Autowired
     private SimpleDateFormat df;
 
@@ -43,13 +42,15 @@ public class ErrorHandlingController {
 
     /**
      * Split a set of pids given in a url to an array of pids.
+     *
      * @param pids The combined pids (URL encoded).
      * @return Separate pids.
      */
     protected String[] getPidsFromURL(String pids) {
         try {
             return URLDecoder.decode(pids, "utf-8").split(deliveryProperties.getPidSeparator());
-        } catch (UnsupportedEncodingException e) {
+        }
+        catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
     }
@@ -66,8 +67,9 @@ public class ErrorHandlingController {
     /**
      * Exception handler for showing invalid request exceptions in a
      * human-readable way.
+     *
      * @param exception The exception that was thrown.
-     * @param response The response to send to the user.
+     * @param response  The response to send to the user.
      * @return The response body.
      */
     @ExceptionHandler(InvalidRequestException.class)
@@ -78,29 +80,29 @@ public class ErrorHandlingController {
     }
 
     protected void checkCaptcha(HttpServletRequest req, BindingResult result, Model model) {
-	    boolean isCaptchaCorrect = false;
-	    String id = req.getSession().getId();
-	    String responseField = req.getParameter("captcha_response_field");
+        boolean isCaptchaCorrect = false;
+        String id = req.getSession().getId();
+        String responseField = req.getParameter("captcha_response_field");
 
-	    try {
-		    if (responseField != null) {
-			    isCaptchaCorrect = captchaService.validateResponseForID(id, responseField);
-		    }
-	    }
-	    catch (CaptchaServiceException e) {
-		    // Should not happen, may be thrown if the id is not valid
-		    isCaptchaCorrect = false;
-	    }
-	    finally {
-		    if (!isCaptchaCorrect) {
-			    String msg = msgSource.getMessage("captcha.error", null, LocaleContextHolder.getLocale());
+        try {
+            if (responseField != null) {
+                isCaptchaCorrect = captchaService.validateResponseForID(id, responseField);
+            }
+        }
+        catch (CaptchaServiceException e) {
+            // Should not happen, may be thrown if the id is not valid
+            isCaptchaCorrect = false;
+        }
+        finally {
+            if (!isCaptchaCorrect) {
+                String msg = msgSource.getMessage("captcha.error", null, LocaleContextHolder.getLocale());
 
-			    // This prevents the createOrEdit from submitting to the database. Sadly, because the captcha is not part of the model,
-			    // no corresponding error will be displayed in the form. We have to do this manually.
-			    result.addError(
-					    new FieldError(result.getObjectName(), "captcha_response_field", "", false, null, null, msg));
-			    model.addAttribute("captchaError", msg);
-		    }
-	    }
+                // This prevents the createOrEdit from submitting to the database. Sadly, because the captcha is not part of the model,
+                // no corresponding error will be displayed in the form. We have to do this manually.
+                result.addError(
+                        new FieldError(result.getObjectName(), "captcha_response_field", "", false, null, null, msg));
+                model.addAttribute("captchaError", msg);
+            }
+        }
     }
 }

@@ -13,9 +13,9 @@ import java.util.Map;
  * Records by providing PIDs and vice versa.
  */
 public interface RecordLookupService {
-    public class PageChunk {
+    class PageChunk {
         public PageChunk(int resultCountPerChunk, int resultStart) {
-            results = new HashMap<String, String>();
+            results = new HashMap<>();
             this.resultCountPerChunk = resultCountPerChunk;
             this.resultStart = resultStart;
         }
@@ -55,7 +55,7 @@ public interface RecordLookupService {
      * @param title The title to search for.
      * @return A map of {pid,title} key-value pairs. (Maximum size defined by implementing service).
      */
-    public PageChunk getRecordsByTitle(String title, int resultCountPerChunk, int resultStart);
+    PageChunk getRecordsByTitle(String title, int resultCountPerChunk, int resultStart);
 
 
     /**
@@ -64,14 +64,14 @@ public interface RecordLookupService {
      * @return The metadata of the record, if found.
      * @throws NoSuchPidException Thrown when the PID is not found.
      */
-    public ExternalRecordInfo getRecordMetaDataByPid(String pid) throws NoSuchPidException;
+    ExternalRecordInfo getRecordMetaDataByPid(String pid) throws NoSuchPidException;
 
     /**
      * Maps a PID to archive holding info of a record.
      * @param pid The PID to lookup.
      * @return The archive metadata of the record, if found.
      */
-    public List<ArchiveHoldingInfo> getArchiveHoldingInfoByPid(String pid);
+    List<ArchiveHoldingInfo> getArchiveHoldingInfoByPid(String pid);
 
     /**
      * Get a map of holding signatures associated with this PID (if any
@@ -82,5 +82,5 @@ public interface RecordLookupService {
      * @throws NoSuchPidException Thrown when the PID being searched for is
      * not found in the API.
      */
-    public Map<String, ExternalHoldingInfo> getHoldingMetadataByPid(String pid) throws NoSuchPidException;
+    Map<String, ExternalHoldingInfo> getHoldingMetadataByPid(String pid) throws NoSuchPidException;
 }

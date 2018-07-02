@@ -1,4 +1,4 @@
-package org.socialhistoryservices.delivery;
+package org.socialhistoryservices.delivery.util;
 
 /**
  * Exception thrown when a template could not be prepared.

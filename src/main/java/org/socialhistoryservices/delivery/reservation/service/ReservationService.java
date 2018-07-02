@@ -23,59 +23,59 @@ public interface ReservationService {
      * Add a Reservation to the database.
      * @param obj Reservation to add.
      */
-    public void addReservation(Reservation obj);
+    void addReservation(Reservation obj);
 
     /**
      * Remove a Reservation from the database.
      * @param obj Reservation to remove.
      */
-    public void removeReservation(Reservation obj);
+    void removeReservation(Reservation obj);
 
     /**
      * Save changes to a Reservation in the database.
      * @param obj Reservation to save.
      */
-    public void saveReservation(Reservation obj);
+    void saveReservation(Reservation obj);
 
     /**
      * Retrieve the Reservation matching the given Id.
      * @param id Id of the Reservation to retrieve.
      * @return The Reservation matching the Id.
      */
-    public Reservation getReservationById(int id);
+    Reservation getReservationById(int id);
 
     /**
      * Get a criteria builder for querying Reservations.
      * @return the CriteriaBuilder.
      */
-    public CriteriaBuilder getReservationCriteriaBuilder();
+    CriteriaBuilder getReservationCriteriaBuilder();
 
 	/**
 	 * Get a criteria builder for querying HoldingReservations.
 	 * @return the CriteriaBuilder.
 	 */
-	public CriteriaBuilder getHoldingReservationCriteriaBuilder();
+    CriteriaBuilder getHoldingReservationCriteriaBuilder();
 
     /**
      * List all Reservations matching a built query.
      * @param q The criteria query to execute
      * @return A list of matching Reservations.
      */
-    public List<Reservation> listReservations(CriteriaQuery<Reservation> q);
+    List<Reservation> listReservations(CriteriaQuery<Reservation> q);
 
     /**
      * List all Tuples matching a built query.
      * @param q The criteria query to execute
      * @return A list of matching Tuples.
      */
-    public List<Tuple> listTuples(CriteriaQuery<Tuple> q);
+    List<Tuple> listTuples(CriteriaQuery<Tuple> q);
 
     /**
      * List all HoldingReservations matching a built query.
      * @param q The criteria query to execute
      * @return A list of matching HoldingReservations.
      */
-    public List<HoldingReservation> listHoldingReservations(CriteriaQuery<HoldingReservation> q);
+    List<HoldingReservation> listHoldingReservations(CriteriaQuery<HoldingReservation> q);
 
     /**
      * List all HoldingReservations matching a built query.
@@ -84,43 +84,43 @@ public interface ReservationService {
      * @param maxResults The max number of results to obtain
      * @return A list of matching HoldingReservations.
      */
-    public List<HoldingReservation> listHoldingReservations(CriteriaQuery<HoldingReservation> q,
-                                                            int firstResult, int maxResults);
+    List<HoldingReservation> listHoldingReservations(CriteriaQuery<HoldingReservation> q,
+                                                     int firstResult, int maxResults);
 
     /**
      * Count all HoldingReservations matching a built query.
      * @param q The criteria query to execute
      * @return A count of matching HoldingReservations.
      */
-    public long countHoldingReservations(CriteriaQuery<Long> q);
+    long countHoldingReservations(CriteriaQuery<Long> q);
 
     /**
      * Get a single Reservation matching a built query.
      * @param query The query to match by.
      * @return The matching Reservation.
      */
-    public Reservation getReservation(CriteriaQuery<Reservation> query);
+    Reservation getReservation(CriteriaQuery<Reservation> query);
 
     /**
      * Change the status of all holdings in a reservation.
      * @param res Reservation to change status for.
      * @param status Status to change holdings to.
      */
-    public void changeHoldingStatus(Reservation res, Holding.Status status);
+    void changeHoldingStatus(Reservation res, Holding.Status status);
 
     /**
      * Mark a specific item in a reservation as seen, bumping it to the next status.
      * @param res Reservation to change status for.
      * @param h Holding to bump.
      */
-    public void markItem(Reservation res, Holding h);
+    void markItem(Reservation res, Holding h);
 
     /**
      * Merge the other reservation's fields into this reservation.
      * @param reservation The reservation.
      * @param other The other reservation to merge with.
      */
-    public void merge(Reservation reservation, Reservation other);
+    void merge(Reservation reservation, Reservation other);
 
     /**
      * Set the reservation status and update the associated holdings status
@@ -128,14 +128,14 @@ public interface ReservationService {
      * @param reservation The reservation.
      * @param status The reservation which changed status.
      */
-    public void updateStatusAndAssociatedHoldingStatus(Reservation reservation, Reservation.Status status);
+    void updateStatusAndAssociatedHoldingStatus(Reservation reservation, Reservation.Status status);
 
     /**
      * Check whether there are any reservations made on the holding.
      * @param h Holding to check for reservations for.
      * @return Whether any reservations have been made including this holding.
      */
-    public boolean hasReservations(Holding h);
+    boolean hasReservations(Holding h);
 
     /**
      * Print a reservation if it was not printed yet.
@@ -144,18 +144,18 @@ public interface ReservationService {
      * printer failed. Does not say anything if the printer actually printed
      * (or ran out of paper for example).
      */
-    public void printReservation(Reservation res) throws PrinterException;
+    void printReservation(Reservation res) throws PrinterException;
 
     /**
      * Prints holding reservations by using the default printer.
-     * @param hr The holding reservations to print.
+     * @param hrs The holding reservations to print.
      * @param alwaysPrint If set to true, already printed holdings will
      * also be printed.
      * @throws PrinterException Thrown when delivering the print job to the
      * printer failed. Does not say anything if the printer actually printed
      * (or ran out of paper for example).
      */
-    public void printItems(List<HoldingReservation> hrs, boolean alwaysPrint) throws PrinterException;
+    void printItems(List<HoldingReservation> hrs, boolean alwaysPrint) throws PrinterException;
 
     /**
      * Edit reservations.
@@ -166,8 +166,8 @@ public interface ReservationService {
      * references a record which is restrictionType=CLOSED.
      * @throws org.socialhistoryservices.delivery.request.service.NoHoldingsException Thrown when no holdings are provided.
      */
-    public void createOrEdit(Reservation newRes, Reservation oldRes,
-                                      BindingResult result) throws
+    void createOrEdit(Reservation newRes, Reservation oldRes,
+                      BindingResult result) throws
         ClosedException, NoHoldingsException;
 
     /**
@@ -178,7 +178,7 @@ public interface ReservationService {
      *                             references a record which is restrictionType=CLOSED.
      * @throws NoHoldingsException Thrown when no holdings are provided.
      */
-    public void validateHoldings(Request newReq, Request oldReq) throws NoHoldingsException, ClosedException;
+    void validateHoldings(Request newReq, Request oldReq) throws NoHoldingsException, ClosedException;
 
     /**
      * Get the first valid reservation date after or equal to from.
@@ -186,12 +186,12 @@ public interface ReservationService {
      * @return The first valid date, or null when maxDaysInAdvance was
      * exceeded.
      */
-    public Date getFirstValidReservationDate(Date from);
+    Date getFirstValidReservationDate(Date from);
 
     /**
      * Returns the active reservation with which this holding is associated.
-     * @param h The Holding to get the active reservation of.
+     * @param holding The Holding to get the active reservation of.
      * @return The active reservation, or null if no active reservation exists.
      */
-    public Reservation getActiveFor(Holding holding);
+    Reservation getActiveFor(Holding holding);
 }

@@ -123,7 +123,7 @@ public class PayWayService {
         String passPhrase = incoming ? this.passPhraseIn : this.passPhraseOut;
 
         // Create the hash
-        List<String> keyValues = new ArrayList<String>();
+        List<String> keyValues = new ArrayList<>();
         for (Map.Entry<String, Object> messageEntry : message.entrySet()) {
             keyValues.add(messageEntry.getKey() + "=" + messageEntry.getValue().toString());
         }
@@ -172,7 +172,7 @@ public class PayWayService {
      * @return A list of name/value pairs.
      */
     private List<NameValuePair> getNameValuePairs(PayWayMessage message) {
-        List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+        List<NameValuePair> pairs = new ArrayList<>();
         for (Map.Entry<String, Object> messageEntry : message.entrySet()) {
             pairs.add(new BasicNameValuePair(messageEntry.getKey(), messageEntry.getValue().toString()));
         }

@@ -13,7 +13,7 @@ public interface GeneralRequestService {
      *
      * @param r Request to change status for.
      */
-    public void markRequest(Request r);
+    void markRequest(Request r);
 
     /**
      * Updates the status of a holding.
@@ -21,7 +21,7 @@ public interface GeneralRequestService {
      * @param holding The holding.
      * @param status  The new status.
      */
-    public void updateHoldingStatus(Holding holding, Holding.Status status);
+    void updateHoldingStatus(Holding holding, Holding.Status status);
 
     /**
      * Get an active request relating to a specific Holding.
@@ -29,5 +29,5 @@ public interface GeneralRequestService {
      * @param holding Holding to find a request for.
      * @return The active request, null if none exist.
      */
-    public Request getActiveFor(Holding holding);
+    Request getActiveFor(Holding holding);
 }

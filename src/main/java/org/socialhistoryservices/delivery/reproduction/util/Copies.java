@@ -4,11 +4,7 @@ import org.socialhistoryservices.delivery.record.entity.Record;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by Igor on 4/26/2017.
- */
 public class Copies {
-
     private static final int NO_NUMBER_OF_COPIES = 0;
     private static final int DEFAULT_NUMBER_OF_COPIES = 1;
 

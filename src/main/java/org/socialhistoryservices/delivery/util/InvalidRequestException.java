@@ -1,4 +1,4 @@
-package org.socialhistoryservices.delivery;
+package org.socialhistoryservices.delivery.util;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @ResponseStatus(value = HttpStatus.BAD_REQUEST)
 public class InvalidRequestException extends RuntimeException {
-
     /**
      * Default constructor.
      */
@@ -21,6 +20,7 @@ public class InvalidRequestException extends RuntimeException {
 
     /**
      * Construct an invalid request exception.
+     *
      * @param msg The message to set.
      */
     public InvalidRequestException(String msg) {
@@ -30,23 +30,22 @@ public class InvalidRequestException extends RuntimeException {
     /**
      * Create an invalid request exception providing the errors (for use with
      * forms).
+     *
      * @param errors The errors to send.
      * @return The invalid request exception.
      */
-    public static <T> InvalidRequestException create(BindingResult errors) {
-        String msg = "";
-
+    public static InvalidRequestException create(BindingResult errors) {
+        StringBuilder msg = new StringBuilder();
         for (ObjectError err : errors.getAllErrors()) {
             if (err instanceof FieldError) {
-                FieldError ferr = (FieldError)err;
-                msg += "'" + ferr.getField() + "':" + ferr.getDefaultMessage()
-                    + "\n";
-            } else {
-                msg += "'" + err.getObjectName() + "':" + err.getDefaultMessage()
-                    + "\n";
+                FieldError ferr = (FieldError) err;
+                msg.append("'").append(ferr.getField()).append("':").append(ferr.getDefaultMessage()).append("\n");
+            }
+            else {
+                msg.append("'").append(err.getObjectName()).append("':").append(err.getDefaultMessage()).append("\n");
             }
 
         }
-        return new InvalidRequestException(msg);
+        return new InvalidRequestException(msg.toString());
     }
 }

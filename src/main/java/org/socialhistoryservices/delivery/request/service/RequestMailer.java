@@ -1,6 +1,6 @@
 package org.socialhistoryservices.delivery.request.service;
 
-import org.socialhistoryservices.delivery.Mailer;
+import org.socialhistoryservices.delivery.util.Mailer;
 import org.socialhistoryservices.delivery.request.entity.Request;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;

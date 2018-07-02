@@ -303,7 +303,7 @@ public class Record {
 
         // Merge holdings.
         if (other.getHoldings() == null) {
-            holdings = new ArrayList<Holding>();
+            holdings = new ArrayList<>();
         } else {
             // Delete holdings that were not provided.
             deleteHoldingsNotInProvidedRecord(other);
@@ -436,8 +436,9 @@ public class Record {
      * Initialize defaults.
      */
     public Record() {
+        // TODO: Reason for Lazy List?
         holdings = LazyList.decorate(new ArrayList<Holding>(), new InstantiateFactory(Holding.class));
-        children = new ArrayList<Record>();
+        children = new ArrayList<>();
         externalInfo = new ExternalRecordInfo();
         setExternalInfoUpdated(new Date());
     }

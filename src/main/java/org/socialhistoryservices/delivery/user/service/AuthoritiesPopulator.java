@@ -40,7 +40,7 @@ public class AuthoritiesPopulator extends DefaultLdapAuthoritiesPopulator {
      */
     @Override
     public Set<GrantedAuthority> getAdditionalRoles(DirContextOperations user, String username) {
-        Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
+        Set<GrantedAuthority> authorities = new HashSet<>();
         User userEntity = userService.getUserByName(username);
         if (userEntity != null) {
             authorities.addAll(userEntity.getAuthorities());

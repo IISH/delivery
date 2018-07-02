@@ -361,9 +361,7 @@ public abstract class RequestPrintable implements Printable {
     /**
      * Draw a key value pair (and a new line) on the provided graphics object.
      *
-     * @param drawInfo Draw offsets.
-     * @param key      The key to use.
-     * @param value    The value to use.
+     * @param drawValueInfo Draw value info.
      */
     protected void drawKeyValueNewLine(DrawValueInfo drawValueInfo) {
         drawKeyValue(drawValueInfo);
@@ -373,12 +371,7 @@ public abstract class RequestPrintable implements Printable {
     /**
      * Draw a key value pair (and a new line) on the provided graphics object.
      *
-     * @param drawInfo  Draw offsets.
-     * @param key       The key to use.
-     * @param value     The value to use.
-     * @param font      The font to use.
-     * @param underline Whether to underline the value
-     * @param tab       Add a tab after the key
+     * @param drawValueInfo Draw value info.
      */
     protected void drawKeyValue(DrawValueInfo drawValueInfo) {
         // Do not print key-value pairs with missing value.
