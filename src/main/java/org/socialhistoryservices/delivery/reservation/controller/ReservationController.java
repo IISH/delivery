@@ -759,24 +759,40 @@ public class ReservationController extends AbstractRequestController {
         CriteriaQuery<Tuple> signatuesCq = signatureStatistics.tuple();
         List<Tuple> signatureTuples = reservations.listTuples(signatuesCq);
 
-        Comparator<Map.Entry<String, Long>> sorter = (c1, c2) -> {
-            int compared = c1.getValue().compareTo(c2.getValue()) * -1;
-            return (compared == 0) ? c1.getKey().compareToIgnoreCase(c2.getKey()) : compared;
-        };
-
-        Collector<Map.Entry<String, Long>, ?, Map<String, Long>> toLinkedMap =
-                Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> v1, LinkedHashMap::new);
-
-        Map<String, Long> parentSignaturesMap = signatureTuples.stream().collect(Collectors.toMap(
+        Map<String, RecordCount> parentSignaturesMap = signatureTuples.stream().collect(Collectors.toMap(
                 t -> (t.get("parentSignature") != null) ? t.get("parentSignature").toString() : t.get("signature").toString(),
-                t -> new Long(t.get("numberOfRequests").toString()),
-                (num1, num2) -> num1 + num2
-        )).entrySet().stream().sorted(sorter).collect(toLinkedMap);
+                t -> new RecordCount(
+                        (t.get("parentTitle") != null) ? t.get("parentTitle").toString() : t.get("title").toString(),
+                        new Long(t.get("numberOfRequests").toString())
+                ),
+                (num1, num2) -> new RecordCount(num1.title, num1.count + num2.count)
+        )).entrySet().stream().sorted((c1, c2) -> {
+            int compared = c1.getValue().count.compareTo(c2.getValue().count) * -1;
+            return (compared == 0) ? c1.getKey().compareToIgnoreCase(c2.getKey()) : compared;
+        }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> v1, LinkedHashMap::new));
 
         model.addAttribute("materialTuples", reservations.listTuples(materialsCq));
         model.addAttribute("parentSignaturesMap", parentSignaturesMap);
         model.addAttribute("signatureTuples", signatureTuples);
 
         return "reservation_materials";
+    }
+
+    public final class RecordCount {
+        public String title;
+        public Long count;
+
+        RecordCount(String title, Long count) {
+            this.title = title;
+            this.count = count;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public Long getCount() {
+            return count;
+        }
     }
 }

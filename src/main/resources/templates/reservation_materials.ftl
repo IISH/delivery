@@ -15,7 +15,7 @@
 <form action="" method="GET">
   <#-- Generate hidden input for already existing GET vars -->
   <#list RequestParameters?keys as k>
-    <#if k!="from_date" && k!="to_date">
+    <#if k!="from_date" && k!="to_date" && k!="material">
       <input type="hidden" name="${k?html}" value="${RequestParameters[k]?html}"/>
     </#if>
   </#list>
@@ -47,6 +47,26 @@
       </label>
       <input type="text" maxlength="10" id="to_date_filter" name="to_date"
              value="${to_date_value?trim}" class="filter_date" />
+    </li>
+    <li>
+      <label for="material_filter"><@_ "record.externalInfo.materialType" "Material"/></label>
+      <select id="material_filter" name="material">
+        <option value=""
+        <#if !RequestParameters["material"]?? ||
+        RequestParameters["material"] == "">
+        selected="selected"</#if>>
+        <@_ "reservationList.allMaterialTypes" "Material N/A"/>
+        </option>
+
+        <#list material_types?keys as k>
+        <option value="${k?lower_case}"
+        <#if (RequestParameters["material"]?? &&
+        RequestParameters["material"]?upper_case == k)>
+        selected="selected"</#if>>
+        <@_ "record.externalInfo.materialType.${k}" "${k}" />
+        </option>
+        </#list>
+      </select>
     </li>
   </ul>
     <#assign searchLabel>
@@ -80,6 +100,7 @@
   <thead>
   <tr>
     <th><@_ "holding.signature" "Signature"/></th>
+    <th><@_ "record.title" "Title"/></th>
     <th><@_ "reservationMaterials.noRequests" "Number of requests"/></th>
   </tr>
   </thead>
@@ -87,12 +108,14 @@
   <#list parentSignaturesMap?keys as parentSignature>
   <tr>
     <td>${parentSignature?html}</td>
-    <td>${parentSignaturesMap[parentSignature]?html}</td>
+    <td>${parentSignaturesMap[parentSignature].title?html}</td>
+    <td>${parentSignaturesMap[parentSignature].count?html}</td>
   </tr>
   <#list signatureTuples as signatureTuple>
     <#if signatureTuple.get("parentSignature")?? && signatureTuple.get("parentSignature") == parentSignature>
   <tr class="sub-row hidden">
     <td>${signatureTuple.get("signature")?html}</td>
+    <td>&nbsp;</td>
     <td>${signatureTuple.get("numberOfRequests")?html}</td>
   </tr>
     </#if>

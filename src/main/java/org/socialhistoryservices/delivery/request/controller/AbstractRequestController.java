@@ -74,6 +74,26 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
     }
 
     /**
+     * Map representation of material types for use in views.
+     *
+     * @return The map {string material type, enum status}.
+     */
+    @ModelAttribute("material_types")
+    public Map<String, ExternalRecordInfo.MaterialType> materialTypes() {
+        Map<String, ExternalRecordInfo.MaterialType> data = new LinkedHashMap<>();
+        data.put("SERIAL", ExternalRecordInfo.MaterialType.SERIAL);
+        data.put("BOOK", ExternalRecordInfo.MaterialType.BOOK);
+        data.put("SOUND", ExternalRecordInfo.MaterialType.SOUND);
+        data.put("DOCUMENTATION", ExternalRecordInfo.MaterialType.DOCUMENTATION);
+        data.put("ARCHIVE", ExternalRecordInfo.MaterialType.ARCHIVE);
+        data.put("VISUAL", ExternalRecordInfo.MaterialType.VISUAL);
+        data.put("MOVING_VISUAL", ExternalRecordInfo.MaterialType.MOVING_VISUAL);
+        data.put("ARTICLE", ExternalRecordInfo.MaterialType.ARTICLE);
+        data.put("OTHER", ExternalRecordInfo.MaterialType.OTHER);
+        return data;
+    }
+
+    /**
      * Translates the path of a URI to a list of holdings.
      *
      * @param path            The path containing the holdings.

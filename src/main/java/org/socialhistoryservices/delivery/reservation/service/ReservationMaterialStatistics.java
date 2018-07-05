@@ -6,6 +6,7 @@ import org.socialhistoryservices.delivery.reservation.entity.HoldingReservation;
 import org.socialhistoryservices.delivery.reservation.entity.HoldingReservation_;
 import org.socialhistoryservices.delivery.reservation.entity.Reservation;
 import org.socialhistoryservices.delivery.reservation.entity.Reservation_;
+import org.socialhistoryservices.delivery.util.InvalidRequestException;
 
 import javax.persistence.criteria.*;
 import java.util.Date;
@@ -52,8 +53,27 @@ public class ReservationMaterialStatistics extends TupleRequestSearch<HoldingRes
         Expression<Boolean> fromExpr = cb.greaterThanOrEqualTo(reservationDate, from);
         Expression<Boolean> toExpr = cb.lessThanOrEqualTo(reservationDate, to);
 
+        Predicate where = cb.and(fromExpr, toExpr);
+
+        if (p.containsKey("material")) {
+            String material = p.get("material")[0].trim().toUpperCase();
+            // Tolerant to empty material type to ensure the filter works
+            if (!material.equals("")) {
+                try {
+                    Expression<Boolean> materialTypeMatches = cb.equal(
+                            eriRoot.get(ExternalRecordInfo_.materialType),
+                            ExternalRecordInfo.MaterialType.valueOf(material)
+                    );
+                    where = cb.and(where, materialTypeMatches);
+                }
+                catch (IllegalArgumentException ex) {
+                    throw new InvalidRequestException("No such material: " + material);
+                }
+            }
+        }
+
         cq.multiselect(materialType.alias("material"), numberOfRequests.alias("noRequests"));
-        cq.where(cb.and(fromExpr, toExpr));
+        cq.where(where);
         cq.groupBy(eriRoot.get(ExternalRecordInfo_.materialType));
         cq.orderBy(cb.desc(numberOfRequests));
     }
