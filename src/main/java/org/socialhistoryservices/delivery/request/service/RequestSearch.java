@@ -3,8 +3,6 @@ package org.socialhistoryservices.delivery.request.service;
 import org.socialhistoryservices.delivery.util.InvalidRequestException;
 
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,57 +35,13 @@ public abstract class RequestSearch<R> {
     }
 
     /**
-     * Create a query that will list the search results.
-     *
-     * @return A query for the persistance layer.
-     */
-    public CriteriaQuery<R> list() {
-        CriteriaQuery<R> cq = cb.createQuery(clazz);
-        Root<R> hrRoot = cq.from(clazz);
-        cq.select(hrRoot);
-        build(hrRoot, cq, false);
-        return cq;
-    }
-
-    /**
-     * Create a query that will count all the search results.
-     *
-     * @return A query for the persistance layer.
-     */
-    public CriteriaQuery<Long> count() {
-        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-        Root<R> hrRoot = cq.from(clazz);
-        cq.select(cb.count(hrRoot));
-        build(hrRoot, cq, true);
-        return cq;
-    }
-
-    /**
-     * Build the query.
-     *
-     * @param hrRoot  The root entity.
-     * @param cq      The query to build upon.
-     * @param isCount Whether the query is a count or not.
-     */
-    protected abstract void build(Root<R> hrRoot, CriteriaQuery<?> cq, boolean isCount);
-
-    /**
      * Returns a single date from the parameter map.
      *
      * @param p The parameter map to search the given filter value in.
      * @return A date, if found.
      */
     protected Date getDateFilter(Map<String, String[]> p) {
-        Date date = null;
-        if (p.containsKey("date")) {
-            try {
-                date = API_DATE_FORMAT.parse(p.get("date")[0]);
-            }
-            catch (ParseException ex) {
-                throw new InvalidRequestException("Invalid date: " + p.get("date")[0]);
-            }
-        }
-        return date;
+        return getDateFilterForKey("date", p);
     }
 
     /**
@@ -97,17 +51,7 @@ public abstract class RequestSearch<R> {
      * @return A date, if found.
      */
     protected Date getFromDateFilter(Map<String, String[]> p) {
-        Date date = null;
-        boolean containsFrom = p.containsKey("from_date") && !p.get("from_date")[0].trim().equals("");
-        if (containsFrom) {
-            try {
-                date = API_DATE_FORMAT.parse(p.get("from_date")[0]);
-            }
-            catch (ParseException ex) {
-                throw new InvalidRequestException("Invalid from_date: " + p.get("from_date")[0]);
-            }
-        }
-        return date;
+        return getDateFilterForKey("from_date", p);
     }
 
     /**
@@ -117,14 +61,25 @@ public abstract class RequestSearch<R> {
      * @return A date, if found.
      */
     protected Date getToDateFilter(Map<String, String[]> p) {
+        return getDateFilterForKey("to_date", p);
+    }
+
+    /**
+     * Obtains the date from the parameter map.
+     *
+     * @param key The date key.
+     * @param p   The parameter map to search the given filter value in.
+     * @return A date, if found.
+     */
+    private Date getDateFilterForKey(String key, Map<String, String[]> p) {
         Date date = null;
-        boolean containsTo = p.containsKey("to_date") && !p.get("to_date")[0].trim().equals("");
+        boolean containsTo = p.containsKey(key) && !p.get(key)[0].trim().equals("");
         if (containsTo) {
             try {
-                date = API_DATE_FORMAT.parse(p.get("to_date")[0]);
+                date = API_DATE_FORMAT.parse(p.get(key)[0]);
             }
             catch (ParseException ex) {
-                throw new InvalidRequestException("Invalid to_date: " + p.get("to_date")[0]);
+                throw new InvalidRequestException("Invalid " + key + ": " + p.get(key)[0]);
             }
         }
         return date;

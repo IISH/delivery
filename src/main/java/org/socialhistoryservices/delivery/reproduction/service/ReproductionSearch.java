@@ -1,12 +1,12 @@
 package org.socialhistoryservices.delivery.reproduction.service;
 
+import org.socialhistoryservices.delivery.request.service.ListRequestSearch;
 import org.socialhistoryservices.delivery.util.InvalidRequestException;
 import org.socialhistoryservices.delivery.record.entity.*;
 import org.socialhistoryservices.delivery.reproduction.entity.HoldingReproduction;
 import org.socialhistoryservices.delivery.reproduction.entity.HoldingReproduction_;
 import org.socialhistoryservices.delivery.reproduction.entity.Reproduction;
 import org.socialhistoryservices.delivery.reproduction.entity.Reproduction_;
-import org.socialhistoryservices.delivery.request.service.RequestSearch;
 
 import javax.persistence.criteria.*;
 import java.util.Date;
@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * Reproduction search helper class, with support for paging.
  */
-public class ReproductionSearch extends RequestSearch<HoldingReproduction> {
+public class ReproductionSearch extends ListRequestSearch<HoldingReproduction> {
 
     /**
      * Creates a new reproduction search helper.

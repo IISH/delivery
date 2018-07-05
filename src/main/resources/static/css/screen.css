@@ -279,6 +279,11 @@ table.records, table.records tr, table.records td {
     border-collapse: collapse;
 }
 
+table tr.sub-row {
+    background: #eee;
+    font-style: italic;
+}
+
 .edit_item form {
     margin-top: 0.5em;
 }
@@ -979,3 +984,4 @@ ul.reproduction_totals {
 ul.reproduction_totals > li {
     margin-bottom: 10px;
 }
+

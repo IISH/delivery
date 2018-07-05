@@ -39,6 +39,10 @@ $(document).ready(function(){
     });
     toggleCustomReproduction();
     toggleReproductionForm();
+
+    $('.with-sub-rows').on('click', 'tr', function () {
+        $(this).nextUntil(':not(.sub-row)').toggleClass('hidden');
+    });
 });
 
 function toggleCustomReproduction(elem) {

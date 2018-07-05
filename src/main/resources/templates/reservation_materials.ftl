@@ -3,7 +3,7 @@
 
 <#-- Build the title -->
 <#assign title>
-<@_ "reservationMaterials.noRequestsPerMaterial" "Number of requests per material type"/>
+<@_ "reservationMaterials.noRequests" "Number of requests"/>
 </#assign>
 
 <#-- Build the page -->
@@ -56,7 +56,7 @@
 </form>
 </fieldset>
 
-<#if tuples?size == 0>
+<#if materialTuples?size == 0 && signatureTuples?size == 0>
 <span class="bignote"><@_ "search.notfound" "No results..."/></span>
 <#else>
 <table class="overview">
@@ -67,11 +67,36 @@
   </tr>
   </thead>
   <tbody>
-  <#list tuples as tuple>
+  <#list materialTuples as tuple>
   <tr>
     <td><@_ "record.externalInfo.materialType.${tuple.get('material')?upper_case}" "${tuple.get('material')?upper_case}" /></td>
     <td>${tuple.get('noRequests')?html}</td>
   </tr>
+  </#list>
+  </tbody>
+</table>
+
+<table class="overview with-sub-rows">
+  <thead>
+  <tr>
+    <th><@_ "holding.signature" "Signature"/></th>
+    <th><@_ "reservationMaterials.noRequests" "Number of requests"/></th>
+  </tr>
+  </thead>
+  <tbody>
+  <#list parentSignaturesMap?keys as parentSignature>
+  <tr>
+    <td>${parentSignature?html}</td>
+    <td>${parentSignaturesMap[parentSignature]?html}</td>
+  </tr>
+  <#list signatureTuples as signatureTuple>
+    <#if signatureTuple.get("parentSignature")?? && signatureTuple.get("parentSignature") == parentSignature>
+  <tr class="sub-row hidden">
+    <td>${signatureTuple.get("signature")?html}</td>
+    <td>${signatureTuple.get("numberOfRequests")?html}</td>
+  </tr>
+    </#if>
+  </#list>
   </#list>
   </tbody>
 </table>

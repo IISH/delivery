@@ -1229,13 +1229,16 @@ public class ReproductionController extends AbstractRequestController {
     public String reproductionMaterials(HttpServletRequest req, Model model) {
         Map<String, String[]> p = req.getParameterMap();
 
-        Date from = getFromDateFilter(p);
-        from = (from != null) ? from : new Date();
-        Date to = getToDateFilter(p);
-        to = (to != null) ? to : new Date();
+        CriteriaBuilder cbMaterial = reproductions.getHoldingReproductionCriteriaBuilder();
+        ReproductionMaterialStatistics materialStatistics = new ReproductionMaterialStatistics(cbMaterial, p);
+        CriteriaQuery<Tuple> cqMaterials = materialStatistics.tuple();
 
-        model.addAttribute("tuplesMaterials", countMaterials(from, to));
-        model.addAttribute("tuplePayedAmounts", countPayedAmounts(from, to));
+        CriteriaBuilder cbPayment = reproductions.getHoldingReproductionCriteriaBuilder();
+        ReproductionPaymentStatistics paymentStatistics = new ReproductionPaymentStatistics(cbPayment, p);
+        CriteriaQuery<Tuple> cqPayments = paymentStatistics.tuple();
+
+        model.addAttribute("tuplesMaterials", reproductions.listTuples(cqMaterials));
+        model.addAttribute("tuplePayedAmounts", reproductions.listTuples(cqPayments));
 
         return "reproduction_materials";
     }
@@ -1264,96 +1267,6 @@ public class ReproductionController extends AbstractRequestController {
         res.setHeader("Content-Disposition", "attachment;filename=reproductions.xls");
         reproductionExcel.writeToStream(res.getOutputStream());
         res.flushBuffer();
-    }
-
-    /**
-     * Counts the number of materials in reproduction requests in a given period.
-     *
-     * @param from From date.
-     * @param to   To date.
-     * @return A list of materials and the counts.
-     */
-    private List<Tuple> countMaterials(Date from, Date to) {
-        CriteriaBuilder cb = reproductions.getHoldingReproductionCriteriaBuilder();
-        CriteriaQuery<Tuple> cq = cb.createTupleQuery();
-
-        // Join all required tables
-        Root<HoldingReproduction> hrRoot = cq.from(HoldingReproduction.class);
-        Join<HoldingReproduction, Reproduction> repRoot = hrRoot.join(HoldingReproduction_.reproduction);
-        Join<HoldingReproduction, Holding> hRoot = hrRoot.join(HoldingReproduction_.holding);
-        Join<Holding, Record> rRoot = hRoot.join(Holding_.record);
-        Join<Record, ExternalRecordInfo> eriRoot = rRoot.join(Record_.externalInfo);
-
-        // Within the selected date range
-        Expression<Date> reproductionDate = repRoot.get(Reproduction_.date);
-        Expression<Boolean> fromExpr = cb.greaterThanOrEqualTo(reproductionDate, from);
-        Expression<Boolean> toExpr = cb.lessThanOrEqualTo(reproductionDate, to);
-
-        // Count the materials
-        Expression<ExternalRecordInfo.MaterialType> materialType =
-                eriRoot.get(ExternalRecordInfo_.materialType);
-        Expression<Long> numberOfRequests = cb.count(materialType);
-
-        cq.multiselect(materialType.alias("material"), numberOfRequests.alias("noRequests"));
-        cq.where(cb.and(fromExpr, toExpr));
-        cq.groupBy(eriRoot.get(ExternalRecordInfo_.materialType));
-        cq.orderBy(cb.desc(numberOfRequests));
-
-        return reproductions.listTuples(cq);
-    }
-
-    /**
-     * Counts the payed amounts in reproduction requests for a given period.
-     *
-     * @param from From date.
-     * @param to   To date.
-     * @return The payed amounts.
-     */
-    private List<Tuple> countPayedAmounts(Date from, Date to) {
-        CriteriaBuilder cb = reproductions.getHoldingReproductionCriteriaBuilder();
-        CriteriaQuery<Tuple> cq = cb.createTupleQuery();
-
-        // Join all required tables
-        Root<HoldingReproduction> hrRoot = cq.from(HoldingReproduction.class);
-        Join<HoldingReproduction, Reproduction> repRoot = hrRoot.join(HoldingReproduction_.reproduction);
-
-        // Within the selected date range
-        Expression<Date> reproductionDate = repRoot.get(Reproduction_.datePaymentAccepted);
-        Expression<Boolean> fromExpr = cb.greaterThanOrEqualTo(reproductionDate, from);
-        Expression<Boolean> toExpr = cb.lessThanOrEqualTo(reproductionDate, to);
-
-        // And only active or completed reproductions
-        Expression<Reproduction.Status> status = repRoot.get(Reproduction_.status);
-        Expression<Boolean> statusExpr = cb.in(status)
-                .value(Reproduction.Status.ACTIVE)
-                .value(Reproduction.Status.COMPLETED)
-                .value(Reproduction.Status.DELIVERED);
-
-        // Count the amounts
-        Expression<BigDecimal> amount = hrRoot.get(HoldingReproduction_.price);
-        Expression<Integer> numberOfPages = hrRoot.get(HoldingReproduction_.numberOfPages);
-        Expression<BigDecimal> discount = hrRoot.get(HoldingReproduction_.discount);
-        Expression<BigDecimal> btwPrice = hrRoot.get(HoldingReproduction_.btwPrice);
-        Expression<Integer> btwPercentage = hrRoot.get(HoldingReproduction_.btwPercentage);
-
-        Expression<Number> totalAmount = cb.prod(amount, numberOfPages);
-
-        Expression<Long> totalItems = cb.count(hrRoot);
-        Expression<Number> sumTotalAmount = cb.sum(totalAmount);
-        Expression<BigDecimal> sumDiscount = cb.sum(discount);
-        Expression<BigDecimal> sumBtwPrice = cb.sum(btwPrice);
-
-        cq.multiselect(
-                totalItems.alias("totalItems"),
-                btwPercentage.alias("btwPercentage"),
-                sumTotalAmount.alias("sumTotalAmount"),
-                sumDiscount.alias("sumDiscount"),
-                sumBtwPrice.alias("sumBtwPrice")
-        );
-        cq.where(cb.and(statusExpr, cb.and(fromExpr, toExpr)));
-        cq.groupBy(btwPercentage);
-
-        return reproductions.listTuples(cq);
     }
 
     /**

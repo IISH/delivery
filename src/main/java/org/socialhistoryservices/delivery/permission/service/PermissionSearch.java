@@ -8,7 +8,7 @@ import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
 import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo_;
 import org.socialhistoryservices.delivery.record.entity.Record;
 import org.socialhistoryservices.delivery.record.entity.Record_;
-import org.socialhistoryservices.delivery.request.service.RequestSearch;
+import org.socialhistoryservices.delivery.request.service.ListRequestSearch;
 
 import javax.persistence.criteria.*;
 import java.util.Date;
@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * Permission search helper class, with support for paging.
  */
-public class PermissionSearch extends RequestSearch<RecordPermission> {
+public class PermissionSearch extends ListRequestSearch<RecordPermission> {
 
     /**
      * Creates a new permission search helper.

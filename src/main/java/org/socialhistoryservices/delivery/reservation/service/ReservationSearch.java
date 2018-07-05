@@ -1,8 +1,8 @@
 package org.socialhistoryservices.delivery.reservation.service;
 
+import org.socialhistoryservices.delivery.request.service.ListRequestSearch;
 import org.socialhistoryservices.delivery.util.InvalidRequestException;
 import org.socialhistoryservices.delivery.record.entity.*;
-import org.socialhistoryservices.delivery.request.service.RequestSearch;
 import org.socialhistoryservices.delivery.reservation.entity.HoldingReservation;
 import org.socialhistoryservices.delivery.reservation.entity.HoldingReservation_;
 import org.socialhistoryservices.delivery.reservation.entity.Reservation;
@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * Reservation search helper class, with support for paging.
  */
-public class ReservationSearch extends RequestSearch<HoldingReservation> {
+public class ReservationSearch extends ListRequestSearch<HoldingReservation> {
 
     /**
      * Creates a new reservation search helper.

@@ -1,6 +1,7 @@
 package org.socialhistoryservices.delivery.reservation.controller;
 
 import org.apache.log4j.Logger;
+import org.socialhistoryservices.delivery.reservation.service.*;
 import org.socialhistoryservices.delivery.util.ResourceNotFoundException;
 import org.socialhistoryservices.delivery.permission.entity.Permission;
 import org.socialhistoryservices.delivery.permission.service.PermissionService;
@@ -17,9 +18,6 @@ import org.socialhistoryservices.delivery.reservation.entity.HoldingReservation;
 import org.socialhistoryservices.delivery.reservation.entity.HoldingReservation_;
 import org.socialhistoryservices.delivery.reservation.entity.Reservation;
 import org.socialhistoryservices.delivery.reservation.entity.Reservation_;
-import org.socialhistoryservices.delivery.reservation.service.ReservationMailer;
-import org.socialhistoryservices.delivery.reservation.service.ReservationSearch;
-import org.socialhistoryservices.delivery.reservation.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.MailException;
@@ -37,6 +35,8 @@ import javax.persistence.criteria.*;
 import javax.servlet.http.HttpServletRequest;
 import java.awt.print.PrinterException;
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * Controller of the Reservation package, handles all /reservation/* requests.
@@ -360,7 +360,7 @@ public class ReservationController extends AbstractRequestController {
      * @param res The reservation to print.
      */
     @Async
-    private void autoPrint(final Reservation res) {
+    protected void autoPrint(final Reservation res) {
         try {
             Date create = res.getCreationDate();
             Date access = res.getDate();
@@ -738,51 +738,45 @@ public class ReservationController extends AbstractRequestController {
     }
     // }}}
 
-	/**
-	 * Get a list with the number of materials reserved per day.
-	 * @param req The HTTP request object.
-	 * @param model Passed view model.
-	 * @return The name of the view to use.
-	 */
-	@RequestMapping(value = "/materials", method = RequestMethod.GET)
-        @PreAuthorize("hasRole('ROLE_RESERVATION_VIEW')")
-	public String reservationMaterials(HttpServletRequest req, Model model) {
-		Map<String, String[]> p = req.getParameterMap();
+    /**
+     * Get a list with the number of materials reserved per day.
+     *
+     * @param req   The HTTP request object.
+     * @param model Passed view model.
+     * @return The name of the view to use.
+     */
+    @RequestMapping(value = "/materials", method = RequestMethod.GET)
+    @PreAuthorize("hasRole('ROLE_RESERVATION_VIEW')")
+    public String reservationMaterials(HttpServletRequest req, Model model) {
+        Map<String, String[]> p = req.getParameterMap();
 
-        Date from = getFromDateFilter(p);
-        from = (from != null) ? from : new Date();
-        Date to = getToDateFilter(p);
-        to = (to != null) ? to : new Date();
+        CriteriaBuilder cbMaterials = reservations.getHoldingReservationCriteriaBuilder();
+        ReservationMaterialStatistics materialStatistics = new ReservationMaterialStatistics(cbMaterials, p);
+        CriteriaQuery<Tuple> materialsCq = materialStatistics.tuple();
 
-		CriteriaBuilder cb = reservations.getHoldingReservationCriteriaBuilder();
-		CriteriaQuery<Tuple> cq = cb.createTupleQuery();
+        CriteriaBuilder cbSignature = reservations.getHoldingReservationCriteriaBuilder();
+        ReservationSignatureStatistics signatureStatistics = new ReservationSignatureStatistics(cbSignature, p);
+        CriteriaQuery<Tuple> signatuesCq = signatureStatistics.tuple();
+        List<Tuple> signatureTuples = reservations.listTuples(signatuesCq);
 
-		Root<HoldingReservation> hrRoot = cq.from(HoldingReservation.class);
-		Join<HoldingReservation,Reservation> resRoot = hrRoot.join
-				(HoldingReservation_.reservation);
-		Join<HoldingReservation,Holding> hRoot = hrRoot.join
-				(HoldingReservation_.holding);
-		Join<Holding,Record> rRoot = hRoot.join
-				(Holding_.record);
-		Join<Record,ExternalRecordInfo> eriRoot = rRoot.join
-				(Record_.externalInfo);
+        Comparator<Map.Entry<String, Long>> sorter = (c1, c2) -> {
+            int compared = c1.getValue().compareTo(c2.getValue()) * -1;
+            return (compared == 0) ? c1.getKey().compareToIgnoreCase(c2.getKey()) : compared;
+        };
 
-		Expression<Date> reservationDate = resRoot.get(Reservation_.date);
-		Expression<ExternalRecordInfo.MaterialType> materialType =
-				eriRoot.get(ExternalRecordInfo_.materialType);
-		Expression<Long> numberOfRequests = cb.count(materialType);
+        Collector<Map.Entry<String, Long>, ?, Map<String, Long>> toLinkedMap =
+                Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> v1, LinkedHashMap::new);
 
-	    Expression<Boolean> fromExpr = cb.greaterThanOrEqualTo(reservationDate, from);
-        Expression<Boolean> toExpr = cb.lessThanOrEqualTo(reservationDate, to);
+        Map<String, Long> parentSignaturesMap = signatureTuples.stream().collect(Collectors.toMap(
+                t -> (t.get("parentSignature") != null) ? t.get("parentSignature").toString() : t.get("signature").toString(),
+                t -> new Long(t.get("numberOfRequests").toString()),
+                (num1, num2) -> num1 + num2
+        )).entrySet().stream().sorted(sorter).collect(toLinkedMap);
 
-        cq.multiselect(materialType.alias("material"), numberOfRequests.alias("noRequests"));
-        cq.where(cb.and(fromExpr, toExpr));
-		cq.groupBy(eriRoot.get(ExternalRecordInfo_.materialType));
-		cq.orderBy(cb.desc(numberOfRequests));
+        model.addAttribute("materialTuples", reservations.listTuples(materialsCq));
+        model.addAttribute("parentSignaturesMap", parentSignaturesMap);
+        model.addAttribute("signatureTuples", signatureTuples);
 
-		List<Tuple> tuples = reservations.listTuples(cq);
-		model.addAttribute("tuples", tuples);
-
-		return "reservation_materials";
-	}
+        return "reservation_materials";
+    }
 }

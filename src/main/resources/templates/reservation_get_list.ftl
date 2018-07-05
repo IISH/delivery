@@ -39,7 +39,7 @@
   </li>
   <li>
     <a href="${rc.contextPath}/reservation/materials">
-	<@_ "reservationMaterials.noRequestsPerMaterial" "Number of requests per material type"/>
+	  <@_ "reservationMaterials.noRequests" "Number of requests"/>
     </a>
   </li>
 </ul>
