@@ -34,29 +34,22 @@ public class ReproductionMaterialStatistics extends TupleRequestSearch<HoldingRe
      */
     @Override
     protected void build(Root<HoldingReproduction> hrRoot, CriteriaQuery<?> cq) {
-        Date from = getFromDateFilter(p);
-        from = (from != null) ? from : new Date();
-        Date to = getToDateFilter(p);
-        to = (to != null) ? to : new Date();
-
         // Join all required tables
         Join<HoldingReproduction, Reproduction> repRoot = hrRoot.join(HoldingReproduction_.reproduction);
         Join<HoldingReproduction, Holding> hRoot = hrRoot.join(HoldingReproduction_.holding);
         Join<Holding, Record> rRoot = hRoot.join(Holding_.record);
         Join<Record, ExternalRecordInfo> eriRoot = rRoot.join(Record_.externalInfo);
 
-        // Within the selected date range
-        Expression<Date> reproductionDate = repRoot.get(Reproduction_.date);
-        Expression<Boolean> fromExpr = cb.greaterThanOrEqualTo(reproductionDate, from);
-        Expression<Boolean> toExpr = cb.lessThanOrEqualTo(reproductionDate, to);
-
         // Count the materials
+        Expression<Date> reproductionDate = repRoot.get(Reproduction_.date);
         Expression<ExternalRecordInfo.MaterialType> materialType =
                 eriRoot.get(ExternalRecordInfo_.materialType);
         Expression<Long> numberOfRequests = cb.count(materialType);
 
+        Predicate datePredicate = getDatePredicate(reproductionDate, true);
+
         cq.multiselect(materialType.alias("material"), numberOfRequests.alias("noRequests"));
-        cq.where(cb.and(fromExpr, toExpr));
+        cq.where(datePredicate);
         cq.groupBy(eriRoot.get(ExternalRecordInfo_.materialType));
         cq.orderBy(cb.desc(numberOfRequests));
     }

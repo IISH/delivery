@@ -34,18 +34,12 @@ public class ReproductionPaymentStatistics extends TupleRequestSearch<HoldingRep
      */
     @Override
     protected void build(Root<HoldingReproduction> hrRoot, CriteriaQuery<?> cq) {
-        Date from = getFromDateFilter(p);
-        from = (from != null) ? from : new Date();
-        Date to = getToDateFilter(p);
-        to = (to != null) ? to : new Date();
-
         // Join all required tables
         Join<HoldingReproduction, Reproduction> repRoot = hrRoot.join(HoldingReproduction_.reproduction);
 
         // Within the selected date range
         Expression<Date> reproductionDate = repRoot.get(Reproduction_.datePaymentAccepted);
-        Expression<Boolean> fromExpr = cb.greaterThanOrEqualTo(reproductionDate, from);
-        Expression<Boolean> toExpr = cb.lessThanOrEqualTo(reproductionDate, to);
+        Predicate datePredicate = getDatePredicate(reproductionDate, true);
 
         // And only active or completed reproductions
         Expression<Reproduction.Status> status = repRoot.get(Reproduction_.status);
@@ -75,7 +69,7 @@ public class ReproductionPaymentStatistics extends TupleRequestSearch<HoldingRep
                 sumDiscount.alias("sumDiscount"),
                 sumBtwPrice.alias("sumBtwPrice")
         );
-        cq.where(cb.and(statusExpr, cb.and(fromExpr, toExpr)));
+        cq.where(cb.and(statusExpr, datePredicate));
         cq.groupBy(btwPercentage);
     }
 }

@@ -1,8 +1,11 @@
 package org.socialhistoryservices.delivery.request.service;
 
+import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
 import org.socialhistoryservices.delivery.util.InvalidRequestException;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Predicate;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,7 +13,7 @@ import java.util.Date;
 import java.util.Map;
 
 /**
- * Request search helper class, with support for paging.
+ * Request search helper class.
  *
  * @param <R> The request entity.
  */
@@ -35,43 +38,94 @@ public abstract class RequestSearch<R> {
     }
 
     /**
+     * Obtain a material filter predicate.
+     *
+     * @param materialTypeExpression The material type field.
+     * @return The material predicate.
+     */
+    protected Predicate getMaterialPredicate(Expression<ExternalRecordInfo.MaterialType> materialTypeExpression) {
+        String material = p.containsKey("material") ? p.get("material")[0].trim().toUpperCase() : "";
+        if (!material.equals("")) {
+            try {
+                return cb.equal(materialTypeExpression, ExternalRecordInfo.MaterialType.valueOf(material));
+            }
+            catch (IllegalArgumentException ex) {
+                throw new InvalidRequestException("No such material: " + material);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Obtain a date filter predicate.
+     *
+     * @param dateExpression The date field.
+     * @param autoDate       Auto add the date of today.
+     * @return The date predicate.
+     */
+    protected Predicate getDatePredicate(Expression<Date> dateExpression, boolean autoDate) {
+        Date date = getDateFilter();
+        if (date != null)
+            return cb.equal(dateExpression, date);
+
+        Predicate fromPredicate = null;
+        Date fromDate = getFromDateFilter();
+        fromDate = (autoDate && fromDate == null) ? new Date() : fromDate;
+        if (fromDate != null)
+            fromPredicate = cb.greaterThanOrEqualTo(dateExpression, fromDate);
+
+        Predicate toPredicate = null;
+        Date toDate = getToDateFilter();
+        toDate = (autoDate && toDate == null) ? new Date() : toDate;
+        if (toDate != null)
+            toPredicate = cb.lessThanOrEqualTo(dateExpression, toDate);
+
+        if (fromPredicate != null && toPredicate != null)
+            return cb.and(fromPredicate, toPredicate);
+
+        if (fromPredicate != null)
+            return fromPredicate;
+
+        if (toPredicate != null)
+            return toPredicate;
+
+        return null;
+    }
+
+    /**
      * Returns a single date from the parameter map.
      *
-     * @param p The parameter map to search the given filter value in.
      * @return A date, if found.
      */
-    protected Date getDateFilter(Map<String, String[]> p) {
-        return getDateFilterForKey("date", p);
+    private Date getDateFilter() {
+        return getDateFilterForKey("date");
     }
 
     /**
      * Returns a 'from' date from the parameter map.
      *
-     * @param p The parameter map to search the given filter value in.
      * @return A date, if found.
      */
-    protected Date getFromDateFilter(Map<String, String[]> p) {
-        return getDateFilterForKey("from_date", p);
+    private Date getFromDateFilter() {
+        return getDateFilterForKey("from_date");
     }
 
     /**
      * Returns a 'to' date from the parameter map.
      *
-     * @param p The parameter map to search the given filter value in.
      * @return A date, if found.
      */
-    protected Date getToDateFilter(Map<String, String[]> p) {
-        return getDateFilterForKey("to_date", p);
+    private Date getToDateFilter() {
+        return getDateFilterForKey("to_date");
     }
 
     /**
      * Obtains the date from the parameter map.
      *
      * @param key The date key.
-     * @param p   The parameter map to search the given filter value in.
      * @return A date, if found.
      */
-    private Date getDateFilterForKey(String key, Map<String, String[]> p) {
+    private Date getDateFilterForKey(String key) {
         Date date = null;
         boolean containsTo = p.containsKey(key) && !p.get(key)[0].trim().equals("");
         if (containsTo) {

@@ -9,7 +9,6 @@ import org.socialhistoryservices.delivery.reservation.entity.Reservation;
 import org.socialhistoryservices.delivery.reservation.entity.Reservation_;
 
 import javax.persistence.criteria.*;
-import java.util.Date;
 import java.util.Map;
 
 /**
@@ -42,12 +41,12 @@ public class ReservationSearch extends ListRequestSearch<HoldingReservation> {
         Expression<Boolean> where = null;
 
         // Filters
-        where = addDateFilter(p, cb, resRoot, where);
-        where = addNameFilter(p, cb, resRoot, where);
-        where = addEmailFilter(p, cb, resRoot, where);
-        where = addStatusFilter(p, cb, resRoot, where);
-        where = addPrintedFilter(p, cb, hrRoot, where);
-        where = addSearchFilter(p, cb, hrRoot, resRoot, where);
+        where = addDateFilter(resRoot, where);
+        where = addNameFilter(resRoot, where);
+        where = addEmailFilter(resRoot, where);
+        where = addStatusFilter(resRoot, where);
+        where = addPrintedFilter(hrRoot, where);
+        where = addSearchFilter(hrRoot, resRoot, where);
 
         // Set the where clause
         if (where != null) {
@@ -57,23 +56,21 @@ public class ReservationSearch extends ListRequestSearch<HoldingReservation> {
         Join<HoldingReservation, Holding> hRoot = hrRoot.join(HoldingReservation_.holding);
 
         if (!isCount) {
-            cq.orderBy(parseSortFilter(p, cb, hrRoot, resRoot, hRoot));
+            cq.orderBy(parseSortFilter(hrRoot, resRoot, hRoot));
         }
     }
 
     /**
      * Parse the sort and sort_dir filters into an Order to be used in a query.
      *
-     * @param p       The parameter list to search the filter values in.
-     * @param cb      The criteria builder used to construct the Order.
      * @param hrRoot  The root of the holding reservation used to construct the Order.
      * @param resRoot The root of the reservation used to construct the Order.
      * @param hRoot   The root of the holding used to construct the Order.
      * @return The order the query should be in (asc/desc) sorted on provided
      * column. Defaults to asc on the PK column.
      */
-    private Order parseSortFilter(Map<String, String[]> p, CriteriaBuilder cb, From<?, HoldingReservation> hrRoot,
-                                  From<?, Reservation> resRoot, From<?, Holding> hRoot) {
+    private Order parseSortFilter(From<?, HoldingReservation> hrRoot, From<?, Reservation> resRoot,
+                                  From<?, Holding> hRoot) {
         boolean containsSort = p.containsKey("sort");
         boolean containsSortDir = p.containsKey("sort_dir");
         Expression e = resRoot.get(Reservation_.date);
@@ -106,14 +103,14 @@ public class ReservationSearch extends ListRequestSearch<HoldingReservation> {
     /**
      * Add the search filter to the where clause, if present.
      *
-     * @param p       The parameter list to search the given filter value in.
-     * @param cb      The criteria builder.
      * @param hrRoot  The holding reservation root.
      * @param resRoot The reservation root.
      * @param where   The already present where clause or null if none present.
      * @return The (updated) where clause, or null if the filter did not exist.
      */
-    private Expression<Boolean> addSearchFilter(Map<String, String[]> p, CriteriaBuilder cb, Root<HoldingReservation> hrRoot, Join<HoldingReservation, Reservation> resRoot, Expression<Boolean> where) {
+    private Expression<Boolean> addSearchFilter(Root<HoldingReservation> hrRoot,
+                                                Join<HoldingReservation, Reservation> resRoot,
+                                                Expression<Boolean> where) {
         if (p.containsKey("search") && !p.get("search")[0].trim().equals("")) {
             String search = p.get("search")[0].trim().toLowerCase();
 
@@ -139,14 +136,11 @@ public class ReservationSearch extends ListRequestSearch<HoldingReservation> {
     /**
      * Add the printed filter to the where clause, if present.
      *
-     * @param p      The parameter list to search the given filter value in.
-     * @param cb     The criteria builder.
      * @param hrRoot The holding reservation root.
      * @param where  The already present where clause or null if none present.
      * @return The (updated) where clause, or null if the filter did not exist.
      */
-    private Expression<Boolean> addPrintedFilter(Map<String, String[]> p,
-                                                 CriteriaBuilder cb, Root<HoldingReservation> hrRoot, Expression<Boolean> where) {
+    private Expression<Boolean> addPrintedFilter(Root<HoldingReservation> hrRoot, Expression<Boolean> where) {
         if (p.containsKey("printed")) {
             String printed = p.get("printed")[0].trim().toLowerCase();
             if (printed.isEmpty()) {
@@ -163,13 +157,12 @@ public class ReservationSearch extends ListRequestSearch<HoldingReservation> {
     /**
      * Add the status filter to the where clause, if present.
      *
-     * @param p       The parameter list to search the given filter value in.
-     * @param cb      The criteria builder.
      * @param resRoot The reservation root.
      * @param where   The already present where clause or null if none present.
      * @return The (updated) where clause, or null if the filter did not exist.
      */
-    private Expression<Boolean> addStatusFilter(Map<String, String[]> p, CriteriaBuilder cb, Join<HoldingReservation, Reservation> resRoot, Expression<Boolean> where) {
+    private Expression<Boolean> addStatusFilter(Join<HoldingReservation, Reservation> resRoot,
+                                                Expression<Boolean> where) {
         if (p.containsKey("status")) {
             String status = p.get("status")[0].trim().toUpperCase();
             // Tolerant to empty status to ensure the filter in
@@ -179,8 +172,7 @@ public class ReservationSearch extends ListRequestSearch<HoldingReservation> {
                     Expression<Boolean> exStatus = cb.equal(
                             resRoot.get(Reservation_.status), Reservation.Status.valueOf(status));
                     where = where != null ? cb.and(where, exStatus) : exStatus;
-                }
-                catch (IllegalArgumentException ex) {
+                } catch (IllegalArgumentException ex) {
                     throw new InvalidRequestException("No such status: " +
                             status);
                 }
@@ -192,13 +184,12 @@ public class ReservationSearch extends ListRequestSearch<HoldingReservation> {
     /**
      * Add the email filter to the where clause, if present.
      *
-     * @param p       The parameter list to search the given filter value in.
-     * @param cb      The criteria builder.
      * @param resRoot The reservation root.
      * @param where   The already present where clause or null if none present.
      * @return The (updated) where clause, or null if the filter did not exist.
      */
-    private Expression<Boolean> addEmailFilter(Map<String, String[]> p, CriteriaBuilder cb, Join<HoldingReservation, Reservation> resRoot, Expression<Boolean> where) {
+    private Expression<Boolean> addEmailFilter(Join<HoldingReservation, Reservation> resRoot,
+                                               Expression<Boolean> where) {
         if (p.containsKey("visitorEmail")) {
             Expression<Boolean> exEmail = cb.like(
                     resRoot.get(Reservation_.visitorEmail),
@@ -211,15 +202,11 @@ public class ReservationSearch extends ListRequestSearch<HoldingReservation> {
     /**
      * Add the name filter to the where clause, if present.
      *
-     * @param p       The parameter list to search the given filter value in.
-     * @param cb      The criteria builder.
      * @param resRoot The reservation root.
      * @param where   The already present where clause or null if none present.
      * @return The (updated) where clause, or null if the filter did not exist.
      */
-    private Expression<Boolean> addNameFilter(Map<String, String[]> p,
-                                              CriteriaBuilder cb,
-                                              Join<HoldingReservation, Reservation> resRoot,
+    private Expression<Boolean> addNameFilter(Join<HoldingReservation, Reservation> resRoot,
                                               Expression<Boolean> where) {
         if (p.containsKey("visitorName")) {
             Expression<Boolean> exName = cb.like(resRoot.get(Reservation_.visitorName),
@@ -232,33 +219,15 @@ public class ReservationSearch extends ListRequestSearch<HoldingReservation> {
     /**
      * Add the date/from_date/to_date filter to the where clause, if present.
      *
-     * @param p       The parameter list to search the given filter value in.
-     * @param cb      The criteria builder.
      * @param resRoot The reservation root.
      * @param where   The already present where clause or null if none present.
      * @return The (updated) where clause, or null if the filter did not exist.
      */
-    private Expression<Boolean> addDateFilter(Map<String, String[]> p,
-                                              CriteriaBuilder cb,
-                                              Join<HoldingReservation, Reservation> resRoot,
+    private Expression<Boolean> addDateFilter(Join<HoldingReservation, Reservation> resRoot,
                                               Expression<Boolean> where) {
-        Date date = getDateFilter(p);
-        if (date != null) {
-            Expression<Boolean> exDate = cb.equal(resRoot.get(Reservation_.date), date);
-            where = where != null ? cb.and(where, exDate) : exDate;
-        }
-        else {
-            Date fromDate = getFromDateFilter(p);
-            Date toDate = getToDateFilter(p);
-            if (fromDate != null) {
-                Expression<Boolean> exDate = cb.greaterThanOrEqualTo(resRoot.get(Reservation_.date), fromDate);
-                where = where != null ? cb.and(where, exDate) : exDate;
-            }
-            if (toDate != null) {
-                Expression<Boolean> exDate = cb.lessThanOrEqualTo(resRoot.get(Reservation_.date), toDate);
-                where = where != null ? cb.and(where, exDate) : exDate;
-            }
-        }
+        Predicate datePredicate = getDatePredicate(resRoot.get(Reservation_.date), false);
+        if (datePredicate != null)
+            where = (where != null) ? cb.and(where, datePredicate) : datePredicate;
         return where;
     }
 }
