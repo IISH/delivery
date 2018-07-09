@@ -3,6 +3,7 @@ package org.socialhistoryservices.delivery.reproduction.service;
 import org.apache.log4j.Logger;
 import org.socialhistoryservices.delivery.api.*;
 import org.socialhistoryservices.delivery.config.DeliveryProperties;
+import org.socialhistoryservices.delivery.config.PrinterConfiguration;
 import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
 import org.socialhistoryservices.delivery.record.entity.Holding;
 import org.socialhistoryservices.delivery.reproduction.dao.*;
@@ -75,6 +76,9 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
 
     @Autowired
     private DeliveryProperties deliveryProperties;
+
+    @Autowired
+    private PrinterConfiguration printerConfiguration;
 
     private Logger log = Logger.getLogger(getClass());
 
@@ -495,7 +499,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
                 }
             }
 
-            printRequest(requestPrintables, deliveryProperties.getPrinterArchive(), alwaysPrint);
+            printRequest(requestPrintables, printerConfiguration.getPrinterNameArchive(), alwaysPrint);
 
             for (Reproduction r : reproductions) {
                 saveReproduction(r);

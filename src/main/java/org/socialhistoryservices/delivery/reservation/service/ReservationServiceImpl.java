@@ -1,5 +1,6 @@
 package org.socialhistoryservices.delivery.reservation.service;
 
+import org.socialhistoryservices.delivery.config.PrinterConfiguration;
 import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
 import org.apache.log4j.Logger;
 import org.socialhistoryservices.delivery.config.DeliveryProperties;
@@ -52,6 +53,9 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     @Autowired
     private DeliveryProperties deliveryProperties;
+
+    @Autowired
+    private PrinterConfiguration printerConfiguration;
 
     private Logger log = Logger.getLogger(getClass());
 
@@ -347,8 +351,8 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
                 reservations.add(hr.getReservation());
             }
 
-            printRequest(requestPrintables, deliveryProperties.getPrinterArchive(), alwaysPrint);
-            printRequest(requestPrintablesArchive, deliveryProperties.getPrinterReadingRoom(), alwaysPrint);
+            printRequest(requestPrintables, printerConfiguration.getPrinterNameArchive(), alwaysPrint);
+            printRequest(requestPrintablesArchive, printerConfiguration.getPrinterNameReadingRoom(), alwaysPrint);
 
             for (Reservation r : reservations) {
                 saveReservation(r);

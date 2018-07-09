@@ -121,6 +121,22 @@ ul.options {
     clear: none;
 }
 
+fieldset.config {
+    margin: 10px 0;
+}
+
+fieldset.config ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 10px;
+}
+
+fieldset.config ul li {
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
 .holdings input[type="text"] {
     width: 8em;
 }
@@ -340,6 +356,11 @@ header.main h1 {
     padding: 0;
     margin-left: 170px;
     margin-top: 5px;
+}
+
+header.main a {
+    color: inherit;
+    text-decoration: none;
 }
 
 nav.main {

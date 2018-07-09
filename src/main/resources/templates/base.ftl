@@ -52,7 +52,7 @@
 
 <#macro userHeading disableLanguage=false>
     <header class="main">
-      <h1>Delivery</h1>
+    <a href="/"><h1>Delivery</h1></a>
         <#if !disableLanguage>
             <div class="languageSelect">
             <span><@_ "language" "Language"/></span>
@@ -69,7 +69,7 @@
 </#macro>
 <#macro heading>
     <header class="main">
-      <h1>Delivery</h1>
+      <a href="/"><h1>Delivery</h1></a>
       <div class="languageSelect">
         <span><@_ "language" "Language"/></span>
         <ul>
