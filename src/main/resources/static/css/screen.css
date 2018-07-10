@@ -128,13 +128,17 @@ fieldset.config {
 fieldset.config ul {
     list-style: none;
     padding: 0;
-    margin: 0 0 10px;
+    margin: 0;
 }
 
 fieldset.config ul li {
     display: block;
     margin: 0;
     padding: 0;
+}
+
+fieldset.config input[type=submit] {
+    margin-top: 10px;
 }
 
 .holdings input[type="text"] {

@@ -30,6 +30,10 @@
       </li>
     </ul>
 
+    <span class="note">
+      <@_ "printer.note""Note: requests that were already sent to the printer before changing the printer configuration have to be printed again!"/>
+    </span>
+
     <input type="submit" name="printerSubmit" value="<@_ "editrecord.submit" "Submit"/>"/>
   </fieldset>
 </form>
