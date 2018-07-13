@@ -369,7 +369,15 @@ public class IISHRecordLookupService implements RecordLookupService {
             if (url.endsWith("?locatt=view:ead")) {
                 URL eadUrl = new URL(url);
                 logger.debug(String.format("getEADNode(): Querying EAD URL: %s", eadUrl.toString()));
-                URLConnection conn = eadUrl.openConnection();
+                HttpURLConnection conn = (HttpURLConnection) eadUrl.openConnection();
+
+                int status = conn.getResponseCode();
+                if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM
+                        || status == HttpURLConnection.HTTP_SEE_OTHER) {
+                    url = conn.getHeaderField("Location");
+                    URL redirectUrl = new URL(url);
+                    conn = (HttpURLConnection) redirectUrl.openConnection();
+                }
 
                 BufferedReader rdr = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 return (Node) xpOAI.evaluate(new InputSource(rdr), XPathConstants.NODE);
