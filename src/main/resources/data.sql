@@ -80,20 +80,16 @@ INSERT INTO group_permissions VALUES (3, 19);
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO users VALUES (1, 'swo@iisg.nl');
 INSERT INTO users VALUES (2, 'lwo@iisg.nl');
 INSERT INTO users VALUES (3, 'etu@iisg.nl');
 INSERT INTO users VALUES (4, 'kerim');
-INSERT INTO users VALUES (5, 'igor.vanderbom');
 
 --
 -- Data for Name: user_groups; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO user_groups VALUES (1, 2);
 INSERT INTO user_groups VALUES (2, 2);
 INSERT INTO user_groups VALUES (3, 2);
 INSERT INTO user_groups VALUES (4, 2);
-INSERT INTO user_groups VALUES (5, 2);
 
 ALTER SEQUENCE HIBERNATE_SEQUENCE RESTART WITH 100
