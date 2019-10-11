@@ -29,7 +29,7 @@
         </#if>
       </#assign>
       <label for="from_date_filter">
-        <@_ "reservationList.dateFrom" "From"/>
+        <@_ "reservationList.dateFrom" "From date"/>
       </label>
       <input type="text" maxlength="10" id="from_date_filter" name="from_date"
              value="${from_date_value?trim}" class="filter_date" />

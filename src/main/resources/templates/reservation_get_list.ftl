@@ -69,47 +69,24 @@
     </li>
     <li>
       <label for="status_filter"><@_ "reservation.status" "Status"/></label>
-      <select id="status_filter" name="status">
-        <option value=""
-        <#if !RequestParameters["status"]?? ||
-             RequestParameters["status"] == "">
-        selected="selected"</#if>>
-        <@_ "reservationList.allStatus" "Status N/A"/>
-        </option>
+
+        <input type="radio" id="status_filter" name="status" value=""
+        <#if !RequestParameters["status"]?? || RequestParameters["status"] == ""> checked="checked"</#if>>
+        <@_ "all" "All"/> &nbsp;
+        </input>
 
         <#list status_types?keys  as k>
-        <option value="${k?lower_case}"
-        <#if (RequestParameters["status"]?? &&
-              RequestParameters["status"]?upper_case == k)>
-        selected="selected"</#if>>
-        <@_ "reservation.statusType.${k}" "${k}" />
-        </option>
+        <input type="radio" id="status_filter" name="status" value="${k?lower_case}"
+        <#if (RequestParameters["status"]?? && RequestParameters["status"]?upper_case == k)> checked="checked"</#if>>
+        <@_ "reservation.statusType.${k}" "${k}" /> &nbsp;
+        </input>
         </#list>
-      </select>
+
     </li>
     <li>
-      <label for="printed_filter"><@_ "reservation.printed" "Printed"/></label>
-      <select id="printed_filter" name="printed">
-        <option value=""
-        <#if !RequestParameters["printed"]?? ||
-             RequestParameters["printed"] == "">
-        selected="selected"</#if>>
-        <@_ "reservationList.allPrinted" "Printed N/A"/>
-        </option>
-        <option value="true"
-        <#if (RequestParameters["printed"]?? &&
-              RequestParameters["printed"]?lower_case == "true")>
-        selected="selected"</#if>>
-        <@_ "yes" "Yes" />
-        </option>
-        <option value="false"
-        <#if (RequestParameters["printed"]?? &&
-              RequestParameters["printed"]?lower_case == "false")>
-        selected="selected"</#if>>
-        <@_ "no" "No" />
-        </option>
-      </select>
+        <@filterSentToPrinter />
     </li>
+
     <li>
       <#assign from_date_value>
         <#-- The date field has priority over from_date -->
@@ -119,40 +96,27 @@
           ${RequestParameters["from_date"]?html}
         </#if>
       </#assign>
-      <label for="from_date_filter"><@_ "reservationList.dateFrom" "From"/>
+      <label for="from_date_filter"><@_ "reservationList.date" "Date"/>
       </label>
-      <input type="text" maxlength="10" id="from_date_filter" name="from_date"
+      <strong><@_ "misc.from" "from"/></strong> <input type="text" maxlength="10" size="15" id="from_date_filter" name="from_date"
              value="${from_date_value?trim}" class="filter_date" />
-    </li>
-    <li>
+
       <#assign to_date_value>
         <#-- The date field has priority over to_date -->
-        <#if RequestParameters["date"]??>
-          ${RequestParameters["date"]?html}
-        <#elseif RequestParameters["to_date"]??>
-          ${RequestParameters["to_date"]?html}
+<#--        <#if RequestParameters["date"]??>-->
+<#--			${RequestParameters["date"]?html}-->
+<#--        <#elseif RequestParameters["to_date"]??>-->
+        <#if RequestParameters["to_date"]??>
+			${RequestParameters["to_date"]?html}
         </#if>
       </#assign>
-      <label for="to_date_filter"><@_ "reservationList.dateUpTo" "Up To"/>
-      </label>
-      <input type="text" maxlength="10" id="to_date_filter" name="to_date"
+
+      <strong><@_ "misc.to" "to"/> </strong>
+      <input type="text" maxlength="10" size="15" id="to_date_filter" name="to_date"
              value="${to_date_value?trim}" class="filter_date" />
     </li>
     <li>
-      <label for="page_len_filter">
-      <@_ "pageListHolder.nrResultsPerPage" "Amount of Results per Page"/>
-      </label>
-      <select id="page_len_filter" name="page_len">
-        <#list 1..(delivery.requestMaxPageLen?number/delivery.requestPageStepSize?number)?floor as i>
-        <#assign pageSize = (i*delivery.requestPageStepSize?number)?floor/>
-        <option value="${pageSize}"
-        <#if (RequestParameters["page_len"]?? &&
-              RequestParameters["page_len"]?number == pageSize) ||
-             (!RequestParameters["page_len"]?? &&
-              delivery.requestPageLen?number == pageSize)>
-        selected="selected"</#if>>${pageSize}</option>
-        </#list>
-      </select>
+        <@filterResultsPerPage />
     </li>
   </ul>
     <#assign searchLabel>

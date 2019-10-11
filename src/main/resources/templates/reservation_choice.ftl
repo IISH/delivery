@@ -73,6 +73,6 @@
   </#list>
 
   <input type="text" class="code" name="codes"/>
-  <input type="submit" value="<@_ "reservation.addCode" "Validate code"/>"/>
+  <input type="submit" value="<@_ "reservation.validateCode" "Validate code"/>"/>
 </form>
 </@userbase>

@@ -16,7 +16,7 @@ public class EADRecordExtractor implements IISHRecordExtractor {
 
     private XPath xpath;
     private XPathExpression xpTitle, xpAuthor, xpPhysicalDescription, xpUnitId,
-            xpAccessAndUse, xpAccessRestrict, xpP, xpParent;
+            xpAccessAndUse, xpAccessRestrict, xpP, xpParent, xpContainer;
 
     public EADRecordExtractor() {
         XPathFactory factory = XPathFactory.newInstance();
@@ -24,6 +24,7 @@ public class EADRecordExtractor implements IISHRecordExtractor {
         xpath.setNamespaceContext(new IISHNamespaceContext());
 
         try {
+            xpContainer = xpath.compile(".//ead:container");
             xpTitle = xpath.compile("normalize-space(.//ead:unittitle)");
             xpAuthor = xpath.compile("normalize-space(.//ead:origination[@label='Creator']/ead:persname)");
             xpPhysicalDescription = xpath.compile(
@@ -98,6 +99,7 @@ public class EADRecordExtractor implements IISHRecordExtractor {
         externalInfo.setMaterialType(ExternalRecordInfo.MaterialType.ARCHIVE);
         externalInfo.setPublicationStatus(ExternalRecordInfo.PublicationStatus.UNKNOWN);
         externalInfo.setRestriction(evaluateRestriction(node, findItemNode(node, item)));
+        externalInfo.setContainer( getContainer(node, findItemNode(node, item)) );
 
         String physicalDescription = XmlUtils.evaluate(xpPhysicalDescription, node);
         externalInfo.setPhysicalDescription((physicalDescription != null) ? physicalDescription.trim() : null);
@@ -212,6 +214,17 @@ public class EADRecordExtractor implements IISHRecordExtractor {
         }
         catch (XPathExpressionException e) {
             return ExternalRecordInfo.Restriction.OPEN;
+        }
+    }
+
+    private String getContainer(Node node, Node itemNode) {
+        try {
+            Element elContainer = (Element) xpContainer.evaluate(itemNode, XPathConstants.NODE);
+            return elContainer.getTextContent().trim();
+        } catch (NullPointerException ex) {
+            return null;
+        } catch (XPathExpressionException ex) {
+            return null;
         }
     }
 }

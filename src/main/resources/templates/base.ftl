@@ -49,7 +49,6 @@
   <body>
 </#macro>
 
-
 <#macro userHeading disableLanguage=false>
     <header class="main">
     <a href="/"><h1>Delivery</h1></a>
@@ -65,8 +64,8 @@
     </header>
     <nav class="main">
     </nav>
-
 </#macro>
+
 <#macro heading>
     <header class="main">
       <a href="/"><h1>Delivery</h1></a>
@@ -82,7 +81,7 @@
       <ul>
         <#if  _sec.ifAllGranted("ROLE_RESERVATION_VIEW")>
           <li>
-            <a href="${rc.contextPath}/reservation/?date=${.now?string("yyyy-MM-dd")}&amp;status=PENDING">
+            <a href="${rc.contextPath}/reservation/?from_date=${.now?string("yyyy-MM-dd")}&amp;status=pending">
             <@_ "reservationList.title" "Reservation Overview"/>
             </a>
           </li>
@@ -110,7 +109,7 @@
         </#if>
         <#if  _sec.ifAllGranted("ROLE_PERMISSION_VIEW")>
           <li>
-            <a href="${rc.contextPath}/permission/">
+            <a href="${rc.contextPath}/permission/?permission=null">
               <@_ "permissionList.title" "Permission Request Overview"/>
             </a>
           </li>
@@ -169,4 +168,98 @@
     </section>
   </body>
 </html>
+</#macro>
+
+<#macro filterSentToPrinter>
+	<label for="printed_filter"><@_ "reservation.printed" "Sent to printer"/></label>
+
+	<input type="radio" id="printed_filter" name="printed" value=""
+            <#if !RequestParameters["printed"]?? || RequestParameters["printed"] == ""> checked="checked"</#if>>
+    <@_ "yesno" "Yes/No"/> &nbsp;
+	</input>
+
+	<input type="radio" id="printed_filter" name="printed" value="true"
+            <#if (RequestParameters["printed"]?? && RequestParameters["printed"]?lower_case == "true")> checked="checked"</#if>>
+    <@_ "yes" "Yes" /> &nbsp;
+	</input>
+
+	<input type="radio" id="printed_filter" name="printed" value="false"
+            <#if (RequestParameters["printed"]?? && RequestParameters["printed"]?lower_case == "false")> checked="checked"</#if>>
+        <@_ "no" "No" />
+	</input>
+</#macro>
+
+<#macro filterResultsPerPage>
+	<label for="page_len_filter">
+        <@_ "pageListHolder.nrResultsPerPage" "Results per page"/>
+	</label>
+
+    <#list delivery.requestPageSteps as i>
+		<input type="radio" id="page_len_filter" name="page_len" value="${i}"
+    <#if (RequestParameters["page_len"]?? && RequestParameters["page_len"]?number == i) || (!RequestParameters["page_len"]?? && delivery.requestPageLen?number == i)>
+		checked="checked"</#if>>${i} &nbsp; </input>
+    </#list>
+</#macro>
+
+<#macro filterPermissionsORG>
+	<label for="permission_filter"><@_ "recordPermission.granted" "Permission"/></label>
+
+	<select id="permission_filter" name="permission">
+		<option value=""
+				<#if !RequestParameters["permission"]?? ||
+		RequestParameters["permission"] == "">
+			selected="selected"</#if>>
+			<@_ "permissionList.allPermission" "Permission N/A"/>
+		</option>
+
+		<option value="null"
+				<#if (RequestParameters["permission"]?? &&
+		RequestParameters["permission"]?upper_case == 'NULL')>
+			selected="selected"</#if>>
+			<@_ "recordPermission.granted.null" "To decide" />
+		</option>
+
+		<option value="true"
+				<#if (RequestParameters["permission"]?? &&
+		RequestParameters["permission"]?upper_case == 'TRUE')>
+			selected="selected"</#if>>
+			<@_ "recordPermission.granted.true" "Granted" />
+		</option>
+
+		<option value="false"
+				<#if (RequestParameters["permission"]?? &&
+		RequestParameters["permission"]?upper_case == 'FALSE')>
+			selected="selected"</#if>>
+			<@_ "recordPermission.granted.false" "Denied" />
+		</option>
+
+	</select>
+</#macro>
+
+<#macro filterPermissions>
+	<label for="permission_filter"><@_ "recordPermission.granted" "Permission"/></label>
+
+		<input type="radio" id="permission_filter" name="permission" value=""
+                <#if !RequestParameters["permission"]?? || RequestParameters["permission"] == "">
+			checked="checked"</#if>>
+            <@_ "all" "All"/> &nbsp;
+		</input>
+
+		<input type="radio" id="permission_filter" name="permission" value="null"
+                <#if (RequestParameters["permission"]?? && RequestParameters["permission"]?upper_case == 'NULL')>
+			checked="checked"</#if>>
+            <@_ "recordPermission.granted.null" "To decide" /> &nbsp;
+		</input>
+
+		<input type="radio" id="permission_filter" name="permission" value="true"
+                <#if (RequestParameters["permission"]?? && RequestParameters["permission"]?upper_case == 'TRUE')>
+			checked="checked"</#if>>
+            <@_ "recordPermission.granted.true" "Granted" /> &nbsp;
+		</input>
+
+		<input type="radio" id="permission_filter" name="permission" value="false"
+                <#if (RequestParameters["permission"]?? && RequestParameters["permission"]?upper_case == 'FALSE')>
+			checked="checked"</#if>>
+            <@_ "recordPermission.granted.false" "Denied" />
+		</input>
 </#macro>

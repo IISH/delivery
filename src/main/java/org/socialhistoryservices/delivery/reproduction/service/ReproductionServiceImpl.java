@@ -499,7 +499,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
                 }
             }
 
-            printRequest(requestPrintables, printerConfiguration.getPrinterNameArchive(), alwaysPrint);
+            printRequest(requestPrintables, printerConfiguration.getPrinterNameArchive(), alwaysPrint, false);
 
             for (Reproduction r : reproductions) {
                 saveReproduction(r);

@@ -12,7 +12,14 @@
 
 <ul class="permissionDetails">
     <li><span><@_ "permission.name" "Name"/></span> ${permission.name?html}</li>
-    <li><span><@_ "permission.email" "E-mail"/></span> ${permission.email?html}</li>
+	<li><span><@_ "permission.email" "E-mail"/></span> ${permission.email?html}</li>
+	<li><span><@_ "permission.dateRequested" "Date requested"/></span>
+        <#if permission.dateRequested??>
+            ${permission.dateRequested?string(delivery.dateFormat)}
+        <#else>
+        	-
+        </#if>
+	</li>
 
     <#if permission.address??>
         <li>

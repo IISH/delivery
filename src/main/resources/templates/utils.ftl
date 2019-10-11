@@ -42,15 +42,15 @@ ${uri}?<#list requestParams?keys as k><#if requestParams[k] !="">${k}=${requestP
     <#assign noPages = (totalSize/noItemsPerPage?number)?ceiling/>
     <div class="pageLinks">
         <#if pageNumber?number &gt; 1>
-            <a href="<@paramUrl {"page": 1} />" class="pageLinks">&lt;&lt;</a>
-            <a href="<@paramUrl {"page": (pageNumber?number-1)?c} />" class="pageLinks">&lt;</a>
+            <a href="<@paramUrl {"page": 1} />" class="pageLinks">&laquo; <@_ "pageListHolder.first" "First"/></a>
+            <a href="<@paramUrl {"page": (pageNumber?number-1)?c} />" class="pageLinks">&lsaquo; <@_ "pageListHolder.prev" "Prev"/></a>
         </#if>
 
         <@_ "pageListHolder.page" "Page"/> ${pageNumber?number} / ${noPages}
 
         <#if pageNumber?number &lt; noPages>
-            <a href="<@paramUrl {"page": (pageNumber?number+1)?c} />" class="pageLinks">&gt;</a>
-            <a href="<@paramUrl {"page": noPages?c} />" class="pageLinks">&gt;&gt;</a>
+            <a href="<@paramUrl {"page": (pageNumber?number+1)?c} />" class="pageLinks"><@_ "pageListHolder.next" "Next"/> &rsaquo;</a>
+            <a href="<@paramUrl {"page": noPages?c} />" class="pageLinks"><@_ "pageListHolder.last" "Last"/> &raquo;</a>
         </#if>
     </div>
 </#macro>
@@ -64,17 +64,16 @@ ${uri}?<#list requestParams?keys as k><#if requestParams[k] !="">${k}=${requestP
 <div class="pageLinks">
     <#if pageChunk.resultStart &gt; 1>
         <a href="<@paramUrl {"resultStart": "1"} />"
-           class="pageLinks">&lt;&lt;</a>
+           class="pageLinks">&laquo; <@_ "pageListHolder.first" "First"/></a>
         <a href="<@paramUrl {"resultStart": prev?c} />"
-           class="pageLinks">&lt;</a>
+           class="pageLinks">&lsaquo; <@_ "pageListHolder.prev" "Prev"/></a>
     </#if>
-    <@_ "pageListHolder.page" "Page"/> ${((pageChunk.resultStart/pageChunk.totalResultCount)*totalPages)?ceiling} /
-${totalPages}
+    <@_ "pageListHolder.page" "Page"/> ${((pageChunk.resultStart/pageChunk.totalResultCount)*totalPages)?ceiling} / ${totalPages}
     <#if pageChunk.resultStart &lt; last>
         <a href="<@paramUrl {"resultStart": next?c} />"
-           class="pageLinks">&gt;</a>
+           class="pageLinks"><@_ "pageListHolder.next" "Next"/> &rsaquo;</a>
         <a href="<@paramUrl {"resultStart": last?c} />"
-           class="pageLinks">&gt;&gt;</a>
+           class="pageLinks"><@_ "pageListHolder.last" "Last"/> &raquo;</a>
     </#if>
 </div>
 </#macro>

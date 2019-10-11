@@ -182,12 +182,14 @@ public abstract class AbstractRequestService implements RequestService {
      * @throws PrinterException Thrown when delivering the print job to the printer failed.
      *                          Does not say anything if the printer actually printed (or ran out of paper for example).
      */
-    protected void printRequest(List<RequestPrintable> requestPrintables, String printerName, boolean alwaysPrint)
+    protected void printRequest(List<RequestPrintable> requestPrintables, String printerName, boolean alwaysPrint, boolean skipPrint)
         throws PrinterException {
         Book pBook = new Book();
 
         for (RequestPrintable requestPrintable : requestPrintables) {
-            if (!requestPrintable.getHoldingRequest().isPrinted() || alwaysPrint) {
+            if ( skipPrint ) {
+                requestPrintable.getHoldingRequest().setPrinted(true);
+            } else if (!requestPrintable.getHoldingRequest().isPrinted() || alwaysPrint) {
                 pBook.append(requestPrintable, new IISHPageFormat());
                 requestPrintable.getHoldingRequest().setPrinted(true);
             }

@@ -219,7 +219,6 @@ public class RecordControllerTest extends DeliveryTestCase {
 
         // Make sure it exists now.
         validateGetRecord(record);
-
         // Now locally edit without saving.
         Record checkRecord = new Record();
         checkRecord.mergeWith(record);

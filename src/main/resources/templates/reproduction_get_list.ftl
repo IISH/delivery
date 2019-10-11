@@ -75,7 +75,7 @@
         <select id="status_filter" name="status">
           <option value=""
                   <#if !RequestParameters["status"]?? || RequestParameters["status"] == "">selected="selected"</#if>>
-            <@_ "reproductionList.allStatus" "Status N/A"/>
+            <@_ "reproductionList.allStatus" "Status N/A KKKKK"/>
           </option>
 
           <#list status_types?keys as k>
@@ -89,29 +89,7 @@
       </li>
 
       <li>
-        <label for="printed_filter"><@_ "reproduction.printed" "Printed"/></label>
-        <select id="printed_filter" name="printed">
-          <option value=""
-            <#if !RequestParameters["printed"]?? ||
-            RequestParameters["printed"] == "">
-                  selected="selected"</#if>>
-            <@_ "reproductionList.allPrinted" "Printed N/A"/>
-          </option>
-
-          <option value="true"
-            <#if (RequestParameters["printed"]?? &&
-            RequestParameters["printed"]?lower_case == "true")>
-                  selected="selected"</#if>>
-            <@_ "yes" "Yes" />
-          </option>
-
-          <option value="false"
-            <#if (RequestParameters["printed"]?? &&
-            RequestParameters["printed"]?lower_case == "false")>
-                  selected="selected"</#if>>
-            <@_ "no" "No" />
-          </option>
-        </select>
+          <@filterSentToPrinter />
       </li>
 
       <li>
@@ -125,43 +103,29 @@
         </#assign>
 
         <label for="from_date_filter">
-          <@_ "reproductionList.dateFrom" "From"/>
+          <@_ "reproductionList.date" "Date"/>
         </label>
 
-        <input type="text" maxlength="10" id="from_date_filter" name="from_date" value="${from_date_value?trim}"
+		  <strong><@_ "misc.from" "from"/></strong> <input type="text" maxlength="10" id="from_date_filter" name="from_date" value="${from_date_value?trim}"
                class="filter_date"/>
-      </li>
-      <li>
+
         <#assign to_date_value>
          <#-- The date field has priority over to_date -->
-          <#if RequestParameters["date"]??>
-           ${RequestParameters["date"]?html}
-          <#elseif RequestParameters["to_date"]??>
+<#--          <#if RequestParameters["date"]??>-->
+<#--           ${RequestParameters["date"]?html}-->
+<#--          <#elseif RequestParameters["to_date"]??>-->
+          <#if RequestParameters["to_date"]??>
             ${RequestParameters["to_date"]?html}
           </#if>
         </#assign>
 
-        <label for="to_date_filter">
-          <@_ "reproductionList.dateUpTo" "Up To"/>
-        </label>
-
+		 <strong><@_ "misc.to" "to"/></strong>
         <input type="text" maxlength="10" id="to_date_filter" name="to_date" value="${to_date_value?trim}"
                class="filter_date"/>
       </li>
 
       <li>
-        <label for="page_len_filter">
-          <@_ "pageListHolder.nrResultsPerPage" "Amount of Results per Page"/>
-        </label>
-
-        <select id="page_len_filter" name="page_len">
-          <#list 1..(delivery.requestMaxPageLen?number/delivery.requestPageStepSize?number)?floor as i>
-            <#assign pageSize = (i*delivery.requestPageStepSize?number)?floor/>
-            <option value="${pageSize}"
-              <#if (RequestParameters["page_len"]?? && RequestParameters["page_len"]?number == pageSize) || (!RequestParameters["page_len"]?? && delivery.requestPageLen?number == pageSize)>
-                    selected="selected"</#if>>${pageSize}</option>
-          </#list>
-        </select>
+          <@filterResultsPerPage />
       </li>
     </ul>
 

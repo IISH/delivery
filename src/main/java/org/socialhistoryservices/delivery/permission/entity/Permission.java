@@ -193,6 +193,31 @@ public class Permission {
         this.address = address;
     }
 
+
+    /* Date requested */
+    @Temporal(TemporalType.DATE)
+    @Column(name="date_requested")
+    private Date dateRequested = new Date();
+
+    /**
+     * Get the date requested.
+     * @return The date requested.
+     */
+    public Date getDateRequested() {
+        return dateRequested;
+    }
+
+    /**
+     * Set the date requested.
+     * @param dateRequested The date requested.
+     */
+    public void setDateRequested(Date dateRequested) {
+        this.dateRequested = dateRequested;
+    }
+
+
+
+
     /** The Permission's request locale. */
     @Column(name="requestlocale", nullable=false)
     private Locale requestLocale;
@@ -251,6 +276,7 @@ public class Permission {
      */
     public boolean hasGranted(Record rec) {
         Calendar minDateCalender = Calendar.getInstance();
+
         minDateCalender.add(Calendar.YEAR, -1);
 
         for (RecordPermission p : recordPermissions) {

@@ -241,7 +241,7 @@ table.overview td.leftAligned {
     padding-left: 0.5em;
 }
 
-table.overview, table.overview tr, table.overview td {
+table.overview, table.overview th, table.overview tr, table.overview td {
     border: 1px solid #888;
     border-collapse: collapse;
 }
@@ -559,6 +559,10 @@ ul.reproductionDetails li {
 
 ul.reproductionDetails li.spacing {
     margin-top: 10px;
+}
+
+ul.form textarea {
+	height: 60px;
 }
 
 ul.reproductionDetails textarea, ul.holdingReproductionDetails textarea {
@@ -1010,3 +1014,6 @@ ul.reproduction_totals > li {
     margin-bottom: 10px;
 }
 
+input#from_date_filter, input#to_date_filter {
+	width: 10em;
+}

@@ -6,6 +6,7 @@ import org.socialhistoryservices.delivery.permission.entity.Permission;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Form to handle modifying permissions.
@@ -143,6 +144,23 @@ public class PermissionForm {
      */
     public void setResearchSubject(String researchSubject) {
         this.researchSubject = researchSubject;
+    }
+
+    /** The date requested of the permission's applicant. */
+    private Date dateRequested;
+    /**
+     * Get the Permission's date requested
+     * @return The the name of the organization.
+     */
+    public Date getDateRequested() {
+        return dateRequested;
+    }
+    /**
+     * Set the Permission's date requested.
+     * @param dateRequested The date requested.
+     */
+    public void setDateRequested(Date dateRequested) {
+        this.dateRequested = dateRequested;
     }
 
     /**

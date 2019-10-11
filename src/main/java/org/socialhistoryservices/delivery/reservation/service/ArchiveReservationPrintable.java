@@ -41,7 +41,8 @@ public class ArchiveReservationPrintable extends ReservationPrintable {
         drawNewLine(drawInfo);
 
         drawArchive(drawInfo);
-        drawInventoryNumber(drawInfo);
+        drawContainer(drawInfo);
+        //drawInventoryNumber(drawInfo);
         drawRestrictedNotice(drawInfo);
 
         drawNewLine(drawInfo);
@@ -73,6 +74,20 @@ public class ArchiveReservationPrintable extends ReservationPrintable {
         drawValueInfo.value = record.getTitle() + " (" + record.getHoldings().get(0).getSignature() + ")";
         drawValueInfo.font = boldFont;
         drawKeyValueNewLine(drawValueInfo);
+    }
+
+    /**
+     * Draw the inventory number.
+     *
+     * @param drawInfo Draw offsets.
+     */
+    private void drawContainer(DrawInfo drawInfo) {
+        if (holdingRequest.getHolding().getRecord().getParent() != null) {
+            DrawValueInfo drawValueInfo = new DrawValueInfo(drawInfo);
+            drawValueInfo.key = getMessage("record.container", "Container");
+            drawValueInfo.value = holdingRequest.getHolding().getRecord().getExternalInfo().getContainer();
+            drawKeyValueNewLine(drawValueInfo);
+        }
     }
 
     /**

@@ -56,7 +56,12 @@ public class ReservationSearch extends ListRequestSearch<HoldingReservation> {
         Join<HoldingReservation, Holding> hRoot = hrRoot.join(HoldingReservation_.holding);
 
         if (!isCount) {
-            cq.orderBy(parseSortFilter(hrRoot, resRoot, hRoot));
+            cq.orderBy(
+              cb.desc(resRoot.get(Reservation_.date))
+            , cb.asc(resRoot.get(Reservation_.visitorName))
+            , cb.asc(hRoot.get(Holding_.signature))
+            , parseSortFilter(hrRoot, resRoot, hRoot)
+            );
         }
     }
 

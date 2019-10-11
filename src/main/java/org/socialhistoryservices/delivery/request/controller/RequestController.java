@@ -2,6 +2,7 @@ package org.socialhistoryservices.delivery.request.controller;
 
 import org.socialhistoryservices.delivery.record.dao.HoldingDAO;
 import org.socialhistoryservices.delivery.record.entity.Holding;
+import org.socialhistoryservices.delivery.record.entity.Record;
 import org.socialhistoryservices.delivery.reproduction.dao.HoldingReproductionDAO;
 import org.socialhistoryservices.delivery.reproduction.entity.HoldingReproduction;
 import org.socialhistoryservices.delivery.reproduction.entity.Reproduction;
@@ -22,7 +23,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -73,8 +76,10 @@ public class RequestController extends AbstractRequestController {
     public String scanBarcode(@RequestParam(required = false) String id, Model model, HttpServletRequest req) {
         // Obtain the scanned holding
         Holding h;
+        List<Holding> containerDependencies= new ArrayList<>();
         try {
             int ID = Integer.parseInt(id);
+
             // Obtain the scanned HoldingReservation/HoldingReproduction
             HoldingReservation holdingReservation = holdingReservationDAO.getById(ID);
             HoldingReproduction holdingReproduction = holdingReproductionDAO.getById(ID);
@@ -82,11 +87,14 @@ public class RequestController extends AbstractRequestController {
             // Check if either the HoldingReproduction or HoldingReservation is null. If so, variable h is null
             // If not, variable h is set to either one that is not null.
             if(holdingReproduction != null && !holdingReproduction.isCompleted()){
+
                 h = holdingReproduction.getHolding();
             }else if(holdingReservation != null && !holdingReservation.isCompleted()){
                 h = holdingReservation.getHolding();
             }else if(h2 != null){
                 h = h2;
+
+
             }else{
                 h = null;
             }
@@ -97,6 +105,19 @@ public class RequestController extends AbstractRequestController {
         if (h == null) {
             model.addAttribute("error", "invalid");
             return "request_scan";
+        }
+
+        // list of all parents children
+        List<Record> listOfParentsChildren = h.getRecord().getParent().getChildren();
+        for (Record aChild : listOfParentsChildren) {
+            // controleer of ze in dezelfde container zitten (ignore current record)
+                    if ( aChild.getExternalInfo().getContainer().equals(h.getRecord().getExternalInfo().getContainer()) ) {
+            for (Holding holdd : aChild.getHoldings() ) {
+                        if ( holdd.getId() != h.getId() ) {
+                                containerDependencies.add( holdd );
+                        }
+            }
+                    }
         }
 
         // Information about the current state
@@ -114,12 +135,17 @@ public class RequestController extends AbstractRequestController {
         // Show the request corresponding to the scanned record
         if ((reservation != null) || (reproduction != null)) {
             // If the user may modify reservations, mark item for the active reservation
-            if (reservation != null)
+            if (reservation != null) {
                 reservations.markItem(reservation, h);
+                for ( Holding hhhh : containerDependencies ) {
+                    reservations.markItem(reservation, hhhh);
+                }
+            }
 
             // If the user may modify reproductions, mark item for the active reproduction
-            if (reproduction != null)
+            if (reproduction != null) {
                 reproductions.markItem(reproduction, h);
+            }
 
             model.addAttribute("holding", h);
             model.addAttribute("oldStatus", oldStatus);

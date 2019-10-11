@@ -28,9 +28,9 @@ public class IISHRecordLookupService implements RecordLookupService {
     private DeliveryProperties deliveryProperties;
 
     private XPathExpression xpSearch, xpAll, xpOAI, xpSearch245aTitle, xpSearch500aTitle, xpSearch600aTitle,
-        xpSearch610aTitle, xpSearch650aTitle, xpSearch651aTitle, xpSearch245kTitle, xpSearch245bSubTitle,
-        xpArchive931, xpArchiveLocation, xpArchiveMeter, xpArchiveNumbers, xpArchiveFormat, xpArchiveNote,
-        xp856uUrl, xpSearchIdent, xpSearchMeta, xpNumberOfRecords;
+            xpSearch610aTitle, xpSearch650aTitle, xpSearch651aTitle, xpSearch245kTitle, xpSearch245bSubTitle,
+            xpArchive931, xpArchiveLocation, xpArchiveMeter, xpArchiveNumbers, xpArchiveFormat, xpArchiveNote,
+            xp856uUrl, xpSearchIdent, xpSearchMeta, xpNumberOfRecords;
 
     private IISHRecordExtractor marcRecordExtractor, eadRecordExtractor;
 
@@ -99,7 +99,7 @@ public class IISHRecordLookupService implements RecordLookupService {
 
         String query = getQuery("marc.245+all+\"" + title + "\"", true);
         logger.debug(String.format("getRecordsByTitle(title: %s, resultcountPerChunk: %d, resultStart: %d)",
-            title, resultCountPerChunk, resultStart));
+                title, resultCountPerChunk, resultStart));
         Node out = doSearch(query, pc.getResultCountPerChunk(), pc.getResultStart());
 
         NodeList search = null;
@@ -153,8 +153,12 @@ public class IISHRecordLookupService implements RecordLookupService {
         Node node = searchByPid(parentPidAndItem[0], true);
         Node eadNode = getEADNode(node);
 
-        if (eadNode != null)
+        // Archives are always EAD
+
+        if (eadNode != null) {
             return eadRecordExtractor.getRecordMetadata(eadNode, parentPidAndItem[1]);
+        }
+
         return marcRecordExtractor.getRecordMetadata(node);
     }
 
@@ -183,7 +187,7 @@ public class IISHRecordLookupService implements RecordLookupService {
                         ahi.setNote(XmlUtils.evaluate(xpArchiveNote, archiveItem));
 
                         if (ahi.getShelvingLocation() != null || ahi.getMeter() != null ||
-                            ahi.getNumbers() != null || ahi.getFormat() != null || ahi.getNote() != null) {
+                                ahi.getNumbers() != null || ahi.getFormat() != null || ahi.getNote() != null) {
                             info.add(ahi);
                         }
                     }

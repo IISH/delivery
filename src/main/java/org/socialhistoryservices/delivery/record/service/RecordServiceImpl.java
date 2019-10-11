@@ -185,10 +185,11 @@ public class RecordServiceImpl implements RecordService {
             Map<String, ExternalHoldingInfo> ehMap = lookup.getHoldingMetadataByPid(pid);
 
             // Update external record info
-            if (record.getExternalInfo() != null)
+            if (record.getExternalInfo() != null) {
                 record.getExternalInfo().mergeWith(eri);
-            else
+            } else {
                 record.setExternalInfo(eri);
+            }
 
             // Update archive holding info
             record.setArchiveHoldingInfo(ahi);
@@ -200,10 +201,14 @@ public class RecordServiceImpl implements RecordService {
 
                 for (Holding h : record.getHoldings()) {
                     if (signature.equals(h.getSignature())) {
-                        if (h.getExternalInfo() != null)
+
+                        h.checkSignature();
+
+                        if (h.getExternalInfo() != null) {
                             h.getExternalInfo().mergeWith(ehi);
-                        else
+                        } else {
                             h.setExternalInfo(ehi);
+                        }
 
                         found = true;
                     }

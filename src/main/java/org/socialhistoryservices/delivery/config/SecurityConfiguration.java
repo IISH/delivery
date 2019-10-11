@@ -102,7 +102,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
                     "RECORD_CONTACT_VIEW", "RESERVATION_VIEW", "RESERVATION_MODIFY", "PERMISSION_VIEW",
                     "PERMISSION_MODIFY", "PERMISSION_DELETE", "RESERVATION_DELETE", "RECORD_DELETE",
                     "RESERVATION_CREATE", "REPRODUCTION_CREATE", "REPRODUCTION_VIEW", "REPRODUCTION_MODIFY",
-                    "REPRODUCTION_DELETE"
+                    "REPRODUCTION_DELETE", "DATE_EXCEPTION_VIEW", "DATE_EXCEPTION_CREATE", "DATE_EXCEPTION_MODIFY",
+                    "DATE_EXCEPTION_DELETE"
                 );
         }
         else {

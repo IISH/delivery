@@ -4,3 +4,4 @@ target/
 *.project
 *_.java
 data/
+*.log

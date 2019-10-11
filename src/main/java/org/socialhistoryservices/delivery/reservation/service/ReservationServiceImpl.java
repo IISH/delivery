@@ -211,6 +211,8 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
     private void markReservation(Reservation res) {
         boolean complete = true;
         boolean reserved = true;
+        // kijk ook naar holdings die bij dezelfde parent horen en in dezelfde container horen
+        // en niet op reserved staan, zet deze op reserved
         for (HoldingReservation hr : res.getHoldingReservations()) {
             if (!hr.isCompleted()) {
                 Holding holding = hr.getHolding();
@@ -335,13 +337,22 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
             Set<Reservation> reservations = new HashSet<>();
             List<RequestPrintable> requestPrintables = new ArrayList<>();
             List<RequestPrintable> requestPrintablesArchive = new ArrayList<>();
+            List<RequestPrintable> requestSkippedArchive = new ArrayList<>();
+            String lastContainer = "";
 
             for (HoldingReservation hr : hrs) {
                 ExternalRecordInfo.MaterialType mt = hr.getHolding().getRecord().getExternalInfo().getMaterialType();
                 if (mt == ExternalRecordInfo.MaterialType.ARCHIVE) {
-                    requestPrintablesArchive.add(
-                        new ArchiveReservationPrintable(
-                            hr, msgSource, (DateFormat) bf.getBean("dateFormat"), deliveryProperties));
+
+                    if (!lastContainer.equals( hr.getHolding().getRecord().getExternalInfo().getContainer() )) {
+                        requestPrintablesArchive.add(
+                                new ArchiveReservationPrintable(hr, msgSource, (DateFormat) bf.getBean("dateFormat"), deliveryProperties));
+
+                        lastContainer = hr.getHolding().getRecord().getExternalInfo().getContainer();
+                    } else {
+                        requestSkippedArchive.add(
+                                new ArchiveReservationPrintable(hr, msgSource, (DateFormat) bf.getBean("dateFormat"), deliveryProperties));
+                    }
                 }
                 else {
                     requestPrintables.add(
@@ -351,8 +362,9 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
                 reservations.add(hr.getReservation());
             }
 
-            printRequest(requestPrintables, printerConfiguration.getPrinterNameArchive(), alwaysPrint);
-            printRequest(requestPrintablesArchive, printerConfiguration.getPrinterNameReadingRoom(), alwaysPrint);
+            printRequest(requestPrintables, printerConfiguration.getPrinterNameArchive(), alwaysPrint, false);
+            printRequest(requestPrintablesArchive, printerConfiguration.getPrinterNameReadingRoom(), alwaysPrint, false);
+            printRequest(requestSkippedArchive, printerConfiguration.getPrinterNameReadingRoom(), alwaysPrint, true);
 
             for (Reservation r : reservations) {
                 saveReservation(r);
@@ -389,8 +401,6 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
             // Validate the reservation.
             validateRequest(newRes, result);
-
-
 
             // Make sure a valid reservation date is provided (Only upon creation
             // because time dependent!).

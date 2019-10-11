@@ -55,8 +55,10 @@ public class ReproductionPrintable extends RequestPrintable {
         drawLocationInfo(drawInfo);
 
         drawNewLine(drawInfo);
-
         drawReproductionInformation(drawInfo);
+
+        drawNewLine(drawInfo);
+        drawReproductionComment(drawInfo);
     }
 
     /**
@@ -158,6 +160,28 @@ public class ReproductionPrintable extends RequestPrintable {
 
             DrawValueInfo drawValueInfoCustom = new DrawValueInfo(drawInfo);
             drawValueInfoCustom.value = hr.getCustomReproductionCustomer();
+            drawValueInfoCustom.font = italicFont;
+            drawKeyValueNewLine(drawValueInfoCustom);
+        }
+    }
+
+    /**
+     * Draws the reproduction information.
+     *
+     * @param drawInfo Draw offsets.
+     */
+    private void drawReproductionComment(DrawInfo drawInfo) {
+        HoldingReproduction hr = (HoldingReproduction) holdingRequest;
+
+        if (hr.getReproduction().getComment() != null) {
+            DrawValueInfo drawValueInfoCustomHeading = new DrawValueInfo(drawInfo);
+            drawValueInfoCustomHeading.value =
+                    getMessage("reproduction.comment_singular", "Comment");
+            drawValueInfoCustomHeading.font = boldFont;
+            drawKeyValueNewLine(drawValueInfoCustomHeading);
+
+            DrawValueInfo drawValueInfoCustom = new DrawValueInfo(drawInfo);
+            drawValueInfoCustom.value = hr.getReproduction().getComment();
             drawValueInfoCustom.font = italicFont;
             drawKeyValueNewLine(drawValueInfoCustom);
         }

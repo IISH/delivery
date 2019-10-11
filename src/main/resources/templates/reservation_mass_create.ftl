@@ -24,13 +24,15 @@ $(document).ready(function(){
 <h1>${title}</h1>
 <fieldset class="reservation_form">
 <@form "" "reservation">
+
     <ul class="form">
       <li><@input "reservation.visitorName" ""/></li>
       <li><@input "reservation.visitorEmail" ""/></li>
       <li><@date "reservation.date" ""/></li>
       <li><@date "reservation.returnDate" "" false/></li>
-      <li><@input "reservation.comment" "" false/></li>
+      <li><@textarea "reservation.comment" "" false/></li>
     </ul>
+
 <ul id="holdingReservations" class="holdingReservationDetails">
     <li id="newHoldingReservation" class="hidden">
         <input type="button" class="removeButton"

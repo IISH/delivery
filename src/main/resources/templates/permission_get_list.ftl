@@ -33,36 +33,7 @@
              value="${search_value?trim}" />
     </li>
       <li>
-          <label for="permission_filter"><@_ "recordPermission.granted" "Permission"/></label>
-          <select id="permission_filter" name="permission">
-              <option value=""
-                  <#if !RequestParameters["permission"]?? ||
-                  RequestParameters["permission"] == "">
-                      selected="selected"</#if>>
-                  <@_ "permissionList.allPermission" "Permission N/A"/>
-              </option>
-
-              <option value="null"
-                  <#if (RequestParameters["permission"]?? &&
-                  RequestParameters["permission"]?upper_case == 'NULL')>
-                      selected="selected"</#if>>
-                  <@_ "recordPermission.granted.null" "To decide" />
-              </option>
-
-              <option value="true"
-                  <#if (RequestParameters["permission"]?? &&
-                  RequestParameters["permission"]?upper_case == 'TRUE')>
-                      selected="selected"</#if>>
-                  <@_ "recordPermission.granted.true" "Granted" />
-              </option>
-
-              <option value="false"
-                  <#if (RequestParameters["permission"]?? &&
-                  RequestParameters["permission"]?upper_case == 'FALSE')>
-                      selected="selected"</#if>>
-                  <@_ "recordPermission.granted.false" "Denied" />
-              </option>
-          </select>
+          <@filterPermissions />
       </li>
       <li>
           <#assign from_date_value>
@@ -73,12 +44,10 @@
               ${RequestParameters["from_date"]?html}
               </#if>
           </#assign>
-          <label for="from_date_filter"><@_ "permissionList.dateFrom" "From"/>
+          <label for="from_date_filter"><@_ "permissionList.date" "Date"/>
           </label>
-          <input type="text" maxlength="10" id="from_date_filter" name="from_date"
-                 value="${from_date_value?trim}" class="filter_date" />
-      </li>
-      <li>
+		  <strong><@_ "misc.from" "from"/></strong> <input type="text" maxlength="10" id="from_date_filter" name="from_date" value="${from_date_value?trim}" class="filter_date" />
+
           <#assign to_date_value>
           <#-- The date field has priority over to_date -->
               <#if RequestParameters["date"]??>
@@ -87,26 +56,11 @@
               ${RequestParameters["to_date"]?html}
               </#if>
           </#assign>
-          <label for="to_date_filter"><@_ "permissionList.dateUpTo" "Up To"/>
-          </label>
-          <input type="text" maxlength="10" id="to_date_filter" name="to_date"
-                 value="${to_date_value?trim}" class="filter_date" />
+		  <strong><@_ "misc.to" "to"/></strong>
+          <input type="text" maxlength="10" id="to_date_filter" name="to_date" value="${to_date_value?trim}" class="filter_date" />
       </li>
     <li>
-      <label for="page_len_filter">
-      <@_ "pageListHolder.nrResultsPerPage" "Amount of Results per Page"/>
-      </label>
-      <select id="page_len_filter" name="page_len">
-        <#list 1..(delivery.permissionMaxPageLen?number/delivery.permissionPageStepSize?number)?floor as i>
-        <#assign pageSize = (i*delivery.permissionPageStepSize?number)?floor/>
-        <option value="${pageSize}"
-        <#if (RequestParameters["page_len"]?? &&
-              RequestParameters["page_len"]?number == pageSize) ||
-             (!RequestParameters["page_len"]?? &&
-              delivery.permissionPageLen?number == pageSize)>
-        selected="selected"</#if>>${pageSize}</option>
-        </#list>
-      </select>
+        <@filterResultsPerPage />
     </li>
   </ul>
     <#assign searchLabel>
@@ -135,13 +89,10 @@
   <tr>
     <th></th>
     <th><@_ "holding.record" "Item"/></th>
-    <th>
-      <@sortLink "visitor_name"><@_ "permission.name" "Name"/></@sortLink>
-    </th>
+    <th><@sortLink "visitor_name"><@_ "permission.name" "Name"/></@sortLink></th>
+    <th><@sortLink "date_requested"><@_ "permission.dateRequested" "Date requested"/></@sortLink></th>
     <th><@sortLink "permission"><@_ "permission.permission" "Permission"/></@sortLink></th>
-    <th>
-      <@sortLink "date_granted"><@_ "permission.dateGranted" "Date granted"/></@sortLink>
-    </th>
+    <th><@sortLink "date_granted"><@_ "permission.dateGranted" "Date granted"/></@sortLink></th>
   </tr>
   </thead>
   <tbody>
@@ -157,6 +108,11 @@
     <td class="leftAligned">${record.toString()?html}</td>
     <td>${permission.name?html}</td>
     <td>
+    <#if permission.dateRequested??>
+    ${permission.dateRequested?string(delivery.dateFormat)}
+    </#if>
+    </td>
+    <td>
     <#if !recordPermission.granted && !recordPermission.dateGranted??>
         ${granted_null}
     <#else>
@@ -167,7 +123,7 @@
     <#if recordPermission.dateGranted??>
         ${recordPermission.dateGranted?string(delivery.dateFormat)}
     <#else>
-        ${granted_null}
+        &nbsp;
     </#if>
     </td>
   </tr>
