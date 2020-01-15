@@ -6,10 +6,14 @@ import org.socialhistoryservices.delivery.permission.entity.Permission;
 import org.socialhistoryservices.delivery.record.entity.Holding;
 import org.socialhistoryservices.delivery.request.entity.HoldingRequest;
 import org.socialhistoryservices.delivery.request.entity.Request;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.*;
 
@@ -21,7 +25,6 @@ import java.util.*;
 @Table(name="reservations")
 @Configurable
 public class Reservation extends Request {
-
     /** Status of the reservation. */
     public enum Status {
         PENDING,
@@ -79,6 +82,7 @@ public class Reservation extends Request {
     @NotBlank
     @Size(max=255)
     @Email
+    @Pattern(regexp=".+@.{2,}\\..{2,}", message="E-mail address is invalid")
     @Column(name="visitoremail", nullable=false)
     private String visitorEmail;
 

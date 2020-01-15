@@ -9,17 +9,14 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.xpath.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class MARCRecordExtractor implements IISHRecordExtractor {
     private static final Log logger = LogFactory.getLog(MARCRecordExtractor.class);
 
     private XPathExpression xpAuthor, xpAltAuthor, xpAlt2Author, xpAlt3Author, xp245aTitle, xp500aTitle, xp600aTitle,
-        xp610aTitle, xp650aTitle, xp651aTitle, xp245kTitle, xp245bSubTitle, xpYear, xpPhysicalDescription, xpGenres,
-        xpShelvingLocations, xpSerialNumbers, xpSignatures, xpBarcodes, xpLeader, xp540bCopyright, xp542mAccess;
+            xp610aTitle, xp650aTitle, xp651aTitle, xp245kTitle, xp245bSubTitle, xpYear, xpPhysicalDescription, xpGenres,
+            xpShelvingLocations, xpSerialNumbers, xpSignatures, xpBarcodes, xpLeader, xp540bCopyright, xp542mAccess;
 
     public MARCRecordExtractor() {
         XPathFactory factory = XPathFactory.newInstance();
@@ -35,7 +32,7 @@ public class MARCRecordExtractor implements IISHRecordExtractor {
             xp500aTitle = XmlUtils.getXPathForMarc(xpath, "500", 'a');
             xp600aTitle = XmlUtils.getXPathForMarc(xpath, "600", 'a');
             xp610aTitle = XmlUtils.getXPathForMarc(xpath, "610", 'a');
-            xp650aTitle =XmlUtils.getXPathForMarc(xpath, "650", 'a');
+            xp650aTitle = XmlUtils.getXPathForMarc(xpath, "650", 'a');
             xp651aTitle = XmlUtils.getXPathForMarc(xpath, "651", 'a');
             xp245kTitle = XmlUtils.getXPathForMarc(xpath, "245", 'k');
             xp245bSubTitle = XmlUtils.getXPathForMarc(xpath, "245", 'b');
@@ -85,8 +82,7 @@ public class MARCRecordExtractor implements IISHRecordExtractor {
             // EDIT: Trim this to ~125 characters for readability (this is the current max size of the field).
             title = stripToSize(title, 125);
             externalInfo.setTitle(title);
-        }
-        else {
+        } else {
             externalInfo.setTitle("Unknown Record");
         }
 
@@ -137,8 +133,9 @@ public class MARCRecordExtractor implements IISHRecordExtractor {
             NodeList serNodes = (NodeList) xpSerialNumbers.evaluate(node, XPathConstants.NODESET);
             NodeList barcodes = (NodeList) xpBarcodes.evaluate(node, XPathConstants.NODESET);
 
-            if (shelfNodes == null || sigNodes == null || serNodes == null || barcodes == null)
+            if (shelfNodes == null || sigNodes == null || serNodes == null || barcodes == null) {
                 return retMap;
+            }
 
             for (int i = 0; i < sigNodes.getLength(); i++) {
                 Node shelf = shelfNodes.item(i);
@@ -146,15 +143,20 @@ public class MARCRecordExtractor implements IISHRecordExtractor {
                 Node ser = serNodes.item(i);
                 Node barcode = barcodes.item(i);
 
-                if (sig == null) continue;
+                if (sig == null) {
+                    continue;
+                }
 
                 ExternalHoldingInfo eh = new ExternalHoldingInfo();
-                if (shelf != null)
+                if (shelf != null) {
                     eh.setShelvingLocation(shelf.getTextContent());
-                if (barcode != null)
+                }
+                if (barcode != null) {
                     eh.setBarcode(barcode.getTextContent());
-                if (ser != null)
+                }
+                if (ser != null) {
                     eh.setSerialNumbers(ser.getTextContent().replace(",", ", "));
+                }
                 retMap.put(sig.getTextContent(), eh);
             }
         }
@@ -202,57 +204,74 @@ public class MARCRecordExtractor implements IISHRecordExtractor {
         String format = leader.substring(6, 8);
         String coll = titleForm.trim().toLowerCase();
 
-        if (format.equals("ab"))
+        if (format.equals("ab")) {
             return ExternalRecordInfo.MaterialType.ARTICLE;
+        }
 
-        if (format.equals("ar") || format.equals("as") || format.equals("ps"))
+        if (format.equals("ar") || format.equals("as") || format.equals("ps")) {
             return ExternalRecordInfo.MaterialType.SERIAL;
+        }
 
-        if (format.equals("am") || format.equals("pm"))
+        if (format.equals("am") || format.equals("pm")) {
             return ExternalRecordInfo.MaterialType.BOOK;
+        }
 
-        if (format.equals("im") || format.equals("pi") || format.equals("ic") || format.equals("jm"))
+        if (format.equals("im") || format.equals("pi") || format.equals("ic") || format.equals("jm")) {
             return ExternalRecordInfo.MaterialType.SOUND;
+        }
 
-        if (format.equals("do") || format.equals("oc"))
+        if (format.equals("do") || format.equals("oc")) {
             return ExternalRecordInfo.MaterialType.DOCUMENTATION;
+        }
 
-        if (format.equals("bm") || format.equals("pc"))
+        if (format.equals("bm") || format.equals("pc")) {
             return ExternalRecordInfo.MaterialType.ARCHIVE;
+        }
 
         if (format.equals("av") || format.equals("rm") || format.equals("pv")
-            || format.equals("km") || format.equals("kc"))
+                || format.equals("km") || format.equals("kc")) {
             return ExternalRecordInfo.MaterialType.VISUAL;
+        }
 
-        if (format.equals("ac") && coll.contains("book collection"))
+        if (format.equals("ac") && coll.contains("book collection")) {
             return ExternalRecordInfo.MaterialType.BOOK;
+        }
 
-        if (format.equals("ac") && coll.contains("serial collection"))
+        if (format.equals("ac") && coll.contains("serial collection")) {
             return ExternalRecordInfo.MaterialType.SERIAL;
+        }
 
-        if (format.equals("pc") && coll.contains("archief"))
+        if (format.equals("pc") && coll.contains("archief")) {
             return ExternalRecordInfo.MaterialType.ARCHIVE;
+        }
 
-        if (format.equals("pc") && coll.contains("archive"))
+        if (format.equals("pc") && coll.contains("archive")) {
             return ExternalRecordInfo.MaterialType.ARCHIVE;
+        }
 
-        if (format.equals("pc") && coll.contains("collection"))
+        if (format.equals("pc") && coll.contains("collection")) {
             return ExternalRecordInfo.MaterialType.DOCUMENTATION;
+        }
 
-        if (format.equals("gm") && coll.contains("moving image document"))
+        if (format.equals("gm") && coll.contains("moving image document")) {
             return ExternalRecordInfo.MaterialType.MOVING_VISUAL;
+        }
 
-        if (format.equals("gc") && coll.contains("moving image collection"))
+        if (format.equals("gc") && coll.contains("moving image collection")) {
             return ExternalRecordInfo.MaterialType.MOVING_VISUAL;
+        }
 
-        if (format.equals("kc") && coll.contains("poster collection"))
+        if (format.equals("kc") && coll.contains("poster collection")) {
             return ExternalRecordInfo.MaterialType.VISUAL;
+        }
 
-        if (format.equals("rc") && coll.contains("object collection"))
+        if (format.equals("rc") && coll.contains("object collection")) {
             return ExternalRecordInfo.MaterialType.VISUAL;
+        }
 
-        if (format.equals("jc") && coll.contains("music collection"))
+        if (format.equals("jc") && coll.contains("music collection")) {
             return ExternalRecordInfo.MaterialType.SOUND;
+        }
 
         return ExternalRecordInfo.MaterialType.OTHER;
     }
@@ -264,8 +283,9 @@ public class MARCRecordExtractor implements IISHRecordExtractor {
             for (int i = 0; i < nodeList.getLength(); i++) {
                 String genre = nodeList.item(i).getTextContent();
                 genre = genre.toLowerCase().trim();
-                if (genre.endsWith("."))
+                if (genre.endsWith(".")) {
                     genre = genre.substring(0, genre.length() - 1).trim();
+                }
                 genres.add(genre);
             }
             return (!genres.isEmpty()) ? StringUtils.collectionToDelimitedString(genres, ",") : null;
@@ -279,18 +299,24 @@ public class MARCRecordExtractor implements IISHRecordExtractor {
         try {
             String title = xp245aTitle.evaluate(node);
 
-            if (title.isEmpty())
+            if (title.isEmpty()) {
                 title = xp500aTitle.evaluate(node);
-            if (title.isEmpty())
+            }
+            if (title.isEmpty()) {
                 title = xp600aTitle.evaluate(node);
-            if (title.isEmpty())
+            }
+            if (title.isEmpty()) {
                 title = xp610aTitle.evaluate(node);
-            if (title.isEmpty())
+            }
+            if (title.isEmpty()) {
                 title = xp650aTitle.evaluate(node);
-            if (title.isEmpty())
+            }
+            if (title.isEmpty()) {
                 title = xp651aTitle.evaluate(node);
-            if (title.isEmpty())
+            }
+            if (title.isEmpty()) {
                 title = xp245kTitle.evaluate(node);
+            }
 
             // Strip trailing slashes
             title = title.trim().replaceAll("[/:]$", "");
@@ -315,12 +341,15 @@ public class MARCRecordExtractor implements IISHRecordExtractor {
     private String evaluateAuthor(Node node) {
         try {
             String author = xpAuthor.evaluate(node);
-            if (author.isEmpty())
+            if (author.isEmpty()) {
                 author = xpAltAuthor.evaluate(node);
-            if (author.isEmpty())
+            }
+            if (author.isEmpty()) {
                 author = xpAlt2Author.evaluate(node);
-            if (author.isEmpty())
+            }
+            if (author.isEmpty()) {
                 author = xpAlt3Author.evaluate(node);
+            }
             return author;
         }
         catch (XPathExpressionException ex) {
@@ -339,23 +368,34 @@ public class MARCRecordExtractor implements IISHRecordExtractor {
             String status = xp542mAccess.evaluate(node);
 
             ExternalRecordInfo.PublicationStatus publicationStatus = ExternalRecordInfo.PublicationStatus.UNKNOWN;
-            if (status.trim().equalsIgnoreCase("irsh"))
+            if (status.trim().equalsIgnoreCase("irsh")) {
                 publicationStatus = ExternalRecordInfo.PublicationStatus.IRSH;
-            if (status.trim().equalsIgnoreCase("open"))
+            }
+            if (status.trim().equalsIgnoreCase("open")) {
                 publicationStatus = ExternalRecordInfo.PublicationStatus.OPEN;
-            if (status.trim().equalsIgnoreCase("restricted"))
+            }
+            if (status.trim().equalsIgnoreCase("restricted")) {
                 publicationStatus = ExternalRecordInfo.PublicationStatus.RESTRICTED;
-            if (status.trim().equalsIgnoreCase("minimal"))
+            }
+            if (status.trim().equalsIgnoreCase("minimal")) {
                 publicationStatus = ExternalRecordInfo.PublicationStatus.MINIMAL;
-            if (status.trim().equalsIgnoreCase("pictoright"))
+            }
+            if (status.trim().equalsIgnoreCase("pictoright")) {
                 publicationStatus = ExternalRecordInfo.PublicationStatus.PICTORIGHT;
-            if (status.trim().equalsIgnoreCase("closed"))
+            }
+            if (status.trim().equalsIgnoreCase("closed")) {
                 publicationStatus = ExternalRecordInfo.PublicationStatus.CLOSED;
+            }
 
             return publicationStatus;
         }
         catch (XPathExpressionException ex) {
             return ExternalRecordInfo.PublicationStatus.UNKNOWN;
         }
+    }
+
+    @Override
+    public String getUnitIdsFromContainer(Node node, String pid, String container, boolean includeCurrentContainer) throws NoSuchPidException {
+        return null;
     }
 }

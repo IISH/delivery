@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.socialhistoryservices.delivery.record.entity.Holding;
+import org.w3c.dom.Node;
+
 /**
  * Mocks a lookup service for testing (so tests won't fail when the real lookup service is down).
  */
@@ -54,5 +57,10 @@ public class MockRecordLookupService implements RecordLookupService {
         Map<String, ExternalHoldingInfo> ehis = new HashMap<>();
         ehis.put("IISG 12345", ehi);
         return ehis;
+    }
+
+    @Override
+    public String getUnitIdsFromContainer(String pid, String container, boolean includeCurrentContainer) throws NoSuchPidException {
+        return null;
     }
 }

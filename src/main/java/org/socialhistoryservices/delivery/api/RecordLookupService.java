@@ -4,9 +4,13 @@ import org.socialhistoryservices.delivery.record.entity.ArchiveHoldingInfo;
 import org.socialhistoryservices.delivery.record.entity.ExternalHoldingInfo;
 import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.socialhistoryservices.delivery.record.entity.Holding;
+import org.w3c.dom.Node;
 
 /**
  * Interface used to represent an external service to lookup titles of
@@ -47,11 +51,12 @@ public interface RecordLookupService {
         private int resultCount;
         private int resultStart;
         private int resultCountPerChunk;
-        private Map <String, String> results;
+        private Map<String, String> results;
     }
 
     /**
      * Search for records with the specified title.
+     *
      * @param title The title to search for.
      * @return A map of {pid,title} key-value pairs. (Maximum size defined by implementing service).
      */
@@ -60,14 +65,18 @@ public interface RecordLookupService {
 
     /**
      * Maps a PID to metadata of a record.
+     *
      * @param pid The PID to lookup.
      * @return The metadata of the record, if found.
      * @throws NoSuchPidException Thrown when the PID is not found.
      */
     ExternalRecordInfo getRecordMetaDataByPid(String pid) throws NoSuchPidException;
 
+    String getUnitIdsFromContainer(String pid, String container, boolean includeCurrentContainer) throws NoSuchPidException;
+
     /**
      * Maps a PID to archive holding info of a record.
+     *
      * @param pid The PID to lookup.
      * @return The archive metadata of the record, if found.
      */
@@ -76,11 +85,12 @@ public interface RecordLookupService {
     /**
      * Get a map of holding signatures associated with this PID (if any
      * found), linking to additional holding info provided by the API.
+     *
      * @param pid The PID to search for.
      * @return A map of found (signature,holding info) tuples,
      * or an empty map if none were found.
      * @throws NoSuchPidException Thrown when the PID being searched for is
-     * not found in the API.
+     *                            not found in the API.
      */
     Map<String, ExternalHoldingInfo> getHoldingMetadataByPid(String pid) throws NoSuchPidException;
 }

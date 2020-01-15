@@ -9,6 +9,7 @@ import org.socialhistoryservices.delivery.reservation.entity.Reservation;
 import org.socialhistoryservices.delivery.reservation.entity.Reservation_;
 
 import javax.persistence.criteria.*;
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -57,10 +58,7 @@ public class ReservationSearch extends ListRequestSearch<HoldingReservation> {
 
         if (!isCount) {
             cq.orderBy(
-              cb.desc(resRoot.get(Reservation_.date))
-            , cb.asc(resRoot.get(Reservation_.visitorName))
-            , cb.asc(hRoot.get(Holding_.signature))
-            , parseSortFilter(hrRoot, resRoot, hRoot)
+                    parseSortFilter(hrRoot, resRoot, hRoot)
             );
         }
     }
@@ -74,11 +72,16 @@ public class ReservationSearch extends ListRequestSearch<HoldingReservation> {
      * @return The order the query should be in (asc/desc) sorted on provided
      * column. Defaults to asc on the PK column.
      */
-    private Order parseSortFilter(From<?, HoldingReservation> hrRoot, From<?, Reservation> resRoot,
-                                  From<?, Holding> hRoot) {
+    private ArrayList<Order> parseSortFilter(From<?, HoldingReservation> hrRoot, From<?, Reservation> resRoot, From<?, Holding> hRoot) {
         boolean containsSort = p.containsKey("sort");
         boolean containsSortDir = p.containsKey("sort_dir");
         Expression e = resRoot.get(Reservation_.date);
+
+        ArrayList<Order> sortOrder = new ArrayList<>();
+        sortOrder.add(cb.desc(resRoot.get(Reservation_.date)));
+        sortOrder.add(cb.asc(resRoot.get(Reservation_.visitorName)));
+        sortOrder.add(cb.asc(hRoot.get(Holding_.signature)));
+
         if (containsSort) {
             String sort = p.get("sort")[0];
             switch (sort) {
@@ -99,10 +102,14 @@ public class ReservationSearch extends ListRequestSearch<HoldingReservation> {
                     break;
             }
         }
+
         if (containsSortDir && p.get("sort_dir")[0].toLowerCase().equals("asc")) {
-            return cb.asc(e);
+            sortOrder.add(cb.asc(e));
+            return sortOrder;
         }
-        return cb.desc(e);
+
+        sortOrder.add(cb.desc(e));
+        return sortOrder;
     }
 
     /**
@@ -177,7 +184,8 @@ public class ReservationSearch extends ListRequestSearch<HoldingReservation> {
                     Expression<Boolean> exStatus = cb.equal(
                             resRoot.get(Reservation_.status), Reservation.Status.valueOf(status));
                     where = where != null ? cb.and(where, exStatus) : exStatus;
-                } catch (IllegalArgumentException ex) {
+                }
+                catch (IllegalArgumentException ex) {
                     throw new InvalidRequestException("No such status: " +
                             status);
                 }
@@ -231,8 +239,9 @@ public class ReservationSearch extends ListRequestSearch<HoldingReservation> {
     private Expression<Boolean> addDateFilter(Join<HoldingReservation, Reservation> resRoot,
                                               Expression<Boolean> where) {
         Predicate datePredicate = getDatePredicate(resRoot.get(Reservation_.date), false);
-        if (datePredicate != null)
+        if (datePredicate != null) {
             where = (where != null) ? cb.and(where, datePredicate) : datePredicate;
+        }
         return where;
     }
 }

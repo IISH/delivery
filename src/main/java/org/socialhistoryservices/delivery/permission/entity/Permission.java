@@ -7,6 +7,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 
 /**
@@ -289,6 +290,34 @@ public class Permission {
         }
         return false;
     }
+
+    /**
+     * The Permissions's last date code valid.
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "last_date_code_valid", nullable = true)
+    private Date lastDateCodeValid;
+
+    /**
+     * Get the Permissions's last date code valid.
+     *
+     * @return the Permission's last date code valid.
+     */
+    public Date getLastDateCodeValid() {
+        return lastDateCodeValid;
+    }
+
+    /**
+     * Set the Permission's last date code valid.
+     *
+     * @param lastDateCodeValid the Permission's last date code valid.
+     */
+    public void setLastDateCodeValid(Date lastDateCodeValid) {
+        this.lastDateCodeValid = lastDateCodeValid;
+    }
+
+
+
 
     /**
      * Default contstructor.

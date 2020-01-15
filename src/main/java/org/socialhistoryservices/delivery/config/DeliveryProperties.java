@@ -27,9 +27,7 @@ public class DeliveryProperties {
     private String payWayPassPhraseIn = "bla";
     private String PayWayPassPhraseOut = "bla";
     private String payWayProjectName = "delivery";
-    private int permissionMaxPageLen = 100; // deprecated???
     private int permissionPageLen = 20;
-    private int permissionPageStepSize = 10; // deprecated???
     private String pidSeparator = ",";
     private int reproductionAdministrationCosts = 6;
     private int reproductionMaxDaysPayment = 21;
@@ -39,8 +37,7 @@ public class DeliveryProperties {
     private String requestLatestTime = "16:00";
     private int requestMaxPageLen = 100;
     private int requestPageLen = 20;
-    private int requestPageStepSize = 10;
-    private int requestPageSteps[] = {10, 20, 30, 50, 100};
+    private int[] requestPageSteps = {10, 20, 30, 50, 100};
     private int reservationMaxDaysInAdvance = 31;
     private int reservationMaxItems = 3;
     private int reservationMaxChildren = 10;
@@ -52,6 +49,15 @@ public class DeliveryProperties {
     private String urlSearch = "search-acc.socialhistory.org";
     private String urlSelf = "http://localhost:8080";
     private int recordPageLen = 20;
+
+    public void setRequestPageSteps(String requestPageSteps) {
+        String[] arrStringPageSteps = requestPageSteps.split(",");
+        this.requestPageSteps = new int[arrStringPageSteps.length];
+
+        for (int i = 0; i < arrStringPageSteps.length; i++) {
+            this.requestPageSteps[i] = Integer.parseInt(arrStringPageSteps[i]);
+        }
+    }
 
     public boolean isMailEnabled() {
         return mailEnabled;
@@ -213,28 +219,12 @@ public class DeliveryProperties {
         this.payWayProjectName = payWayProjectName;
     }
 
-    public int getPermissionMaxPageLen() {
-        return permissionMaxPageLen;
-    }
-
-    public void setPermissionMaxPageLen(int permissionMaxPageLen) {
-        this.permissionMaxPageLen = permissionMaxPageLen;
-    }
-
     public int getPermissionPageLen() {
         return permissionPageLen;
     }
 
     public void setPermissionPageLen(int permissionPageLen) {
         this.permissionPageLen = permissionPageLen;
-    }
-
-    public int getPermissionPageStepSize() {
-        return permissionPageStepSize;
-    }
-
-    public void setPermissionPageStepSize(int permissionPageStepSize) {
-        this.permissionPageStepSize = permissionPageStepSize;
     }
 
     public String getPidSeparator() {
@@ -309,16 +299,8 @@ public class DeliveryProperties {
         this.requestPageLen = requestPageLen;
     }
 
-    public int getRequestPageStepSize() {
-        return requestPageStepSize;
-    }
-
     public int[] getRequestPageSteps() {
         return requestPageSteps;
-    }
-
-    public void setRequestPageStepSize(int requestPageStepSize) {
-        this.requestPageStepSize = requestPageStepSize;
     }
 
     public int getReservationMaxDaysInAdvance() {

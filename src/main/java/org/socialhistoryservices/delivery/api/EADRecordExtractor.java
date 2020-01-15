@@ -28,24 +28,24 @@ public class EADRecordExtractor implements IISHRecordExtractor {
             xpTitle = xpath.compile("normalize-space(.//ead:unittitle)");
             xpAuthor = xpath.compile("normalize-space(.//ead:origination[@label='Creator']/ead:persname)");
             xpPhysicalDescription = xpath.compile(
-                "normalize-space(.//ead:physdesc[@label='Physical Description']/ead:extent)");
+                    "normalize-space(.//ead:physdesc[@label='Physical Description']/ead:extent)");
             xpUnitId = xpath.compile(".//ead:unitid");
             xpAccessAndUse = xpath.compile(".//ead:descgrp[@type='access_and_use']");
             xpAccessRestrict = xpath.compile(".//ead:accessrestrict");
             xpP = xpath.compile("normalize-space(./ead:p[1])");
             xpParent = xpath.compile("(" +
-                "./ancestor::ead:c01|" +
-                "./ancestor::ead:c02|" +
-                "./ancestor::ead:c03|" +
-                "./ancestor::ead:c04|" +
-                "./ancestor::ead:c05|" +
-                "./ancestor::ead:c06|" +
-                "./ancestor::ead:c07|" +
-                "./ancestor::ead:c08|" +
-                "./ancestor::ead:c09|" +
-                "./ancestor::ead:c10|" +
-                "./ancestor::ead:c11|" +
-                "./ancestor::ead:c12)[last()]");
+                    "./ancestor::ead:c01|" +
+                    "./ancestor::ead:c02|" +
+                    "./ancestor::ead:c03|" +
+                    "./ancestor::ead:c04|" +
+                    "./ancestor::ead:c05|" +
+                    "./ancestor::ead:c06|" +
+                    "./ancestor::ead:c07|" +
+                    "./ancestor::ead:c08|" +
+                    "./ancestor::ead:c09|" +
+                    "./ancestor::ead:c10|" +
+                    "./ancestor::ead:c11|" +
+                    "./ancestor::ead:c12)[last()]");
         }
         catch (XPathExpressionException ex) {
             logger.error("Failed initializing XPath expressions");
@@ -91,15 +91,14 @@ public class EADRecordExtractor implements IISHRecordExtractor {
             // EDIT: Trim this to ~125 characters for readability (this is the current max size of the field).
             title = stripToSize(title, 125);
             externalInfo.setTitle(title);
-        }
-        else {
+        } else {
             externalInfo.setTitle("Unknown Record");
         }
 
         externalInfo.setMaterialType(ExternalRecordInfo.MaterialType.ARCHIVE);
         externalInfo.setPublicationStatus(ExternalRecordInfo.PublicationStatus.UNKNOWN);
         externalInfo.setRestriction(evaluateRestriction(node, findItemNode(node, item)));
-        externalInfo.setContainer( getContainer(node, findItemNode(node, item)) );
+        externalInfo.setContainer(getContainer(node, findItemNode(node, item)));
 
         String physicalDescription = XmlUtils.evaluate(xpPhysicalDescription, node);
         externalInfo.setPhysicalDescription((physicalDescription != null) ? physicalDescription.trim() : null);
@@ -134,13 +133,15 @@ public class EADRecordExtractor implements IISHRecordExtractor {
         Map<String, ExternalHoldingInfo> retMap = new HashMap<>();
 
         Node itemNode = (item != null) ? findItemNode(node, item) : node;
-        if (itemNode == null)
+        if (itemNode == null) {
             throw new NoSuchPidException();
+        }
 
         try {
             String barcode = xpUnitId.evaluate(node);
-            if (item != null)
+            if (item != null) {
                 barcode += "." + item;
+            }
 
             ExternalHoldingInfo eh = new ExternalHoldingInfo();
             eh.setBarcode(barcode);
@@ -154,6 +155,31 @@ public class EADRecordExtractor implements IISHRecordExtractor {
         return retMap;
     }
 
+    @Override
+    public String getUnitIdsFromContainer(Node node, String pid, String container, boolean includeCurrentContainer) throws NoSuchPidException {
+        ArrayList<String> listOfContainers = new ArrayList<String>();
+        String[] parentPidAndItem = Utils.getParentPidAndItem(pid);
+
+        try {
+            NodeList itemNodes = (NodeList) xpath.evaluate(".//ead:dsc//ead:unitid", node, XPathConstants.NODESET);
+
+            for (int i = 0; i < itemNodes.getLength(); i++) {
+                Node child = itemNodes.item(i);
+
+                if (child.getTextContent().toLowerCase().startsWith(container.toLowerCase() + " ")) { // don't remove space " "
+                    if (includeCurrentContainer || !(child.getTextContent().toLowerCase().equals(parentPidAndItem[1].toLowerCase()))) {
+                        listOfContainers.add(parentPidAndItem[0] + "." + child.getTextContent());
+                    }
+                }
+            }
+        }
+        catch (XPathExpressionException ex) {
+            return null;
+        }
+
+        return String.join(",", listOfContainers);
+    }
+
     private String stripToSize(String string, int size) {
         if (string.length() > size) {
             string = string.substring(0, size);
@@ -164,16 +190,18 @@ public class EADRecordExtractor implements IISHRecordExtractor {
 
     private Node findItemNode(Node node, String item) {
         try {
-            if (item == null)
+            if (item == null) {
                 return null;
+            }
 
             Node itemNode = (Node) xpath.evaluate(".//ead:dsc//ead:unitid[text()='" + item + "']",
-                node, XPathConstants.NODE);
+                    node, XPathConstants.NODE);
             Node parentNode = (Node) xpParent.evaluate(itemNode, XPathConstants.NODE);
 
             // An item node is only valid if is a leaf item node (has no children with items)
-            if (((NodeList) xpUnitId.evaluate(parentNode, XPathConstants.NODESET)).getLength() == 1)
+            if (((NodeList) xpUnitId.evaluate(parentNode, XPathConstants.NODESET)).getLength() == 1) {
                 return parentNode;
+            }
             return null;
         }
         catch (XPathExpressionException ex) {
@@ -188,15 +216,17 @@ public class EADRecordExtractor implements IISHRecordExtractor {
             String restriction = xpP.evaluate(accessRestrict);
 
             String type = accessRestrict.getAttribute("type").toLowerCase();
-            if (type.equals("date"))
+            if (type.equals("date")) {
                 restriction = "date";
+            }
 
             if (type.equals("part") && (itemNode != null)) {
                 accessRestrict = (Element) xpAccessRestrict.evaluate(itemNode, XPathConstants.NODE);
-                if (accessRestrict != null)
+                if (accessRestrict != null) {
                     restriction = accessRestrict.getAttribute("type");
-                else
+                } else {
                     restriction = "open";
+                }
             }
 
             switch (restriction.trim().toLowerCase()) {
@@ -221,9 +251,8 @@ public class EADRecordExtractor implements IISHRecordExtractor {
         try {
             Element elContainer = (Element) xpContainer.evaluate(itemNode, XPathConstants.NODE);
             return elContainer.getTextContent().trim();
-        } catch (NullPointerException ex) {
-            return null;
-        } catch (XPathExpressionException ex) {
+        }
+        catch (NullPointerException | XPathExpressionException ex) {
             return null;
         }
     }

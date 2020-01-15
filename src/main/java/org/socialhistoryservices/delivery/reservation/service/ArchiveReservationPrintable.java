@@ -6,6 +6,7 @@ import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
 import org.socialhistoryservices.delivery.record.entity.Record;
 import org.socialhistoryservices.delivery.reservation.entity.HoldingReservation;
 import org.springframework.context.MessageSource;
+
 import java.text.DateFormat;
 import java.util.List;
 
@@ -16,9 +17,10 @@ public class ArchiveReservationPrintable extends ReservationPrintable {
 
     /**
      * Construct the printable.
-     * @param hr The holding reservation to construct from.
+     *
+     * @param hr      The holding reservation to construct from.
      * @param mSource The message source to fetch localized messages.
-     * @param format The date format to use.
+     * @param format  The date format to use.
      */
     public ArchiveReservationPrintable(HoldingReservation hr, MessageSource mSource, DateFormat format, DeliveryProperties prop) {
         super(hr, mSource, format, prop);
@@ -41,8 +43,16 @@ public class ArchiveReservationPrintable extends ReservationPrintable {
         drawNewLine(drawInfo);
 
         drawArchive(drawInfo);
-        drawContainer(drawInfo);
-        //drawInventoryNumber(drawInfo);
+
+        // if there is container info show it, else show inventory number
+        if (holdingRequest.getHolding().getRecord().getParent() != null &&
+                holdingRequest.getHolding().getRecord().getExternalInfo() != null &&
+                !holdingRequest.getHolding().getRecord().getExternalInfo().getContainer().equals("")) {
+            drawContainer(drawInfo);
+        } else {
+            drawInventoryNumber(drawInfo);
+        }
+
         drawRestrictedNotice(drawInfo);
 
         drawNewLine(drawInfo);
@@ -67,8 +77,9 @@ public class ArchiveReservationPrintable extends ReservationPrintable {
      */
     private void drawArchive(DrawInfo drawInfo) {
         Record record = getHoldingRequest().getHolding().getRecord();
-        if (record.getParent() != null)
+        if (record.getParent() != null) {
             record = record.getParent();
+        }
 
         DrawValueInfo drawValueInfo = new DrawValueInfo(drawInfo);
         drawValueInfo.value = record.getTitle() + " (" + record.getHoldings().get(0).getSignature() + ")";
@@ -111,7 +122,7 @@ public class ArchiveReservationPrintable extends ReservationPrintable {
      */
     private void drawRestrictedNotice(DrawInfo drawInfo) {
         ExternalRecordInfo.Restriction restriction =
-            holdingRequest.getHolding().getRecord().getExternalInfo().getRestriction();
+                holdingRequest.getHolding().getRecord().getExternalInfo().getRestriction();
         String restrictionValue = getMessage("record.externalInfo.restriction." + restriction, "");
 
         String permissionRequired = "";
@@ -134,8 +145,9 @@ public class ArchiveReservationPrintable extends ReservationPrintable {
      */
     private void drawHoldingInfo(DrawInfo drawInfo) {
         Record record = holdingRequest.getHolding().getRecord();
-        if (record.getParent() != null)
+        if (record.getParent() != null) {
             record = record.getParent();
+        }
 
         boolean printNoMoreSpaceNotice = true;
         List<ArchiveHoldingInfo> archiveHoldingInfo = record.getArchiveHoldingInfo();
@@ -146,12 +158,14 @@ public class ArchiveReservationPrintable extends ReservationPrintable {
             // Empty string: assumption that the first line will never exceed more than one line
             int heightFirstLine = 0;
             if ((ahi.getShelvingLocation() != null) || (ahi.getMeter() != null) || (ahi.getNumbers() != null)
-                || (ahi.getFormat() != null))
+                    || (ahi.getFormat() != null)) {
                 heightFirstLine = heightOneLine;
+            }
 
             int heightLineNote = 0;
-            if (ahi.getNote() != null)
+            if (ahi.getNote() != null) {
                 heightLineNote = determineHeight(drawInfo, ahi.getNote(), (smallFont) ? smallNormalFont : normalFont);
+            }
 
             // Only if there is still space, draw holding info
             int afterOffsetY = (drawInfo.offsetY + heightFirstLine + heightLineNote);
@@ -207,8 +221,7 @@ public class ArchiveReservationPrintable extends ReservationPrintable {
 
                 drawNewLine(drawInfo);
                 drawInfo.offsetY = drawInfo.offsetY + 2;
-            }
-            else if (printNoMoreSpaceNotice) {
+            } else if (printNoMoreSpaceNotice) {
                 printNoMoreSpaceNotice = false;
 
                 DrawValueInfo drawValueInfo = new DrawValueInfo(drawInfo);

@@ -41,7 +41,8 @@ public class UserController extends ErrorHandlingController {
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(@RequestParam(value = "error", required = false) String error, Model model) {
         if (error != null) {
-            String msg = msgSource.getMessage("security.error", null, "Invalid username and password!",
+//            String msg = msgSource.getMessage("security.error", null, "Invalid username and password!",
+            String msg = messageSource.getMessage("security.error", null, "Invalid username and password!",
                     LocaleContextHolder.getLocale());
             model.addAttribute("error", msg);
         }

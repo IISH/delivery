@@ -61,6 +61,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Add a Reservation to the database.
+     *
      * @param obj Reservation to add.
      */
     public void addReservation(Reservation obj) {
@@ -73,6 +74,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Remove a Reservation from the database.
+     *
      * @param obj Reservation to remove.
      */
     public void removeReservation(Reservation obj) {
@@ -89,7 +91,8 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Change the status of all holdings in a reservation.
-     * @param res Reservation to change status for.
+     *
+     * @param res    Reservation to change status for.
      * @param status Status to change holdings to.
      */
     public void changeHoldingStatus(Reservation res, Holding.Status status) {
@@ -99,6 +102,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Save changes to a Reservation in the database.
+     *
      * @param obj Reservation to save.
      */
     public void saveReservation(Reservation obj) {
@@ -107,6 +111,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Retrieve the Reservation matching the given Id.
+     *
      * @param id Id of the Reservation to retrieve.
      * @return The Reservation matching the Id.
      */
@@ -116,6 +121,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Get a criteria builder for querying Reservations.
+     *
      * @return the CriteriaBuilder.
      */
     public CriteriaBuilder getReservationCriteriaBuilder() {
@@ -124,6 +130,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Get a criteria builder for querying HoldingReservations.
+     *
      * @return the CriteriaBuilder.
      */
     public CriteriaBuilder getHoldingReservationCriteriaBuilder() {
@@ -132,6 +139,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * List all Reservations matching a built query.
+     *
      * @param q The criteria query to execute
      * @return A list of matching Reservations.
      */
@@ -141,6 +149,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * List all Tuples matching a built query.
+     *
      * @param q The criteria query to execute
      * @return A list of matching Tuples.
      */
@@ -150,6 +159,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * List all HoldingReservations matching a built query.
+     *
      * @param q The criteria query to execute
      * @return A list of matching HoldingReservations.
      */
@@ -159,9 +169,10 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * List all HoldingReservations matching a built query.
-     * @param q The criteria query to execute
+     *
+     * @param q           The criteria query to execute
      * @param firstResult The first result to obtain
-     * @param maxResults The max number of results to obtain
+     * @param maxResults  The max number of results to obtain
      * @return A list of matching HoldingReservations.
      */
     public List<HoldingReservation> listHoldingReservations(CriteriaQuery<HoldingReservation> q,
@@ -171,6 +182,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Count all HoldingReservations matching a built query.
+     *
      * @param q The criteria query to execute
      * @return A count of matching HoldingReservations.
      */
@@ -180,6 +192,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Get a single Reservation matching a built query.
+     *
      * @param query The query to match by.
      * @return The matching Reservation.
      */
@@ -189,13 +202,15 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Mark a specific item in a reservation as seen, bumping it to the next status.
+     *
      * @param res Reservation to change status for.
-     * @param h Holding to bump.
+     * @param h   Holding to bump.
      */
     public void markItem(Reservation res, Holding h) {
         // Ignore old reservations
-        if (res == null)
+        if (res == null) {
             return;
+        }
 
         Holding.Status newStatus = super.markItem(h);
         markReservation(res);
@@ -206,21 +221,21 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Mark a reservation, bumping it to the next status.
+     *
      * @param res Reservation to change status for.
      */
     private void markReservation(Reservation res) {
         boolean complete = true;
         boolean reserved = true;
-        // kijk ook naar holdings die bij dezelfde parent horen en in dezelfde container horen
-        // en niet op reserved staan, zet deze op reserved
+        // look also for holding with same parent and also in the same container
+        // and not 'reserved', set these on 'reserved'
         for (HoldingReservation hr : res.getHoldingReservations()) {
             if (!hr.isCompleted()) {
                 Holding holding = hr.getHolding();
 
                 if (holding.getStatus() == Holding.Status.AVAILABLE) {
                     hr.setCompleted(true);
-                }
-                else {
+                } else {
                     complete = false;
                 }
 
@@ -232,19 +247,18 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
         if (complete) {
             res.setStatus(Reservation.Status.COMPLETED);
-        }
-        else if (reserved) {
+        } else if (reserved) {
             res.setStatus(Reservation.Status.PENDING);
-        }
-        else {
+        } else {
             res.setStatus(Reservation.Status.ACTIVE);
         }
     }
 
     /**
      * Merge the other reservation's fields into this reservation.
+     *
      * @param reservation The reservation.
-     * @param other The other reservation to merge with.
+     * @param other       The other reservation to merge with.
      */
     public void merge(Reservation reservation, Reservation other) {
         reservation.setDate(other.getDate());
@@ -258,8 +272,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
                 requests.updateHoldingStatus(hr.getHolding(), Holding.Status.AVAILABLE);
             }
             reservation.setHoldingReservations(new ArrayList<>());
-        }
-        else {
+        } else {
             // Delete holdings that were not provided.
             deleteHoldingsNotInProvidedRequest(reservation, other);
 
@@ -272,13 +285,15 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
     /**
      * Set the reservation status and update the associated holdings status
      * accordingly. Only updates status forward.
+     *
      * @param reservation The reservation.
-     * @param status The reservation which changed status.
+     * @param status      The reservation which changed status.
      */
     public void updateStatusAndAssociatedHoldingStatus(Reservation reservation, Reservation.Status status) {
         if (status.ordinal() < reservation.getStatus().ordinal()) {
             return;
         }
+
         reservation.setStatus(status);
         Holding.Status hStatus;
         switch (status) {
@@ -292,10 +307,12 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
                 hStatus = Holding.Status.AVAILABLE;
                 break;
         }
+
         for (HoldingReservation hr : reservation.getHoldingReservations()) {
             if (!hr.isCompleted()) {
-                if (status == Reservation.Status.COMPLETED)
+                if (status == Reservation.Status.COMPLETED) {
                     hr.setCompleted(true);
+                }
                 requests.updateHoldingStatus(hr.getHolding(), hStatus);
             }
         }
@@ -316,6 +333,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Check whether there are any reservations made on the holding.
+     *
      * @param h Holding to check for reservations for.
      * @return Whether any reservations have been made including this holding.
      */
@@ -325,51 +343,64 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Prints holding reservations by using the default printer.
-     * @param hrs The holding reservations to print.
+     *
+     * @param hrs         The holding reservations to print.
      * @param alwaysPrint If set to true, already printed holdings will
-     * also be printed.
+     *                    also be printed.
      * @throws PrinterException Thrown when delivering the print job to the
-     * printer failed. Does not say anything if the printer actually printed
-     * (or ran out of paper for example).
+     *                          printer failed. Does not say anything if the printer actually printed
+     *                          (or ran out of paper for example).
      */
     public void printItems(List<HoldingReservation> hrs, boolean alwaysPrint) throws PrinterException {
         try {
             Set<Reservation> reservations = new HashSet<>();
             List<RequestPrintable> requestPrintables = new ArrayList<>();
-            List<RequestPrintable> requestPrintablesArchive = new ArrayList<>();
+            List<RequestPrintable> requestPrintablesArchiveSorted = new ArrayList<>();
+            Map<String, RequestPrintable> requestPrintablesArchiveUnsorted = new HashMap<>();
             List<RequestPrintable> requestSkippedArchive = new ArrayList<>();
-            String lastContainer = "";
+            ArrayList<String> previousContainers = new ArrayList<String>();
 
             for (HoldingReservation hr : hrs) {
                 ExternalRecordInfo.MaterialType mt = hr.getHolding().getRecord().getExternalInfo().getMaterialType();
                 if (mt == ExternalRecordInfo.MaterialType.ARCHIVE) {
+                    if (!previousContainers.contains(hr.getHolding().getRecord().getParent().getPid() + " - " + hr.getHolding().getRecord().getExternalInfo().getContainer())) {
 
-                    if (!lastContainer.equals( hr.getHolding().getRecord().getExternalInfo().getContainer() )) {
-                        requestPrintablesArchive.add(
-                                new ArchiveReservationPrintable(hr, msgSource, (DateFormat) bf.getBean("dateFormat"), deliveryProperties));
+                        requestPrintablesArchiveUnsorted.put(
+                                hr.getHolding().getRecord().getParent().getPid() + " - " + hr.getHolding().getRecord().getExternalInfo().getContainer(),
+                                new ArchiveReservationPrintable(hr, messageSource, (DateFormat) bf.getBean("dateFormat"), deliveryProperties)
+                        );
 
-                        lastContainer = hr.getHolding().getRecord().getExternalInfo().getContainer();
+                        previousContainers.add(hr.getHolding().getRecord().getParent().getPid() + " - " + hr.getHolding().getRecord().getExternalInfo().getContainer());
                     } else {
                         requestSkippedArchive.add(
-                                new ArchiveReservationPrintable(hr, msgSource, (DateFormat) bf.getBean("dateFormat"), deliveryProperties));
+                                new ArchiveReservationPrintable(hr, messageSource, (DateFormat) bf.getBean("dateFormat"), deliveryProperties));
                     }
-                }
-                else {
+
+                } else {
                     requestPrintables.add(
-                        new ReservationPrintable(
-                            hr, msgSource, (DateFormat) bf.getBean("dateFormat"), deliveryProperties));
+                            new ReservationPrintable(
+                                    hr, messageSource, (DateFormat) bf.getBean("dateFormat"), deliveryProperties));
                 }
                 reservations.add(hr.getReservation());
             }
 
+            // sort archive printable objects
+            ArrayList<String> sortedKeys = new ArrayList<String>(requestPrintablesArchiveUnsorted.keySet());
+            Collections.sort(sortedKeys);
+            for (String x : sortedKeys) {
+                requestPrintablesArchiveSorted.add(requestPrintablesArchiveUnsorted.get(x));
+            }
+
+            //
             printRequest(requestPrintables, printerConfiguration.getPrinterNameArchive(), alwaysPrint, false);
-            printRequest(requestPrintablesArchive, printerConfiguration.getPrinterNameReadingRoom(), alwaysPrint, false);
+            printRequest(requestPrintablesArchiveSorted, printerConfiguration.getPrinterNameReadingRoom(), alwaysPrint, false);
             printRequest(requestSkippedArchive, printerConfiguration.getPrinterNameReadingRoom(), alwaysPrint, true);
 
             for (Reservation r : reservations) {
                 saveReservation(r);
             }
-        } catch (PrinterException e) {
+        }
+        catch (PrinterException e) {
             log.warn("Printing reservation failed", e);
             throw e;
         }
@@ -377,10 +408,11 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Print a reservation if it was not printed yet.
+     *
      * @param res The reservation to print.
      * @throws PrinterException Thrown when delivering the print job to the
-     * printer failed. Does not say anything if the printer actually printed
-     * (or ran out of paper for example).
+     *                          printer failed. Does not say anything if the printer actually printed
+     *                          (or ran out of paper for example).
      */
     public void printReservation(Reservation res) throws PrinterException {
         printItems(res.getHoldingReservations(), false);
@@ -388,74 +420,78 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Edit reservations.
+     *
      * @param newRes The new reservation to put in the database.
      * @param oldRes The old reservation in the database (if present).
      * @param result The binding result object to put the validation errors in.
-     * @throws org.socialhistoryservices.delivery.request.service.ClosedException Thrown when a holding is provided which
-     * references a record which is restrictionType=CLOSED.
+     * @throws org.socialhistoryservices.delivery.request.service.ClosedException     Thrown when a holding is provided which
+     *                                                                                references a record which is restrictionType=CLOSED.
      * @throws org.socialhistoryservices.delivery.request.service.NoHoldingsException Thrown when no holdings are provided.
      */
     public void createOrEdit(Reservation newRes, Reservation oldRes,
-            BindingResult result) throws
-        ClosedException, NoHoldingsException {
+                             BindingResult result) throws
+            ClosedException, NoHoldingsException {
 
-            // Validate the reservation.
-            validateRequest(newRes, result);
+        // Validate the reservation.
+        validateRequest(newRes, result);
 
-            // Make sure a valid reservation date is provided (Only upon creation
-            // because time dependent!).
-            if (oldRes == null) {
-                Date resDate = newRes.getDate();
-                if (resDate != null && !resDate.equals(getFirstValidReservationDate
-                            (resDate))) {
-                    Calendar resCalendar = Calendar.getInstance();
-                    resCalendar.setTime(resDate);
-                    String msg = "";
-                    if(dateExceptionService.getExceptionDates().contains(resCalendar)){
-                        msg =  messageSource.getMessage("reservationDateException.dateIsException", new Object[]{}, LocaleContextHolder.getLocale()) + dateExceptionService.getReasonForExceptionDate(resCalendar);
-                    }
-                    else {
-                        msg = msgSource.getMessage("validator.reservationDate", null,
-                            "Invalid date", LocaleContextHolder.getLocale());
-                    }
-                    result.addError(new FieldError(result.getObjectName(), "date",
-                                newRes.getDate(), false,
-                                null, null, msg));
-                            }
-            }
-
-            // If the return date is provided, it should be >= to the date of
-            // visit.
-            Date d = newRes.getDate();
-            Date rd = newRes.getReturnDate();
-            if (d != null && rd != null && rd.before(d)) {
-                String msg =  msgSource.getMessage("validator.reservationReturnDate", null,
-                        "Invalid date", LocaleContextHolder.getLocale());
-                result.addError(new FieldError(result.getObjectName(),
-                            "returnDate",
-                            newRes.getDate(), false,
-                            null, null, msg));
-            }
-
-            // Execute this method below the date check, or else the date will
-            // not be checked if this method throws an exception; not displaying
-            // the error immediately, but only when the holdings are valid instead.
-            validateHoldings(newRes, oldRes);
-
-            // Add or save the record when no errors are present.
-            if (!result.hasErrors()) {
-                if (oldRes == null) {
-                    newRes.setCreationDate(new Date());
-                    addReservation(newRes);
+        // Make sure a valid reservation date is provided (Only upon creation
+        // because time dependent!).
+        if (oldRes == null) {
+            Date resDate = newRes.getDate();
+            if (resDate != null && !resDate.equals(getFirstValidReservationDate
+                    (resDate))) {
+                Calendar resCalendar = Calendar.getInstance();
+                resCalendar.setTime(resDate);
+                String msg = "";
+                if (dateExceptionService.getExceptionDates().contains(resCalendar)) {
+                    msg = messageSource.getMessage("reservationDateException.dateIsException", new Object[]{}, LocaleContextHolder.getLocale()) + dateExceptionService.getReasonForExceptionDate(resCalendar);
                 } else {
-                    merge(oldRes, newRes);
-                    saveReservation(oldRes);
+//                    msg = msgSource.getMessage("validator.reservationDate", null,
+                    msg = messageSource.getMessage("validator.reservationDate", null,
+                            "Invalid date", LocaleContextHolder.getLocale());
                 }
+
+                result.addError(new FieldError(result.getObjectName(), "date",
+                        newRes.getDate(), false,
+                        null, null, msg));
             }
         }
 
+        // If the return date is provided, it should be >= to the date of
+        // visit.
+        Date d = newRes.getDate();
+        Date rd = newRes.getReturnDate();
+        if (d != null && rd != null && rd.before(d)) {
+//            String msg = msgSource.getMessage("validator.reservationReturnDate", null,
+            String msg = messageSource.getMessage("validator.reservationReturnDate", null,
+                    "Invalid date", LocaleContextHolder.getLocale());
+            result.addError(new FieldError(result.getObjectName(),
+                    "returnDate",
+                    newRes.getDate(), false,
+                    null, null, msg));
+        }
+
+        // Execute this method below the date check, or else the date will
+        // not be checked if this method throws an exception; not displaying
+        // the error immediately, but only when the holdings are valid instead.
+        validateHoldings(newRes, oldRes);
+
+        // Add or save the record when no errors are present.
+        if (!result.hasErrors()) {
+            if (oldRes == null) {
+                newRes.setCreationDate(new Date());
+                addReservation(newRes);
+            } else {
+                merge(oldRes, newRes);
+                saveReservation(oldRes);
+            }
+        }
+    }
+
     /**
      * Get the first valid reservation date after or equal to from.
+     *
      * @param from The date to start from.
      * @return The first valid date, or null when maxDaysInAdvance was
      * exceeded.
@@ -470,7 +506,8 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
         Calendar t = GregorianCalendar.getInstance();
         try {
             t.setTime(format.parse(deliveryProperties.getRequestLatestTime()));
-        } catch (ParseException e) {
+        }
+        catch (ParseException e) {
             throw new RuntimeException("Invalid reservationLatestTime " +
                     "provided in config. Should be of format HH:mm");
         }
@@ -480,21 +517,21 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
         // Cannot reserve after "closing" time.
         if (firstPossibleCal.get(Calendar.HOUR_OF_DAY) > t.get(Calendar.HOUR_OF_DAY) ||
                 (firstPossibleCal.get(Calendar.HOUR_OF_DAY) == t.get(Calendar
-                                                                     .HOUR_OF_DAY)
-                 &&
-                 firstPossibleCal.get(Calendar.MINUTE)
-                 >= t.get(Calendar.MINUTE))) {
+                        .HOUR_OF_DAY)
+                        &&
+                        firstPossibleCal.get(Calendar.MINUTE)
+                                >= t.get(Calendar.MINUTE))) {
             firstPossibleCal.add(Calendar.DAY_OF_YEAR, 1);
-                 }
+        }
 
         // Cannot reserve in past (or after closing time).
         if (fromCal.get(Calendar.YEAR) < firstPossibleCal.get(Calendar.YEAR)
                 || (
-                    fromCal.get(Calendar.YEAR) == firstPossibleCal.get(Calendar
+                fromCal.get(Calendar.YEAR) == firstPossibleCal.get(Calendar
                         .YEAR) && fromCal.get(Calendar.DAY_OF_YEAR) < firstPossibleCal.get
-                    (Calendar.DAY_OF_YEAR))) {
+                        (Calendar.DAY_OF_YEAR))) {
             fromCal = firstPossibleCal;
-                    }
+        }
 
         // Check if date is an exception date
         List<Calendar> exceptionDates = dateExceptionService.getExceptionDates();
@@ -523,24 +560,26 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
         int maxDaysInAdvance = deliveryProperties.getReservationMaxDaysInAdvance();
         maxCal.add(Calendar.DAY_OF_YEAR, maxDaysInAdvance);
         if (fromCal.get(Calendar.YEAR) > maxCal.get(Calendar.YEAR) || (fromCal
-                    .get(Calendar.YEAR) == maxCal.get(Calendar.YEAR) && fromCal
-                    .get(Calendar.DAY_OF_YEAR) > maxCal.get(Calendar.DAY_OF_YEAR)
-                    )) {
+                .get(Calendar.YEAR) == maxCal.get(Calendar.YEAR) && fromCal
+                .get(Calendar.DAY_OF_YEAR) > maxCal.get(Calendar.DAY_OF_YEAR)
+        )) {
             System.out.println("Date reserved is beyond the max date: " + fromCal.getTime());
             return null;
-                    }
+        }
 
         return fromCal.getTime();
     }
 
     /**
      * Mark a request, bumping it to the next status.
+     *
      * @param r Request to change status for.
      */
     public void markRequest(Request r) {
         // Ignore old reservations
-        if (!(r instanceof Reservation))
+        if (!(r instanceof Reservation)) {
             return;
+        }
 
         Reservation reservation = (Reservation) r;
         markReservation(reservation);
@@ -549,6 +588,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Returns the active reservation with which this holding is associated.
+     *
      * @param holding The Holding to get the active reservation of.
      * @return The active reservation, or null if no active reservation exists.
      */

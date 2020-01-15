@@ -32,7 +32,8 @@ public class ErrorHandlingController {
     private SimpleDateFormat df;
 
     @Autowired
-    protected MessageSource msgSource;
+//    protected MessageSource msgSource;
+    protected MessageSource messageSource;
 
     @Autowired
     protected CaptchaService captchaService;
@@ -95,7 +96,8 @@ public class ErrorHandlingController {
         }
         finally {
             if (!isCaptchaCorrect) {
-                String msg = msgSource.getMessage("captcha.error", null, LocaleContextHolder.getLocale());
+//                String msg = msgSource.getMessage("captcha.error", null, LocaleContextHolder.getLocale());
+                String msg = messageSource.getMessage("captcha.error", null, LocaleContextHolder.getLocale());
 
                 // This prevents the createOrEdit from submitting to the database. Sadly, because the captcha is not part of the model,
                 // no corresponding error will be displayed in the form. We have to do this manually.

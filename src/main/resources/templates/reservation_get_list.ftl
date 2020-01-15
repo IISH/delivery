@@ -102,10 +102,6 @@
              value="${from_date_value?trim}" class="filter_date" />
 
       <#assign to_date_value>
-        <#-- The date field has priority over to_date -->
-<#--        <#if RequestParameters["date"]??>-->
-<#--			${RequestParameters["date"]?html}-->
-<#--        <#elseif RequestParameters["to_date"]??>-->
         <#if RequestParameters["to_date"]??>
 			${RequestParameters["to_date"]?html}
         </#if>

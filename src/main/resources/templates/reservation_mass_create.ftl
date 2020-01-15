@@ -30,7 +30,7 @@ $(document).ready(function(){
       <li><@input "reservation.visitorEmail" ""/></li>
       <li><@date "reservation.date" ""/></li>
       <li><@date "reservation.returnDate" "" false/></li>
-      <li><@textarea "reservation.comment" "" false/></li>
+      <li><@input "reservation.comment" "" false/></li>
     </ul>
 
 <ul id="holdingReservations" class="holdingReservationDetails">

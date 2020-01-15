@@ -20,7 +20,7 @@
   <ul class="form">
     <li><@input "reproduction.customerName" ""/></li>
     <li><@input "reproduction.customerEmail" ""/></li>
-    <li><@textarea "reproduction.comment" "" false/></li>
+    <li><@input "reproduction.comment" "" false/></li>
   </ul>
 
   <ul id="holdingReproductions" class="holdingReproductionDetails actions">

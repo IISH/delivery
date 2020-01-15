@@ -4,6 +4,7 @@ import org.hibernate.validator.constraints.Email;
 import org.socialhistoryservices.delivery.permission.entity.Permission;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -35,6 +36,7 @@ public class PermissionForm {
     /** The email address of the visitor to view the record. */
     @NotNull
     @Email
+    @Pattern(regexp=".+@.{2,}\\..{2,}", message="E-mail address is invalid")
     @Size(min=1,max=255)
     private String visitorEmail;
     /**

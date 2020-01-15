@@ -33,14 +33,15 @@ public class MockRecordLookupService implements RecordLookupService {
         pc.setTotalResultCount(1);
         return pc;
     }
+
     /**
      * Maps a PID to metadata of a record.
+     *
      * @param pid The PID to lookup.
      * @return The metadata of the record, if found.
      * @throws NoSuchPidException Thrown when the PID is not found.
      */
-    public ExternalRecordInfo getRecordMetaDataByPid(String pid) throws
-            NoSuchPidException {
+    public ExternalRecordInfo getRecordMetaDataByPid(String pid) throws NoSuchPidException {
         ExternalRecordInfo externalInfo = new ExternalRecordInfo();
         externalInfo.setTitle("Open Archive");
         externalInfo.setMaterialType(ExternalRecordInfo.MaterialType.ARCHIVE);

@@ -3,6 +3,7 @@ package org.socialhistoryservices.delivery.request.controller;
 import org.socialhistoryservices.delivery.record.dao.HoldingDAO;
 import org.socialhistoryservices.delivery.record.entity.Holding;
 import org.socialhistoryservices.delivery.record.entity.Record;
+import org.socialhistoryservices.delivery.record.service.RecordService;
 import org.socialhistoryservices.delivery.reproduction.dao.HoldingReproductionDAO;
 import org.socialhistoryservices.delivery.reproduction.entity.HoldingReproduction;
 import org.socialhistoryservices.delivery.reproduction.entity.Reproduction;
@@ -35,6 +36,9 @@ import java.util.Set;
 @Transactional
 @RequestMapping(value = "/request")
 public class RequestController extends AbstractRequestController {
+    @Autowired
+    private RecordService records;
+
     @Autowired
     private ReservationService reservations;
 
@@ -76,7 +80,6 @@ public class RequestController extends AbstractRequestController {
     public String scanBarcode(@RequestParam(required = false) String id, Model model, HttpServletRequest req) {
         // Obtain the scanned holding
         Holding h;
-        List<Holding> containerDependencies= new ArrayList<>();
         try {
             int ID = Integer.parseInt(id);
 
@@ -86,19 +89,18 @@ public class RequestController extends AbstractRequestController {
             Holding h2 = holdingDAO.getById(ID);
             // Check if either the HoldingReproduction or HoldingReservation is null. If so, variable h is null
             // If not, variable h is set to either one that is not null.
-            if(holdingReproduction != null && !holdingReproduction.isCompleted()){
+            if (holdingReproduction != null && !holdingReproduction.isCompleted()) {
 
                 h = holdingReproduction.getHolding();
-            }else if(holdingReservation != null && !holdingReservation.isCompleted()){
+            } else if (holdingReservation != null && !holdingReservation.isCompleted()) {
                 h = holdingReservation.getHolding();
-            }else if(h2 != null){
+            } else if (h2 != null) {
                 h = h2;
-
-
-            }else{
+            } else {
                 h = null;
             }
-        } catch (NumberFormatException ex) {
+        }
+        catch (NumberFormatException ex) {
             h = null;
         }
 
@@ -107,18 +109,8 @@ public class RequestController extends AbstractRequestController {
             return "request_scan";
         }
 
-        // list of all parents children
-        List<Record> listOfParentsChildren = h.getRecord().getParent().getChildren();
-        for (Record aChild : listOfParentsChildren) {
-            // controleer of ze in dezelfde container zitten (ignore current record)
-                    if ( aChild.getExternalInfo().getContainer().equals(h.getRecord().getExternalInfo().getContainer()) ) {
-            for (Holding holdd : aChild.getHoldings() ) {
-                        if ( holdd.getId() != h.getId() ) {
-                                containerDependencies.add( holdd );
-                        }
-            }
-                    }
-        }
+        // list of all parents children excluding current holding
+        List<Holding> containerDependencies = records.getListOfSiblingHoldingInSameContainer(h);
 
         // Information about the current state
         Holding.Status oldStatus = h.getStatus();
@@ -127,18 +119,20 @@ public class RequestController extends AbstractRequestController {
         // Determine the active request
         Reservation reservation = null;
         Reproduction reproduction = null;
-        if (requestActive instanceof Reservation)
+        if (requestActive instanceof Reservation) {
             reservation = (Reservation) requestActive;
-        if (requestActive instanceof Reproduction)
+        }
+        if (requestActive instanceof Reproduction) {
             reproduction = (Reproduction) requestActive;
+        }
 
         // Show the request corresponding to the scanned record
         if ((reservation != null) || (reproduction != null)) {
             // If the user may modify reservations, mark item for the active reservation
             if (reservation != null) {
                 reservations.markItem(reservation, h);
-                for ( Holding hhhh : containerDependencies ) {
-                    reservations.markItem(reservation, hhhh);
+                for (Holding containerDependancy : containerDependencies) {
+                    reservations.markItem(reservation, containerDependancy);
                 }
             }
 
@@ -157,10 +151,12 @@ public class RequestController extends AbstractRequestController {
 
             // Also add information about the state of each of the reservation and/or reproduction holdings
             Set<Holding> holdings = new HashSet<>();
-            if ((reservation != null) && (reservation.getHoldings() != null))
+            if ((reservation != null) && (reservation.getHoldings() != null)) {
                 holdings.addAll(reservation.getHoldings());
-            if ((reproduction != null) && (reproduction.getHoldings() != null))
+            }
+            if ((reproduction != null) && (reproduction.getHoldings() != null)) {
                 holdings.addAll(reproduction.getHoldings());
+            }
             model.addAttribute("holdingActiveRequests", getHoldingActiveRequests(holdings));
 
             return "request_scan";

@@ -26,7 +26,8 @@ public abstract class AbstractRequestService implements RequestService {
     protected Validator mvcValidator;
 
     @Autowired
-    protected MessageSource msgSource;
+//    protected MessageSource msgSource;
+    protected MessageSource messageSource;
 
     @Autowired
     protected GeneralRequestService requests;
@@ -139,8 +140,9 @@ public abstract class AbstractRequestService implements RequestService {
     protected void changeHoldingStatus(Request request, Holding.Status status) {
         for (HoldingRequest hr : request.getHoldingRequests()) {
             Holding h = hr.getHolding();
-            if (requests.getActiveFor(h) == request)
+            if (requests.getActiveFor(h) == request) {
                 requests.updateHoldingStatus(h, status);
+            }
         }
     }
 
@@ -164,7 +166,8 @@ public abstract class AbstractRequestService implements RequestService {
 
             if (hr.getHolding().getRecord().getExternalInfo().getMaterialType() ==
                     ExternalRecordInfo.MaterialType.SERIAL && hr.getComment() == null) {
-                String msg = msgSource.getMessage("validator.serialYear", null, "Required",
+//                String msg = msgSource.getMessage("validator.serialYear", null, "Required",
+                String msg = messageSource.getMessage("validator.serialYear", null, "Required",
                         LocaleContextHolder.getLocale());
                 result.addError(new FieldError(result.getObjectName(), "holding" +
                         request.getClass().getSimpleName() + "s[" + i + "].comment", "", false, null, null, msg));
@@ -183,11 +186,11 @@ public abstract class AbstractRequestService implements RequestService {
      *                          Does not say anything if the printer actually printed (or ran out of paper for example).
      */
     protected void printRequest(List<RequestPrintable> requestPrintables, String printerName, boolean alwaysPrint, boolean skipPrint)
-        throws PrinterException {
+            throws PrinterException {
         Book pBook = new Book();
 
         for (RequestPrintable requestPrintable : requestPrintables) {
-            if ( skipPrint ) {
+            if (skipPrint) {
                 requestPrintable.getHoldingRequest().setPrinted(true);
             } else if (!requestPrintable.getHoldingRequest().isPrinted() || alwaysPrint) {
                 pBook.append(requestPrintable, new IISHPageFormat());
@@ -198,13 +201,15 @@ public abstract class AbstractRequestService implements RequestService {
         if (pBook.getNumberOfPages() > 0) {
             PrintService printService = null;
             for (PrintService curPrintService : PrinterJob.lookupPrintServices()) {
-                if (curPrintService.getName().equals(printerName))
+                if (curPrintService.getName().equals(printerName)) {
                     printService = curPrintService;
+                }
             }
 
             PrinterJob job = PrinterJob.getPrinterJob();
-            if (printService != null)
+            if (printService != null) {
                 job.setPrintService(printService);
+            }
             job.setJobName("delivery");
             job.setPageable(pBook);
             job.print();
@@ -217,6 +222,7 @@ public abstract class AbstractRequestService implements RequestService {
      * @param h Holding to bump.
      */
     protected Holding.Status markItem(Holding h) {
+        // get current status, set next status
         switch (h.getStatus()) {
             case RESERVED:
                 h.setStatus(Holding.Status.IN_USE);
@@ -228,6 +234,7 @@ public abstract class AbstractRequestService implements RequestService {
                 h.setStatus(Holding.Status.AVAILABLE);
                 break;
         }
+
         return h.getStatus();
     }
 }

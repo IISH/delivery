@@ -20,6 +20,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.w3c.dom.Node;
 
 import javax.persistence.criteria.*;
 import java.beans.PropertyEditorSupport;
@@ -96,10 +97,10 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
     /**
      * Translates the path of a URI to a list of holdings.
      *
-     * @param path            The path containing the holdings.
+     * @param path The path containing the holdings.
      * @return A list of holdings.
      */
-    protected List<Holding> uriPathToHoldings(String path) {
+    protected List<Holding> uriPathToHoldings(String path, boolean doImportOtherUnitIds) {
         List<Holding> holdings = new ArrayList<>();
         String[] tuples = getPidsFromURL(path);
         for (String tuple : tuples) {
@@ -111,12 +112,16 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
                 try {
                     r = records.createRecordByPid(elements[0]);
                     records.addRecord(r);
-                } catch (NoSuchPidException e) {
+                }
+                catch (NoSuchPidException e) {
                     return null;
                 }
-            }
-            else if (records.updateExternalInfo(r, false)) {
-                records.saveRecord(r);
+            } else {
+                if (doImportOtherUnitIds) {
+                    if (records.updateExternalInfo(r, false)) {
+                        records.saveRecord(r);
+                    }
+                }
             }
 
             for (int i = 1; i < Math.max(2, elements.length); i++) {
@@ -191,7 +196,8 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
         if (p.containsKey("date")) {
             try {
                 date = API_DATE_FORMAT.parse(p.get("date")[0]);
-            } catch (ParseException ex) {
+            }
+            catch (ParseException ex) {
                 throw new InvalidRequestException("Invalid date: " + p.get("date")[0]);
             }
         }
@@ -210,7 +216,8 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
         if (containsFrom) {
             try {
                 date = API_DATE_FORMAT.parse(p.get("from_date")[0]);
-            } catch (ParseException ex) {
+            }
+            catch (ParseException ex) {
                 throw new InvalidRequestException("Invalid from_date: " + p.get("from_date")[0]);
             }
         }
@@ -229,7 +236,8 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
         if (containsTo) {
             try {
                 date = API_DATE_FORMAT.parse(p.get("to_date")[0]);
-            } catch (ParseException ex) {
+            }
+            catch (ParseException ex) {
                 throw new InvalidRequestException("Invalid to_date: " + p.get("to_date")[0]);
             }
         }
@@ -248,7 +256,8 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
         if (p.containsKey("page")) {
             try {
                 page = Math.max(0, Integer.parseInt(p.get("page")[0]) - 1);
-            } catch (NumberFormatException ex) {
+            }
+            catch (NumberFormatException ex) {
                 throw new InvalidRequestException("Invalid page number: " + p.get("page")[0]);
             }
         }
@@ -268,11 +277,39 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
             try {
                 maxResults = Math.max(0, Math.min(Integer.parseInt(p.get("page_len")[0]),
                         deliveryProperties.getRequestMaxPageLen()));
-            } catch (NumberFormatException ex) {
+            }
+            catch (NumberFormatException ex) {
                 throw new InvalidRequestException("Invalid page length: " + p.get("page_len")[0]);
             }
         }
         return maxResults;
+    }
+
+    protected List<Holding> getHoldingsWithSpecificStatus(ArrayList<String> pids, Holding.Status holdingStatus) {
+        if (pids == null || pids.size() == 0) {
+            return null;
+        }
+
+        CriteriaBuilder cb = records.getRecordCriteriaBuilder();
+        CriteriaQuery<Holding> cq = cb.createQuery(Holding.class);
+        Root<Holding> rHolding = cq.from(Holding.class);
+        cq.select(rHolding);
+
+        Join<Holding, Record> rRecord = rHolding.join(Holding_.record);
+
+        Expression<Boolean> whereRecordPid = null;
+
+        for (String aPid : pids) {
+            whereRecordPid = whereRecordPid == null ? cb.or(cb.equal(rRecord.get(Record_.pid), aPid)) : cb.or(whereRecordPid, cb.equal(rRecord.get(Record_.pid), aPid));
+        }
+
+        Expression<Boolean> whereHoldingStatus = cb.and(cb.equal(rHolding.get(Holding_.status), holdingStatus));
+
+        cq.where(cb.and(whereRecordPid, whereHoldingStatus));
+
+        cq.distinct(true);
+
+        return records.listHoldings(cq);
     }
 
     /**
@@ -284,8 +321,9 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
      * @return A list of matching holdings not already specified in the given request.
      */
     protected List<Holding> searchMassCreate(Request request, String searchTitle, String searchSignature) {
-        if ((searchTitle == null) && (searchSignature == null))
+        if ((searchTitle == null) && (searchSignature == null)) {
             return new ArrayList<>();
+        }
 
         CriteriaBuilder cb = records.getRecordCriteriaBuilder();
         CriteriaQuery<Holding> cq = cb.createQuery(Holding.class);
@@ -319,11 +357,9 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
         Expression<Boolean> where = null;
         if (sigWhere == null) {
             where = titleWhere;
-        }
-        else if (titleWhere == null) {
+        } else if (titleWhere == null) {
             where = sigWhere;
-        }
-        else {
+        } else {
             where = cb.and(titleWhere, sigWhere);
         }
 
@@ -379,8 +415,9 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
         for (Holding holding : holdings) {
             if (!holdingActiveRequests.containsKey(holding.toString())) {
                 Request request = requests.getActiveFor(holding);
-                if (request != null)
+                if (request != null) {
                     holdingActiveRequests.put(holding.toString(), request);
+                }
             }
         }
         return holdingActiveRequests;
@@ -396,8 +433,9 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
         List<BulkActionIds> bulkActionIds = new ArrayList<>();
         for (String bulkIds : bulk) {
             String[] ids = bulkIds.split(":");
-            if (ids.length == 2)
+            if (ids.length == 2) {
                 bulkActionIds.add(new BulkActionIds(Integer.parseInt(ids[0]), Integer.parseInt(ids[1])));
+            }
         }
         return bulkActionIds;
     }

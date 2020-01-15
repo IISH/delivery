@@ -6,6 +6,7 @@ import org.socialhistoryservices.delivery.record.entity.ArchiveHoldingInfo;
 import org.socialhistoryservices.delivery.config.DeliveryProperties;
 import org.socialhistoryservices.delivery.record.entity.ExternalHoldingInfo;
 import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
+import org.socialhistoryservices.delivery.record.entity.Holding;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -39,7 +40,9 @@ public class IISHRecordLookupService implements RecordLookupService {
      *
      * @param p The properties to set.
      */
-    public void setDeliveryProperties(DeliveryProperties p) { deliveryProperties = p; }
+    public void setDeliveryProperties(DeliveryProperties p) {
+        deliveryProperties = p;
+    }
 
     /**
      * Constructor.
@@ -88,7 +91,9 @@ public class IISHRecordLookupService implements RecordLookupService {
      */
     public PageChunk getRecordsByTitle(String title, int resultCountPerChunk, int resultStart) {
         PageChunk pc = new PageChunk(resultCountPerChunk, resultStart);
-        if (title == null) return pc;
+        if (title == null) {
+            return pc;
+        }
 
         try {
             title = URLEncoder.encode(title, "utf-8");
@@ -139,7 +144,9 @@ public class IISHRecordLookupService implements RecordLookupService {
             if (recTitle != null && recPid != null) {
                 // Strip trailing slashes.
                 recTitle = recTitle.trim().replaceAll("[/:]$", "");
-                if (!recTitle.isEmpty()) pc.getResults().put(recPid, recTitle + recSubTitle);
+                if (!recTitle.isEmpty()) {
+                    pc.getResults().put(recPid, recTitle + recSubTitle);
+                }
             }
         }
         return pc;
@@ -154,7 +161,6 @@ public class IISHRecordLookupService implements RecordLookupService {
         Node eadNode = getEADNode(node);
 
         // Archives are always EAD
-
         if (eadNode != null) {
             return eadRecordExtractor.getRecordMetadata(eadNode, parentPidAndItem[1]);
         }
@@ -209,12 +215,32 @@ public class IISHRecordLookupService implements RecordLookupService {
         logger.debug(String.format("getHoldingMetaDataByPid(%s)", pid));
 
         String[] parentPidAndItem = getParentPidAndItem(pid);
+
         Node node = searchByPid(parentPidAndItem[0], true);
         Node eadNode = getEADNode(node);
 
-        if (eadNode != null)
+        if (eadNode != null) {
             return eadRecordExtractor.getHoldingMetadata(eadNode, parentPidAndItem[1]);
+        }
+
         return marcRecordExtractor.getHoldingMetadata(node);
+    }
+
+    @Override
+    public String getUnitIdsFromContainer(String pid, String container, boolean includeCurrentContainer) throws NoSuchPidException {
+        logger.debug(String.format("getUnitIdsFromContainer(%s)", pid));
+
+        String[] parentPidAndItem = getParentPidAndItem(pid);
+
+        Node node = searchByPid(parentPidAndItem[0], true);
+        Node eadNode = getEADNode(node);
+
+        // Archives are always EAD
+        if (eadNode != null) {
+            return eadRecordExtractor.getUnitIdsFromContainer(eadNode, pid, container, includeCurrentContainer);
+        }
+
+        return marcRecordExtractor.getUnitIdsFromContainer(node, pid, container, includeCurrentContainer);
     }
 
     /**
@@ -246,10 +272,12 @@ public class IISHRecordLookupService implements RecordLookupService {
 
             URI uri = new URI(apiProto, null, apiDomain, apiPort, apiBase, search, null);
             URL req = uri.toURL();
+
             logger.debug(String.format("doSearch(): Querying SRW API: %s", req.toString()));
             URLConnection conn = req.openConnection();
 
             BufferedReader rdr = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
             return (Node) xpAll.evaluate(new InputSource(rdr), XPathConstants.NODE);
         }
         catch (IOException ex) {
@@ -269,12 +297,13 @@ public class IISHRecordLookupService implements RecordLookupService {
     /**
      * Search metadata by PID.
      *
-     * @param pid The PID to search for.
+     * @param pid      The PID to search for.
      * @param metadata Whether we want the metadata record.
      * @return The main record node.
      * @throws NoSuchPidException Thrown when the search returns nothing.
      */
-    private Node searchByPid(String pid, boolean metadata) throws NoSuchPidException {
+    public Node searchByPid(String pid, boolean metadata) throws NoSuchPidException {
+        //private Node searchByPid(String pid, boolean metadata) throws NoSuchPidException {
         // If we do not search for metadata, then we need to strip the naming authority from the PID
         if (!metadata) {
             pid = pid.replace("10622/", "");
@@ -291,11 +320,9 @@ public class IISHRecordLookupService implements RecordLookupService {
         String query;
         if (metadata) {
             query = getQuery("dc.identifier+=+\"" + encodedPid + "\"", true);
-        }
-        else {
+        } else {
             query = getQuery("marc.852$j=+\"" + encodedPid + "\"", false);
         }
-
 
         Node all = doSearch(query, 1, 1);
         NodeList search = null;
@@ -333,18 +360,24 @@ public class IISHRecordLookupService implements RecordLookupService {
     private String evaluateSearchTitle(Node node) throws XPathExpressionException {
         String recTitle;
         recTitle = xpSearch245aTitle.evaluate(node);
-        if (recTitle.isEmpty())
+        if (recTitle.isEmpty()) {
             recTitle = xpSearch500aTitle.evaluate(node);
-        if (recTitle.isEmpty())
+        }
+        if (recTitle.isEmpty()) {
             recTitle = xpSearch600aTitle.evaluate(node);
-        if (recTitle.isEmpty())
+        }
+        if (recTitle.isEmpty()) {
             recTitle = xpSearch610aTitle.evaluate(node);
-        if (recTitle.isEmpty())
+        }
+        if (recTitle.isEmpty()) {
             recTitle = xpSearch650aTitle.evaluate(node);
-        if (recTitle.isEmpty())
+        }
+        if (recTitle.isEmpty()) {
             recTitle = xpSearch651aTitle.evaluate(node);
-        if (recTitle.isEmpty())
+        }
+        if (recTitle.isEmpty()) {
             recTitle = xpSearch245kTitle.evaluate(node);
+        }
         return recTitle;
     }
 
@@ -355,8 +388,7 @@ public class IISHRecordLookupService implements RecordLookupService {
             query = "iisg.collectionName+=+\"iish.evergreen.biblio\"";
             query += "+or+iisg.collectionName+=+\"iish.archieven\"";
             query += "+or+iisg.collectionName+=+\"iish.eci\"";
-        }
-        else {
+        } else {
             query = "iisg.collectionName+=+\"iish.evergreen.biblio\"";
         }
 

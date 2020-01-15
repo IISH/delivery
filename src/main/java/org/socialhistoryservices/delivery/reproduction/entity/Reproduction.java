@@ -92,6 +92,7 @@ public class Reproduction extends Request {
     @NotBlank
     @Size(max = 255)
     @Email
+    @Pattern(regexp=".+@.{2,}\\..{2,}", message="E-mail address is invalid")
     @Column(name = "customeremail", nullable = false)
     private String customerEmail;
 

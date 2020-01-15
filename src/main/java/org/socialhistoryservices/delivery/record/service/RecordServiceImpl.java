@@ -1,9 +1,9 @@
 package org.socialhistoryservices.delivery.record.service;
 
+import org.apache.batik.svggen.ImageCacher;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.socialhistoryservices.delivery.api.NoSuchPidException;
-import org.socialhistoryservices.delivery.api.RecordLookupService;
+import org.socialhistoryservices.delivery.api.*;
 import org.socialhistoryservices.delivery.config.DeliveryProperties;
 import org.socialhistoryservices.delivery.record.dao.HoldingDAO;
 import org.socialhistoryservices.delivery.record.dao.RecordDAO;
@@ -13,8 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
+import org.socialhistoryservices.delivery.request.controller.AbstractRequestController;
 
 import javax.persistence.criteria.*;
+
+import org.w3c.dom.Node;
+
 import java.util.*;
 
 /**
@@ -22,7 +26,8 @@ import java.util.*;
  */
 @Service
 @Transactional
-public class RecordServiceImpl implements RecordService {
+public class RecordServiceImpl extends AbstractRequestController implements RecordService {
+//public class RecordServiceImpl implements RecordService {
 
     @Autowired
     private RecordDAO recordDAO;
@@ -43,6 +48,7 @@ public class RecordServiceImpl implements RecordService {
 
     /**
      * Add a Record to the database.
+     *
      * @param obj Record to add.
      */
     public void addRecord(Record obj) {
@@ -51,6 +57,7 @@ public class RecordServiceImpl implements RecordService {
 
     /**
      * Remove a Record from the database.
+     *
      * @param obj Record to remove.
      */
     public void removeRecord(Record obj) {
@@ -59,6 +66,7 @@ public class RecordServiceImpl implements RecordService {
 
     /**
      * Save changes to a Record in the database.
+     *
      * @param obj Record to save.
      */
     public void saveRecord(Record obj) {
@@ -67,6 +75,7 @@ public class RecordServiceImpl implements RecordService {
 
     /**
      * Save changes to a Holding in the database.
+     *
      * @param obj Holding to save.
      */
     public void saveHolding(Holding obj) {
@@ -75,6 +84,7 @@ public class RecordServiceImpl implements RecordService {
 
     /**
      * Retrieve the Record matching the given Id.
+     *
      * @param id Id of the Record to retrieve.
      * @return The Record matching the Id.
      */
@@ -84,6 +94,7 @@ public class RecordServiceImpl implements RecordService {
 
     /**
      * Retrieve the Record matching the given pid.
+     *
      * @param pid Pid of the Record to retrieve.
      * @return The Record matching the pid. Null if none exist.
      */
@@ -101,6 +112,7 @@ public class RecordServiceImpl implements RecordService {
 
     /**
      * Get a criteria builder for querying Records.
+     *
      * @return the CriteriaBuilder.
      */
     public CriteriaBuilder getRecordCriteriaBuilder() {
@@ -109,6 +121,7 @@ public class RecordServiceImpl implements RecordService {
 
     /**
      * List all Records matching a built query.
+     *
      * @param query The query to match by.
      * @return A list of matching Records.
      */
@@ -118,6 +131,7 @@ public class RecordServiceImpl implements RecordService {
 
     /**
      * List all Records.
+     *
      * @param offset     The offset.
      * @param maxResults The max number of records to fetch.
      * @return A list of Records.
@@ -128,6 +142,7 @@ public class RecordServiceImpl implements RecordService {
 
     /**
      * Get a single Record matching a built query.
+     *
      * @param query The query to match by.
      * @return The matching Record.
      */
@@ -137,6 +152,7 @@ public class RecordServiceImpl implements RecordService {
 
     /**
      * List all Holdings matching a built query.
+     *
      * @param query The query to match by.
      * @return A list of matching Holdings.
      */
@@ -146,6 +162,7 @@ public class RecordServiceImpl implements RecordService {
 
     /**
      * Retrieve the Holding matching the given Id.
+     *
      * @param id Id of the Holding to retrieve.
      * @return The Holding matching the Id.
      */
@@ -155,6 +172,7 @@ public class RecordServiceImpl implements RecordService {
 
     /**
      * Remove a Holding from the database.
+     *
      * @param obj Holding to remove.
      */
     public void removeHolding(Holding obj) {
@@ -163,6 +181,7 @@ public class RecordServiceImpl implements RecordService {
 
     /**
      * Updates the external info of the given record, if necessary.
+     *
      * @param record      The record of which to update the external info.
      * @param hardRefresh Always update the external info.
      * @return Whether the record was updated.
@@ -175,11 +194,13 @@ public class RecordServiceImpl implements RecordService {
             calendar.add(Calendar.DAY_OF_YEAR, -days);
 
             Date lastUpdated = record.getExternalInfoUpdated();
-            if (!hardRefresh && (lastUpdated != null) && lastUpdated.after(calendar.getTime()))
+            if (!hardRefresh && (lastUpdated != null) && lastUpdated.after(calendar.getTime())) {
                 return (record.getParent() != null) && updateExternalInfo(record.getParent(), hardRefresh);
+            }
 
             // We need to update the external info
             String pid = record.getPid();
+
             ExternalRecordInfo eri = lookup.getRecordMetaDataByPid(pid);
             List<ArchiveHoldingInfo> ahi = lookup.getArchiveHoldingInfoByPid(pid);
             Map<String, ExternalHoldingInfo> ehMap = lookup.getHoldingMetadataByPid(pid);
@@ -193,6 +214,12 @@ public class RecordServiceImpl implements RecordService {
 
             // Update archive holding info
             record.setArchiveHoldingInfo(ahi);
+
+            // add missing units from same container to database
+            if (eri.getContainer() != null) {
+                String listOfUnitIds = lookup.getUnitIdsFromContainer(pid, eri.getContainer(), false);
+                List<Holding> holdings = uriPathToHoldings(listOfUnitIds, false);
+            }
 
             // Update the holdings, merge existing holdings, add new holdings, do not remove old holdings
             for (String signature : ehMap.keySet()) {
@@ -220,14 +247,17 @@ public class RecordServiceImpl implements RecordService {
                         // Found a holding with a different signature, but with the same barcode, start a merge
                         if (ehi.getBarcode().equals(h.getExternalInfo().getBarcode())) {
                             h.setSignature(signature);
-                            if (h.getExternalInfo() != null)
+                            if (h.getExternalInfo() != null) {
                                 h.getExternalInfo().mergeWith(ehi);
-                            else
+                            } else {
                                 h.setExternalInfo(ehi);
+                            }
 
                             found = true;
                         }
                     }
+
+                    // ToDo: add extra checks to fix data errors
 
                     // If still not found, create a new holding
                     if (!found) {
@@ -251,15 +281,15 @@ public class RecordServiceImpl implements RecordService {
 
     /**
      * Edit records.
+     *
      * @param newRecord The new record to put.
      * @param oldRecord The old record (or null if none).
-     * @param result The binding result object to put the validation errors in.
-     * @throws org.socialhistoryservices.delivery.api.NoSuchPidException Thrown when the
-     * PID is not found in the external SRW API.
-     * @throws org.socialhistoryservices.delivery.record.service.NoSuchParentException
-     * Thrown when the provided record is detected as a pid by containing an
-     * item separator (default .), but the parent record was not found in the
-     * database.
+     * @param result    The binding result object to put the validation errors in.
+     * @throws org.socialhistoryservices.delivery.api.NoSuchPidException               Thrown when the
+     *                                                                                 PID is not found in the external SRW API.
+     * @throws org.socialhistoryservices.delivery.record.service.NoSuchParentException Thrown when the provided record is detected as a pid by containing an
+     *                                                                                 item separator (default .), but the parent record was not found in the
+     *                                                                                 database.
      */
     public void createOrEdit(Record newRecord, Record oldRecord, BindingResult result)
             throws NoSuchParentException {
@@ -294,6 +324,7 @@ public class RecordServiceImpl implements RecordService {
 
     /**
      * Validate a record using the provided binding result to store errors.
+     *
      * @param record The record.
      * @param result The binding result.
      */
@@ -303,12 +334,12 @@ public class RecordServiceImpl implements RecordService {
 
         // Validate associated holdings if present
         int i = 0;
-        for(Holding h : record.getHoldings()) {
+        for (Holding h : record.getHoldings()) {
             // Set the record reference for newly created holdings (so you can
             // use the record reference without saving and loading them to
             // the database first).
             h.setRecord(record);
-            result.pushNestedPath("holdings["+i+"]");
+            result.pushNestedPath("holdings[" + i + "]");
             mvcValidator.validate(h, result);
             result.popNestedPath();
             i++;
@@ -318,10 +349,11 @@ public class RecordServiceImpl implements RecordService {
     /**
      * Create a record, using the metadata from the IISH API to populate its
      * fields.
+     *
      * @param pid The pid of the record (should exist in the API).
      * @return The new Record (not yet committed to the database).
      * @throws NoSuchPidException Thrown when the provided PID does not exist
-     * in the API.
+     *                            in the API.
      */
     public Record createRecordByPid(String pid) throws NoSuchPidException {
         Record parent = null;
@@ -334,8 +366,7 @@ public class RecordServiceImpl implements RecordService {
             if (parent == null) {
                 parent = createRecordByPid(parentPid);
                 addRecord(parent);
-            }
-            else if (updateExternalInfo(parent, false)) {
+            } else if (updateExternalInfo(parent, false)) {
                 saveRecord(parent);
             }
         }
@@ -347,7 +378,7 @@ public class RecordServiceImpl implements RecordService {
         r.setParent(parent);
         List<Holding> hList = new ArrayList<>();
         for (Map.Entry<String, ExternalHoldingInfo> e :
-            lookup.getHoldingMetadataByPid(pid).entrySet()) {
+                lookup.getHoldingMetadataByPid(pid).entrySet()) {
             Holding h = new Holding();
             h.setSignature(e.getKey());
             h.setExternalInfo(e.getValue());
@@ -360,12 +391,14 @@ public class RecordServiceImpl implements RecordService {
 
     /**
      * Get all child records of the given record that are currently reserved.
+     *
      * @param record The parent record.
      * @return A list of all reserved child records.
      */
     public List<Record> getReservedChildRecords(Record record) {
-        if (record.getParent() != null)
+        if (record.getParent() != null) {
             return new ArrayList<>();
+        }
 
         CriteriaBuilder builder = getRecordCriteriaBuilder();
         CriteriaQuery<Record> query = builder.createQuery(Record.class);
@@ -379,5 +412,42 @@ public class RecordServiceImpl implements RecordService {
         query.where(builder.and(parentEquals, notAvailable));
 
         return listRecords(query);
+    }
+
+    /*
+     * Get list of sibling holdings in same container
+     * @param holding record
+     * @return list of sibling holdings in same container
+     */
+    public List<Holding> getListOfSiblingHoldingInSameContainer(Holding h) {
+        CriteriaBuilder builder = getRecordCriteriaBuilder();
+        CriteriaQuery<Record> query = builder.createQuery(Record.class);
+
+        // Step 1: combine holding and record
+        Root<Record> recRoot = query.from(Record.class);
+        Join<Record, Holding> hRoot = recRoot.join(Record_.holdings);
+        Predicate holdingId = builder.equal(hRoot.get(Holding_.id), h.getId());
+        query.select(recRoot);
+        query.where(holdingId);
+
+        Record record = getRecord(query);
+
+        // Step 2: use the parent id and container/box name(doos naam) to find the siblings
+        CriteriaBuilder builder2 = getRecordCriteriaBuilder();
+        CriteriaQuery<Holding> query2 = builder2.createQuery(Holding.class);
+
+        Root<Holding> holdingRoot = query2.from(Holding.class);
+        Join<Holding, Record> recordRoot = holdingRoot.join(Holding_.record);
+        Join<Record, ExternalRecordInfo> eriRoot = recordRoot.join(Record_.externalInfo);
+
+        Predicate parentId = builder2.and(
+                builder2.equal(recordRoot.get(Record_.parent), record.getParent().getId()),
+                builder2.equal(eriRoot.get(ExternalRecordInfo_.container), record.getExternalInfo().getContainer()),
+                builder2.notEqual(holdingRoot.get(Holding_.id), h.getId())
+        );
+        query2.select(holdingRoot);
+        query2.where(parentId);
+
+        return listHoldings(query2);
     }
 }

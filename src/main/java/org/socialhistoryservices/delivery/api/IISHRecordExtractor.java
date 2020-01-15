@@ -4,6 +4,7 @@ import org.socialhistoryservices.delivery.record.entity.ExternalHoldingInfo;
 import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
 import org.w3c.dom.Node;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 interface IISHRecordExtractor {
@@ -47,4 +48,6 @@ interface IISHRecordExtractor {
      * @throws NoSuchPidException Thrown when the PID does not exist.
      */
     Map<String, ExternalHoldingInfo> getHoldingMetadata(Node node, String item) throws NoSuchPidException;
+
+    String getUnitIdsFromContainer(Node node, String pid, String container, boolean includeCurrentContainer) throws NoSuchPidException;
 }

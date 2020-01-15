@@ -12,7 +12,7 @@
 <#macro border>
 <table cellpadding=3><tr><td>
     <#nested>
-</tr></td></table>
+</td></tr></table>
 </#macro>
 
 <#-- Build the page -->
