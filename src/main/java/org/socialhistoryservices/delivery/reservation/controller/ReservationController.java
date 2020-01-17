@@ -352,7 +352,7 @@ public class ReservationController extends AbstractRequestController {
 
     /**
      * Print a reservation if it has been reserved between the opening and
-     * closing times of the readingroom.
+     * closing times of the reading room.
      *
      * Run this in a separate thread, we do nothing on failure so in this case this is perfectly possible.
      * This speeds up the processing of the page for the end-user.
@@ -558,7 +558,7 @@ public class ReservationController extends AbstractRequestController {
             if ((request instanceof Reservation) &&
                     (((Reservation) request).getId() == bulkActionIds.getRequestId())) {
                 // Set the new status
-                requests.updateHoldingStatus(h, newHoldingStatus);
+                records.updateHoldingStatus(h, newHoldingStatus);
                 records.saveHolding(h);
             }
         }

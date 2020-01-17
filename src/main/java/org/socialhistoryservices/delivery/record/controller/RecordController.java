@@ -219,8 +219,7 @@ public class RecordController extends ErrorHandlingController {
         if (pid != null) {
             try {
                 // First search locally, if that fails search remote.
-                if (records.getRecordByPid(pid) != null ||
-                    lookup.getRecordMetaDataByPid(pid) != null)
+                if (records.getRecordByPid(pid) != null || lookup.getRecordExtractorByPid(pid) != null)
                 return "redirect:/record/editform/" + urlEncode(pid);
             } catch (NoSuchPidException e) {
             }

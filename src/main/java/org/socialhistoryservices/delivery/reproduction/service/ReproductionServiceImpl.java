@@ -6,6 +6,7 @@ import org.socialhistoryservices.delivery.config.DeliveryProperties;
 import org.socialhistoryservices.delivery.config.PrinterConfiguration;
 import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
 import org.socialhistoryservices.delivery.record.entity.Holding;
+import org.socialhistoryservices.delivery.record.service.RecordService;
 import org.socialhistoryservices.delivery.reproduction.dao.*;
 import org.socialhistoryservices.delivery.reproduction.entity.*;
 import org.socialhistoryservices.delivery.reproduction.util.BigDecimalUtils;
@@ -311,7 +312,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
         Holding.Status newStatus = super.markItem(h);
         markReproduction(r);
 
-        requests.updateHoldingStatus(h, newStatus);
+        records.updateHoldingStatus(h, newStatus);
         saveReproduction(r);
     }
 
@@ -356,7 +357,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
 
         if (other.getHoldingReproductions() == null) {
             for (HoldingReproduction hr : reproduction.getHoldingReproductions()) {
-                requests.updateHoldingStatus(hr.getHolding(), Holding.Status.AVAILABLE);
+                records.updateHoldingStatus(hr.getHolding(), Holding.Status.AVAILABLE);
             }
             reproduction.setHoldingReproductions(new ArrayList<>());
         }
@@ -410,7 +411,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
             for (HoldingReproduction hr : reproduction.getHoldingReproductions()) {
                 if (hr.getHolding().getStatus() == Holding.Status.RESERVED) {
                     hr.setCompleted(true);
-                    requests.updateHoldingStatus(hr.getHolding(), Holding.Status.AVAILABLE);
+                    records.updateHoldingStatus(hr.getHolding(), Holding.Status.AVAILABLE);
                 }
             }
         }
@@ -675,7 +676,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
     private void reserveAvailableRequiredHoldings(Reproduction reproduction) {
         for (HoldingReproduction hr : reproduction.getHoldingReproductions()) {
             if (!hr.isInSor() && (hr.getHolding().getStatus() == Holding.Status.AVAILABLE))
-                requests.updateHoldingStatus(hr.getHolding(), Holding.Status.RESERVED);
+                records.updateHoldingStatus(hr.getHolding(), Holding.Status.RESERVED);
         }
     }
 
@@ -987,7 +988,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
      * @return A Future object that will return the order when succesful.
      */
     @Async
-    private Future<Order> refundOrder(Order order) {
+    public Future<Order> refundOrder(Order order) {
         try {
             if ((order.getPayed() == Order.ORDER_PAYED) && (order.getAmount() > 0)) {
                 PayWayMessage message = payWayService.getMessageForOrderId(order.getId());

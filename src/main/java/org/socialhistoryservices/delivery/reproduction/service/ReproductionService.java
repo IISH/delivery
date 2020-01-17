@@ -5,6 +5,7 @@ import org.socialhistoryservices.delivery.reproduction.entity.*;
 import org.socialhistoryservices.delivery.reproduction.util.ReproductionStandardOptions;
 import org.socialhistoryservices.delivery.request.service.ClosedException;
 import org.socialhistoryservices.delivery.request.service.NoHoldingsException;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.validation.BindingResult;
 
 import javax.persistence.Tuple;
@@ -232,6 +233,16 @@ public interface ReproductionService {
      * @return A Future object that will return the refreshed Order when succesful.
      */
     Future<Order> refreshOrder(Order order);
+
+    /**
+     * Will refund everything for the given order. (NOTE: Only marked as such in PayWay)
+     * The API call is performed in a seperate thread and
+     * a Future object is returned to see when and whether the refund was succesful.
+     *
+     * @param order The order to refund. The id must be set.
+     * @return A Future object that will return the order when succesful.
+     */
+    Future<Order> refundOrder(Order order);
 
     /**
      * Validates and saves the standard reproduction options.

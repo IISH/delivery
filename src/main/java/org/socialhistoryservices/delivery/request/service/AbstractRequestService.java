@@ -2,6 +2,8 @@ package org.socialhistoryservices.delivery.request.service;
 
 import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
 import org.socialhistoryservices.delivery.record.entity.Holding;
+import org.socialhistoryservices.delivery.record.entity.Record;
+import org.socialhistoryservices.delivery.record.service.RecordService;
 import org.socialhistoryservices.delivery.request.entity.HoldingRequest;
 import org.socialhistoryservices.delivery.request.entity.Request;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +17,7 @@ import javax.print.PrintService;
 import java.awt.print.Book;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Represents the service of the request package to be used by the implementing services.
@@ -30,6 +31,9 @@ public abstract class AbstractRequestService implements RequestService {
 
     @Autowired
     protected GeneralRequestService requests;
+
+    @Autowired
+    protected RecordService records;
 
     /**
      * Validate provided holding part of request.
@@ -125,7 +129,7 @@ public abstract class AbstractRequestService implements RequestService {
 
             if (!has) {
                 it.remove();
-                requests.updateHoldingStatus(h, Holding.Status.AVAILABLE);
+                records.updateHoldingStatus(h, Holding.Status.AVAILABLE);
             }
         }
     }
@@ -140,7 +144,7 @@ public abstract class AbstractRequestService implements RequestService {
         for (HoldingRequest hr : request.getHoldingRequests()) {
             Holding h = hr.getHolding();
             if (requests.getActiveFor(h) == request)
-                requests.updateHoldingStatus(h, status);
+                records.updateHoldingStatus(h, status);
         }
     }
 
@@ -183,13 +187,34 @@ public abstract class AbstractRequestService implements RequestService {
      *                          Does not say anything if the printer actually printed (or ran out of paper for example).
      */
     protected void printRequest(List<RequestPrintable> requestPrintables, String printerName, boolean alwaysPrint)
-        throws PrinterException {
+            throws PrinterException {
         Book pBook = new Book();
+        HashMap<Integer, Set<String>> containersPrinted = new HashMap<>();
 
         for (RequestPrintable requestPrintable : requestPrintables) {
-            if (!requestPrintable.getHoldingRequest().isPrinted() || alwaysPrint) {
-                pBook.append(requestPrintable, new IISHPageFormat());
-                requestPrintable.getHoldingRequest().setPrinted(true);
+            HoldingRequest holdingRequest = requestPrintable.getHoldingRequest();
+            if (!holdingRequest.isPrinted() || alwaysPrint) {
+                boolean addPrintable = false;
+                Record record = holdingRequest.getHolding().getRecord();
+
+                if (record.getParent() == null)
+                    addPrintable = true;
+                else {
+                    int id = record.getParent().getId();
+                    String container = record.getExternalInfo().getContainer();
+                    Set<String> containers = containersPrinted.getOrDefault(id, new HashSet<>());
+
+                    if (!containers.contains(container)) {
+                        addPrintable = true;
+                        containers.add(container);
+                        containersPrinted.put(id, containers);
+                    }
+                }
+
+                if (addPrintable)
+                    pBook.append(requestPrintable, new IISHPageFormat());
+
+                holdingRequest.setPrinted(true);
             }
         }
 

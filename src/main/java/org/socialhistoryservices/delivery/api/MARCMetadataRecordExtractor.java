@@ -1,27 +1,32 @@
 package org.socialhistoryservices.delivery.api;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.socialhistoryservices.delivery.record.entity.ExternalHoldingInfo;
-import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
-import org.springframework.util.StringUtils;
+import java.util.*;
+import javax.xml.xpath.*;
+
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.xml.xpath.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import org.springframework.util.StringUtils;
 
-public class MARCRecordExtractor implements IISHRecordExtractor {
-    private static final Log logger = LogFactory.getLog(MARCRecordExtractor.class);
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-    private XPathExpression xpAuthor, xpAltAuthor, xpAlt2Author, xpAlt3Author, xp245aTitle, xp500aTitle, xp600aTitle,
-        xp610aTitle, xp650aTitle, xp651aTitle, xp245kTitle, xp245bSubTitle, xpYear, xpPhysicalDescription, xpGenres,
-        xpShelvingLocations, xpSerialNumbers, xpSignatures, xpBarcodes, xpLeader, xp540bCopyright, xp542mAccess;
+import org.socialhistoryservices.delivery.record.entity.ExternalHoldingInfo;
+import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
+import org.socialhistoryservices.delivery.record.entity.ArchiveHoldingInfo;
 
-    public MARCRecordExtractor() {
+public class MARCMetadataRecordExtractor implements MetadataRecordExtractor {
+    private static final Log LOGGER = LogFactory.getLog(MARCMetadataRecordExtractor.class);
+
+    private static XPathExpression xpAuthor, xpAltAuthor, xpAlt2Author, xpAlt3Author, xp245aTitle,
+            xp500aTitle, xp600aTitle, xp610aTitle, xp650aTitle, xp651aTitle, xp245kTitle, xp245bSubTitle, xpYear,
+            xpPhysicalDescription, xpGenres, xpShelvingLocations, xpSerialNumbers, xpSignatures, xpBarcodes,
+            xpLeader, xp540bCopyright, xp542mAccess;
+
+    private String pid;
+    private Node marc;
+
+    static {
         XPathFactory factory = XPathFactory.newInstance();
         XPath xpath = factory.newXPath();
         xpath.setNamespaceContext(new IISHNamespaceContext());
@@ -35,7 +40,7 @@ public class MARCRecordExtractor implements IISHRecordExtractor {
             xp500aTitle = XmlUtils.getXPathForMarc(xpath, "500", 'a');
             xp600aTitle = XmlUtils.getXPathForMarc(xpath, "600", 'a');
             xp610aTitle = XmlUtils.getXPathForMarc(xpath, "610", 'a');
-            xp650aTitle =XmlUtils.getXPathForMarc(xpath, "650", 'a');
+            xp650aTitle = XmlUtils.getXPathForMarc(xpath, "650", 'a');
             xp651aTitle = XmlUtils.getXPathForMarc(xpath, "651", 'a');
             xp245kTitle = XmlUtils.getXPathForMarc(xpath, "245", 'k');
             xp245bSubTitle = XmlUtils.getXPathForMarc(xpath, "245", 'b');
@@ -51,31 +56,44 @@ public class MARCRecordExtractor implements IISHRecordExtractor {
             xp542mAccess = XmlUtils.getXPathForMarc(xpath, "542", 'm');
         }
         catch (XPathExpressionException ex) {
-            logger.error("Failed initializing XPath expressions");
+            throw new RuntimeException(ex);
         }
     }
 
+    public MARCMetadataRecordExtractor(String pid, Node marc) {
+        this.pid = pid;
+        this.marc = marc;
+    }
+
     /**
-     * Parses a node to metadata of a record.
+     * Returns the PID of the record.
      *
-     * @param node The node to parse.
-     * @return The metadata of the record, if found.
-     * @throws NoSuchPidException Thrown when the PID does not exist.
+     * @return The PID.
      */
     @Override
-    public ExternalRecordInfo getRecordMetadata(Node node) throws NoSuchPidException {
+    public String getPid() {
+        return pid;
+    }
+
+    /**
+     * Extracts the metadata of the record.
+     *
+     * @return The metadata of the record, if found.
+     */
+    @Override
+    public ExternalRecordInfo getRecordMetadata() {
         ExternalRecordInfo externalInfo = new ExternalRecordInfo();
 
-        String author = evaluateAuthor(node);
+        String author = evaluateAuthor();
         if (author != null && !author.isEmpty()) {
-            externalInfo.setAuthor(stripToSize(author, 125));
+            externalInfo.setAuthor(MetadataRecordExtractor.stripToSize(author, 125));
         }
 
-        String title = evaluateTitle(node);
+        String title = evaluateTitle();
         if (title != null && !title.isEmpty()) {
             // Strip trailing slashes
             title = title.trim().replaceAll("[/:]$", "");
-            String subTitle = XmlUtils.evaluate(xp245bSubTitle, node);
+            String subTitle = XmlUtils.evaluate(xp245bSubTitle, marc);
             if (subTitle != null && !subTitle.isEmpty()) {
                 title += " " + subTitle.trim().replaceAll("[/:]$", "");
             }
@@ -83,59 +101,44 @@ public class MARCRecordExtractor implements IISHRecordExtractor {
             // Some titles from the API SRW exceed 255 characters.
             // Strip them to 251 characters (up to 252 , exclusive) to save up for the dash and \0 termination.
             // EDIT: Trim this to ~125 characters for readability (this is the current max size of the field).
-            title = stripToSize(title, 125);
+            title = MetadataRecordExtractor.stripToSize(title, 125);
             externalInfo.setTitle(title);
         }
         else {
             externalInfo.setTitle("Unknown Record");
         }
 
-        String year = XmlUtils.evaluate(xpYear, node);
+        String year = XmlUtils.evaluate(xpYear, marc);
         if (year != null && !year.isEmpty()) {
-            externalInfo.setDisplayYear(stripToSize(year, 30));
+            externalInfo.setDisplayYear(MetadataRecordExtractor.stripToSize(year, 30));
         }
 
-        externalInfo.setMaterialType(evaluateMaterialType(node));
-        externalInfo.setCopyright(XmlUtils.evaluate(xp540bCopyright, node));
-        externalInfo.setPublicationStatus(evaluatePublicationStatus(node));
-        externalInfo.setPhysicalDescription(XmlUtils.evaluate(xpPhysicalDescription, node));
-        externalInfo.setGenres(evaluateGenres(node));
+        externalInfo.setMaterialType(evaluateMaterialType());
+        externalInfo.setCopyright(XmlUtils.evaluate(xp540bCopyright, marc));
+        externalInfo.setPublicationStatus(evaluatePublicationStatus());
+        externalInfo.setPhysicalDescription(XmlUtils.evaluate(xpPhysicalDescription, marc));
+        externalInfo.setGenres(evaluateGenres());
         externalInfo.setRestriction(ExternalRecordInfo.Restriction.OPEN);
 
         return externalInfo;
     }
 
     /**
-     * Parses a node to metadata of a record.
-     *
-     * @param node The node to parse.
-     * @param item The item.
-     * @return The metadata of the record, if found.
-     * @throws NoSuchPidException Thrown when the PID does not exist.
-     */
-    @Override
-    public ExternalRecordInfo getRecordMetadata(Node node, String item) throws NoSuchPidException {
-        return getRecordMetadata(node);
-    }
-
-    /**
-     * Get a map of holding signatures associated with this node,
+     * Get a map of holding signatures associated with this this marc,
      * linking to additional holding info provided by the API.
      *
-     * @param node The node to parse.
      * @return A map of found (signature,holding info) tuples, or an empty map if none were found.
-     * @throws NoSuchPidException Thrown when the PID does not exist.
      */
     @Override
-    public Map<String, ExternalHoldingInfo> getHoldingMetadata(Node node) throws NoSuchPidException {
+    public Map<String, ExternalHoldingInfo> getHoldingMetadata() {
         Map<String, ExternalHoldingInfo> retMap = new HashMap<>();
 
         try {
             // TODO: 866 is not always available.
-            NodeList shelfNodes = (NodeList) xpShelvingLocations.evaluate(node, XPathConstants.NODESET);
-            NodeList sigNodes = (NodeList) xpSignatures.evaluate(node, XPathConstants.NODESET);
-            NodeList serNodes = (NodeList) xpSerialNumbers.evaluate(node, XPathConstants.NODESET);
-            NodeList barcodes = (NodeList) xpBarcodes.evaluate(node, XPathConstants.NODESET);
+            NodeList shelfNodes = (NodeList) xpShelvingLocations.evaluate(marc, XPathConstants.NODESET);
+            NodeList sigNodes = (NodeList) xpSignatures.evaluate(marc, XPathConstants.NODESET);
+            NodeList serNodes = (NodeList) xpSerialNumbers.evaluate(marc, XPathConstants.NODESET);
+            NodeList barcodes = (NodeList) xpBarcodes.evaluate(marc, XPathConstants.NODESET);
 
             if (shelfNodes == null || sigNodes == null || serNodes == null || barcodes == null)
                 return retMap;
@@ -159,38 +162,36 @@ public class MARCRecordExtractor implements IISHRecordExtractor {
             }
         }
         catch (XPathExpressionException ignored) {
-            logger.debug("getHoldingMetadata(): Invalid XPath", ignored);
+            LOGGER.debug("getHoldingMetadata(): Invalid XPath", ignored);
         }
 
         return retMap;
     }
 
     /**
-     * Get a map of holding signatures associated with this node,
-     * linking to additional holding info provided by the API.
+     * Obtains archive holding info of a record.
      *
-     * @param node The node to parse.
-     * @param item The item.
-     * @return A map of found (signature,holding info) tuples, or an empty map if none were found.
-     * @throws NoSuchPidException Thrown when the PID does not exist.
+     * @return A list with the archive metadata of the record, if found.
      */
     @Override
-    public Map<String, ExternalHoldingInfo> getHoldingMetadata(Node node, String item) throws NoSuchPidException {
-        return getHoldingMetadata(node);
+    public List<ArchiveHoldingInfo> getArchiveHoldingInfo() {
+        return Collections.emptyList();
     }
 
-    private String stripToSize(String string, int size) {
-        if (string.length() > size) {
-            string = string.substring(0, size);
-            string = string.trim();
-        }
-        return string;
+    /**
+     * Obtains metadata record extractors for all container siblings of the current record.
+     * These records do not only share the same parent record, but also share a common container.
+     *
+     * @return A set of metadata record extractors for the container siblings.
+     */
+    public Set<MetadataRecordExtractor> getRecordExtractorsForContainerSiblings() {
+        return Collections.emptySet();
     }
 
-    private ExternalRecordInfo.MaterialType evaluateMaterialType(Node node) {
+    private ExternalRecordInfo.MaterialType evaluateMaterialType() {
         try {
-            String leader = xpLeader.evaluate(node);
-            String titleForm = xp245kTitle.evaluate(node);
+            String leader = xpLeader.evaluate(marc);
+            String titleForm = xp245kTitle.evaluate(marc);
             return leaderToMaterialType(leader, titleForm);
         }
         catch (XPathExpressionException e) {
@@ -221,7 +222,7 @@ public class MARCRecordExtractor implements IISHRecordExtractor {
             return ExternalRecordInfo.MaterialType.ARCHIVE;
 
         if (format.equals("av") || format.equals("rm") || format.equals("pv")
-            || format.equals("km") || format.equals("kc"))
+                || format.equals("km") || format.equals("kc"))
             return ExternalRecordInfo.MaterialType.VISUAL;
 
         if (format.equals("ac") && coll.contains("book collection"))
@@ -257,10 +258,10 @@ public class MARCRecordExtractor implements IISHRecordExtractor {
         return ExternalRecordInfo.MaterialType.OTHER;
     }
 
-    private String evaluateGenres(Node node) {
+    private String evaluateGenres() {
         try {
             Set<String> genres = new HashSet<>();
-            NodeList nodeList = (NodeList) xpGenres.evaluate(node, XPathConstants.NODESET);
+            NodeList nodeList = (NodeList) xpGenres.evaluate(marc, XPathConstants.NODESET);
             for (int i = 0; i < nodeList.getLength(); i++) {
                 String genre = nodeList.item(i).getTextContent();
                 genre = genre.toLowerCase().trim();
@@ -275,26 +276,26 @@ public class MARCRecordExtractor implements IISHRecordExtractor {
         }
     }
 
-    private String evaluateTitle(Node node) {
+    private String evaluateTitle() {
         try {
-            String title = xp245aTitle.evaluate(node);
+            String title = xp245aTitle.evaluate(marc);
 
             if (title.isEmpty())
-                title = xp500aTitle.evaluate(node);
+                title = xp500aTitle.evaluate(marc);
             if (title.isEmpty())
-                title = xp600aTitle.evaluate(node);
+                title = xp600aTitle.evaluate(marc);
             if (title.isEmpty())
-                title = xp610aTitle.evaluate(node);
+                title = xp610aTitle.evaluate(marc);
             if (title.isEmpty())
-                title = xp650aTitle.evaluate(node);
+                title = xp650aTitle.evaluate(marc);
             if (title.isEmpty())
-                title = xp651aTitle.evaluate(node);
+                title = xp651aTitle.evaluate(marc);
             if (title.isEmpty())
-                title = xp245kTitle.evaluate(node);
+                title = xp245kTitle.evaluate(marc);
 
             // Strip trailing slashes
             title = title.trim().replaceAll("[/:]$", "");
-            String subTitle = XmlUtils.evaluate(xp245bSubTitle, node);
+            String subTitle = XmlUtils.evaluate(xp245bSubTitle, marc);
             if (subTitle != null && !subTitle.isEmpty()) {
                 title += " " + subTitle.trim().replaceAll("[/:]$", "");
             }
@@ -309,18 +310,17 @@ public class MARCRecordExtractor implements IISHRecordExtractor {
     /**
      * Fetches author from MARCXML, first tries 100a, then 110a.
      *
-     * @param node The XML node to execute the XPath on.
      * @return The author found, or null if not present.
      */
-    private String evaluateAuthor(Node node) {
+    private String evaluateAuthor() {
         try {
-            String author = xpAuthor.evaluate(node);
+            String author = xpAuthor.evaluate(marc);
             if (author.isEmpty())
-                author = xpAltAuthor.evaluate(node);
+                author = xpAltAuthor.evaluate(marc);
             if (author.isEmpty())
-                author = xpAlt2Author.evaluate(node);
+                author = xpAlt2Author.evaluate(marc);
             if (author.isEmpty())
-                author = xpAlt3Author.evaluate(node);
+                author = xpAlt3Author.evaluate(marc);
             return author;
         }
         catch (XPathExpressionException ex) {
@@ -331,12 +331,11 @@ public class MARCRecordExtractor implements IISHRecordExtractor {
     /**
      * Fetches publication status from MARCXML.
      *
-     * @param node The XML node to execute the XPath on.
      * @return The publication status.
      */
-    private ExternalRecordInfo.PublicationStatus evaluatePublicationStatus(Node node) {
+    private ExternalRecordInfo.PublicationStatus evaluatePublicationStatus() {
         try {
-            String status = xp542mAccess.evaluate(node);
+            String status = xp542mAccess.evaluate(marc);
 
             ExternalRecordInfo.PublicationStatus publicationStatus = ExternalRecordInfo.PublicationStatus.UNKNOWN;
             if (status.trim().equalsIgnoreCase("irsh"))

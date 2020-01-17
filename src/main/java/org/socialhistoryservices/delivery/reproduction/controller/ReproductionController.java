@@ -377,7 +377,7 @@ public class ReproductionController extends AbstractRequestController {
                 if ((request instanceof Reproduction) &&
                         (((Reproduction) request).getId() == bulkActionIds.getRequestId())) {
                     // Set the new status
-                    requests.updateHoldingStatus(h, newHoldingStatus);
+                    records.updateHoldingStatus(h, newHoldingStatus);
                     records.saveHolding(h);
                 }
             }
@@ -602,7 +602,7 @@ public class ReproductionController extends AbstractRequestController {
      * @param reproduction The reproduction.
      */
     @Async
-    private void autoPrintReproduction(final Reproduction reproduction) {
+    protected void autoPrintReproduction(final Reproduction reproduction) {
         try {
             reproductions.printReproduction(reproduction);
         } catch (PrinterException e) {

@@ -150,8 +150,7 @@ public class Holding {
     }
 
     /**
-     * Set the external info (preferably from IISHRecordLookupService
-     * .getRecordMetaDataByPid).
+     * Set the external info (preferably from IISHRecordLookupService).
      * @param info The info.
      */
     public void setExternalInfo(ExternalHoldingInfo info) {
@@ -205,6 +204,15 @@ public class Holding {
      */
     public String determinePid() {
         return "10622/" + externalInfo.getBarcode();
+    }
+
+    /**
+     * Returns either the container or the signature of this holding.
+     * @return The container or signature.
+     */
+    public String getIdentity() {
+        String container = this.getRecord().getExternalInfo().getContainer();
+        return container != null ? container : this.getSignature();
     }
 
     /**

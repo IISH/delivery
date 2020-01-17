@@ -6,6 +6,7 @@ import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
 import org.socialhistoryservices.delivery.record.entity.Record;
 import org.socialhistoryservices.delivery.reservation.entity.HoldingReservation;
 import org.springframework.context.MessageSource;
+
 import java.text.DateFormat;
 import java.util.List;
 
@@ -16,9 +17,10 @@ public class ArchiveReservationPrintable extends ReservationPrintable {
 
     /**
      * Construct the printable.
-     * @param hr The holding reservation to construct from.
+     *
+     * @param hr      The holding reservation to construct from.
      * @param mSource The message source to fetch localized messages.
-     * @param format The date format to use.
+     * @param format  The date format to use.
      */
     public ArchiveReservationPrintable(HoldingReservation hr, MessageSource mSource, DateFormat format, DeliveryProperties prop) {
         super(hr, mSource, format, prop);
@@ -41,7 +43,7 @@ public class ArchiveReservationPrintable extends ReservationPrintable {
         drawNewLine(drawInfo);
 
         drawArchive(drawInfo);
-        drawInventoryNumber(drawInfo);
+        drawIdentifier(drawInfo);
         drawRestrictedNotice(drawInfo);
 
         drawNewLine(drawInfo);
@@ -76,15 +78,24 @@ public class ArchiveReservationPrintable extends ReservationPrintable {
     }
 
     /**
-     * Draw the inventory number.
+     * Draw the inventory number or container.
      *
      * @param drawInfo Draw offsets.
      */
-    private void drawInventoryNumber(DrawInfo drawInfo) {
+    private void drawIdentifier(DrawInfo drawInfo) {
         if (holdingRequest.getHolding().getRecord().getParent() != null) {
             DrawValueInfo drawValueInfo = new DrawValueInfo(drawInfo);
-            drawValueInfo.key = getMessage("record.inventory", "Inventory Nr");
-            drawValueInfo.value = holdingRequest.getHolding().getSignature();
+
+            String container = holdingRequest.getHolding().getRecord().getExternalInfo().getContainer();
+            if (container != null) {
+                drawValueInfo.key = getMessage("record.container", "Container");
+                drawValueInfo.value = container;
+            }
+            else {
+                drawValueInfo.key = getMessage("record.inventory", "Inventory Nr");
+                drawValueInfo.value = holdingRequest.getHolding().getSignature();
+            }
+
             drawKeyValueNewLine(drawValueInfo);
         }
     }
@@ -96,7 +107,7 @@ public class ArchiveReservationPrintable extends ReservationPrintable {
      */
     private void drawRestrictedNotice(DrawInfo drawInfo) {
         ExternalRecordInfo.Restriction restriction =
-            holdingRequest.getHolding().getRecord().getExternalInfo().getRestriction();
+                holdingRequest.getHolding().getRecord().getExternalInfo().getRestriction();
         String restrictionValue = getMessage("record.externalInfo.restriction." + restriction, "");
 
         String permissionRequired = "";
@@ -131,7 +142,7 @@ public class ArchiveReservationPrintable extends ReservationPrintable {
             // Empty string: assumption that the first line will never exceed more than one line
             int heightFirstLine = 0;
             if ((ahi.getShelvingLocation() != null) || (ahi.getMeter() != null) || (ahi.getNumbers() != null)
-                || (ahi.getFormat() != null))
+                    || (ahi.getFormat() != null))
                 heightFirstLine = heightOneLine;
 
             int heightLineNote = 0;

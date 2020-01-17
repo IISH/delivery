@@ -87,8 +87,7 @@ public class Record {
     }
 
     /**
-     * Set the external info (preferably from IISHRecordLookupService
-     * .getRecordMetaDataByPid).
+     * Set the external info (preferably from IISHRecordLookupService).
      * @param info The info.
      */
     public void setExternalInfo(ExternalRecordInfo info) {

@@ -200,7 +200,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
         Holding.Status newStatus = super.markItem(h);
         markReservation(res);
 
-        requests.updateHoldingStatus(h, newStatus);
+        records.updateHoldingStatus(h, newStatus);
         saveReservation(res);
     }
 
@@ -253,7 +253,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
         if (other.getHoldingReservations() == null) {
             for (HoldingReservation hr : reservation.getHoldingReservations()) {
-                requests.updateHoldingStatus(hr.getHolding(), Holding.Status.AVAILABLE);
+                records.updateHoldingStatus(hr.getHolding(), Holding.Status.AVAILABLE);
             }
             reservation.setHoldingReservations(new ArrayList<>());
         }
@@ -294,7 +294,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
             if (!hr.isCompleted()) {
                 if (status == Reservation.Status.COMPLETED)
                     hr.setCompleted(true);
-                requests.updateHoldingStatus(hr.getHolding(), hStatus);
+                records.updateHoldingStatus(hr.getHolding(), hStatus);
             }
         }
     }

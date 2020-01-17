@@ -260,6 +260,26 @@ public class ExternalRecordInfo {
         this.genres = genres;
     }
 
+    @Size(max = 255)
+    @Column(name = "container")
+    private String container;
+
+    /**
+     * Get the container.
+     * @return The container.
+     */
+    public String getContainer() {
+        return container;
+    }
+
+    /**
+     * Set the container.
+     * @param container The container.
+     */
+    public void setContainer(String container) {
+        this.container = container;
+    }
+
     /**
      * Merge other record's data with this record.
      * @param other The other record.
@@ -274,5 +294,6 @@ public class ExternalRecordInfo {
         setDisplayYear(other.getDisplayYear());
         setPhysicalDescription(other.getPhysicalDescription());
         setGenres(other.getGenres());
+        setContainer(other.getContainer());
     }
 }

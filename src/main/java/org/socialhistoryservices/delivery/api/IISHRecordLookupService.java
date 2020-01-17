@@ -1,50 +1,37 @@
 package org.socialhistoryservices.delivery.api;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.socialhistoryservices.delivery.record.entity.ArchiveHoldingInfo;
-import org.socialhistoryservices.delivery.config.DeliveryProperties;
-import org.socialhistoryservices.delivery.record.entity.ExternalHoldingInfo;
-import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
+import java.net.*;
 
-import javax.xml.xpath.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.*;
-import java.util.*;
+
+import javax.xml.xpath.*;
+
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.socialhistoryservices.delivery.config.DeliveryProperties;
 
 /**
- * Represents the api.socialhistoryservices.nl lookup service.
+ * Represents the api.socialhistoryservices.org lookup service.
  */
 public class IISHRecordLookupService implements RecordLookupService {
-    private static final Log logger = LogFactory.getLog(IISHRecordLookupService.class);
+    private static final Log LOGGER = LogFactory.getLog(IISHRecordLookupService.class);
     private static final String SRW_SEARCH_PATH = "ns1:recordData/marc:record/";
+
+    private static XPathExpression xpSearch, xpAll, xpOAI, xpSearch245aTitle, xpSearch500aTitle, xpSearch600aTitle,
+            xpSearch610aTitle, xpSearch650aTitle, xpSearch651aTitle, xpSearch245kTitle, xpSearch245bSubTitle,
+            xp856uUrl, xpSearchIdent, xpSearchMeta, xpNumberOfRecords;
 
     private DeliveryProperties deliveryProperties;
 
-    private XPathExpression xpSearch, xpAll, xpOAI, xpSearch245aTitle, xpSearch500aTitle, xpSearch600aTitle,
-        xpSearch610aTitle, xpSearch650aTitle, xpSearch651aTitle, xpSearch245kTitle, xpSearch245bSubTitle,
-        xpArchive931, xpArchiveLocation, xpArchiveMeter, xpArchiveNumbers, xpArchiveFormat, xpArchiveNote,
-        xp856uUrl, xpSearchIdent, xpSearchMeta, xpNumberOfRecords;
-
-    private IISHRecordExtractor marcRecordExtractor, eadRecordExtractor;
-
-    /**
-     * Set the properties info.
-     *
-     * @param p The properties to set.
-     */
-    public void setDeliveryProperties(DeliveryProperties p) { deliveryProperties = p; }
-
-    /**
-     * Constructor.
-     */
-    public IISHRecordLookupService() {
+    static {
         XPathFactory factory = XPathFactory.newInstance();
         XPath xpath = factory.newXPath();
         xpath.setNamespaceContext(new IISHNamespaceContext());
@@ -61,23 +48,23 @@ public class IISHRecordLookupService implements RecordLookupService {
             xpSearch650aTitle = XmlUtils.getXPathForMarc(xpath, "650", 'a', SRW_SEARCH_PATH);
             xpSearch651aTitle = XmlUtils.getXPathForMarc(xpath, "651", 'a', SRW_SEARCH_PATH);
             xpSearch245kTitle = XmlUtils.getXPathForMarc(xpath, "245", 'k', SRW_SEARCH_PATH);
-            xpArchive931 = XmlUtils.getXPathForMarcTag(xpath, "931");
-            xpArchiveLocation = XmlUtils.getXPathForMarcSubfield(xpath, 'a');
-            xpArchiveMeter = XmlUtils.getXPathForMarcSubfield(xpath, 'b');
-            xpArchiveNumbers = XmlUtils.getXPathForMarcSubfield(xpath, 'c');
-            xpArchiveFormat = XmlUtils.getXPathForMarcSubfield(xpath, 'e');
-            xpArchiveNote = XmlUtils.getXPathForMarcSubfield(xpath, 'f');
             xp856uUrl = XmlUtils.getXPathForMarc(xpath, "856", 'u');
             xpSearchIdent = xpath.compile("ns1:extraRecordData/extraData:extraData/iisg:identifier");
             xpSearchMeta = xpath.compile("//marc:record");
             xpNumberOfRecords = xpath.compile("//ns1:numberOfRecords");
         }
         catch (XPathExpressionException ex) {
-            logger.error("Failed initializing XPath expressions");
+            throw new RuntimeException(ex);
         }
+    }
 
-        marcRecordExtractor = new MARCRecordExtractor();
-        eadRecordExtractor = new EADRecordExtractor();
+    /**
+     * Set the properties info.
+     *
+     * @param p The properties to set.
+     */
+    public void setDeliveryProperties(DeliveryProperties p) {
+        deliveryProperties = p;
     }
 
     /**
@@ -86,6 +73,7 @@ public class IISHRecordLookupService implements RecordLookupService {
      * @param title The title to search for.
      * @return A map of {pid,title} key-value pairs.
      */
+    @Override
     public PageChunk getRecordsByTitle(String title, int resultCountPerChunk, int resultStart) {
         PageChunk pc = new PageChunk(resultCountPerChunk, resultStart);
         if (title == null) return pc;
@@ -98,8 +86,8 @@ public class IISHRecordLookupService implements RecordLookupService {
         }
 
         String query = getQuery("marc.245+all+\"" + title + "\"", true);
-        logger.debug(String.format("getRecordsByTitle(title: %s, resultcountPerChunk: %d, resultStart: %d)",
-            title, resultCountPerChunk, resultStart));
+        LOGGER.debug(String.format("getRecordsByTitle(title: %s, resultcountPerChunk: %d, resultStart: %d)",
+                title, resultCountPerChunk, resultStart));
         Node out = doSearch(query, pc.getResultCountPerChunk(), pc.getResultStart());
 
         NodeList search = null;
@@ -108,7 +96,7 @@ public class IISHRecordLookupService implements RecordLookupService {
             pc.setTotalResultCount(((Double) xpNumberOfRecords.evaluate(out, XPathConstants.NUMBER)).intValue());
         }
         catch (XPathExpressionException e) {
-            logger.debug("getRecordsByTitle(): Invalid XPath", e);
+            LOGGER.debug("getRecordsByTitle(): Invalid XPath", e);
             return pc;
         }
 
@@ -145,72 +133,27 @@ public class IISHRecordLookupService implements RecordLookupService {
         return pc;
     }
 
+    /**
+     * Maps a PID to a record metadata extractor.
+     *
+     * @param pid The PID to lookup.
+     * @return The metadata extractor of the record, if found.
+     * @throws NoSuchPidException Thrown when the PID is not found.
+     */
     @Override
-    public ExternalRecordInfo getRecordMetaDataByPid(String pid) throws NoSuchPidException {
-        logger.debug(String.format("getRecordMetaDataByPid(%s)", pid));
+    public MetadataRecordExtractor getRecordExtractorByPid(String pid) throws NoSuchPidException {
+        LOGGER.debug(String.format("getRecordExtractorByPid(%s)", pid));
 
         String[] parentPidAndItem = getParentPidAndItem(pid);
         Node node = searchByPid(parentPidAndItem[0], true);
+        Node archivalNode = (parentPidAndItem[1] == null) ? searchByPid(parentPidAndItem[0], false) : null;
         Node eadNode = getEADNode(node);
 
         if (eadNode != null)
-            return eadRecordExtractor.getRecordMetadata(eadNode, parentPidAndItem[1]);
-        return marcRecordExtractor.getRecordMetadata(node);
-    }
+            return new EADMetadataRecordExtractor(parentPidAndItem[0], parentPidAndItem[1],
+                    deliveryProperties.getItemSeparator(), eadNode, archivalNode);
 
-    @Override
-    public List<ArchiveHoldingInfo> getArchiveHoldingInfoByPid(String pid) {
-        logger.debug(String.format("getArchiveHoldingInfoByPid(%s)", pid));
-
-        List<ArchiveHoldingInfo> info = new ArrayList<>();
-        String[] parentPidAndItem = getParentPidAndItem(pid);
-
-        // Child records should look for archive holding info at their parent
-        if (parentPidAndItem[1] == null) {
-            try {
-                Node node = searchByPid(parentPidAndItem[0], false);
-                NodeList archiveList = (NodeList) xpArchive931.evaluate(node, XPathConstants.NODESET);
-
-                if (archiveList != null) {
-                    for (int i = 0; i < archiveList.getLength(); i++) {
-                        Node archiveItem = archiveList.item(i);
-
-                        ArchiveHoldingInfo ahi = new ArchiveHoldingInfo();
-                        ahi.setShelvingLocation(XmlUtils.evaluate(xpArchiveLocation, archiveItem));
-                        ahi.setMeter(XmlUtils.evaluate(xpArchiveMeter, archiveItem));
-                        ahi.setNumbers(XmlUtils.evaluate(xpArchiveNumbers, archiveItem));
-                        ahi.setFormat(XmlUtils.evaluate(xpArchiveFormat, archiveItem));
-                        ahi.setNote(XmlUtils.evaluate(xpArchiveNote, archiveItem));
-
-                        if (ahi.getShelvingLocation() != null || ahi.getMeter() != null ||
-                            ahi.getNumbers() != null || ahi.getFormat() != null || ahi.getNote() != null) {
-                            info.add(ahi);
-                        }
-                    }
-                }
-            }
-            catch (XPathExpressionException ignored) {
-                logger.debug("getArchiveHoldingInfoByPid(): Invalid XPath", ignored);
-            }
-            catch (NoSuchPidException ignored) {
-                logger.debug("getArchiveHoldingInfoByPid(): No such PID", ignored);
-            }
-        }
-
-        return info;
-    }
-
-    @Override
-    public Map<String, ExternalHoldingInfo> getHoldingMetadataByPid(String pid) throws NoSuchPidException {
-        logger.debug(String.format("getHoldingMetaDataByPid(%s)", pid));
-
-        String[] parentPidAndItem = getParentPidAndItem(pid);
-        Node node = searchByPid(parentPidAndItem[0], true);
-        Node eadNode = getEADNode(node);
-
-        if (eadNode != null)
-            return eadRecordExtractor.getHoldingMetadata(eadNode, parentPidAndItem[1]);
-        return marcRecordExtractor.getHoldingMetadata(node);
+        return new MARCMetadataRecordExtractor(pid, node);
     }
 
     /**
@@ -242,22 +185,22 @@ public class IISHRecordLookupService implements RecordLookupService {
 
             URI uri = new URI(apiProto, null, apiDomain, apiPort, apiBase, search, null);
             URL req = uri.toURL();
-            logger.debug(String.format("doSearch(): Querying SRW API: %s", req.toString()));
+            LOGGER.debug(String.format("doSearch(): Querying SRW API: %s", req.toString()));
             URLConnection conn = req.openConnection();
 
             BufferedReader rdr = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             return (Node) xpAll.evaluate(new InputSource(rdr), XPathConstants.NODE);
         }
         catch (IOException ex) {
-            logger.debug("doSearch(): API Connect Failed", ex);
+            LOGGER.debug("doSearch(): API Connect Failed", ex);
             return null;
         }
         catch (URISyntaxException ex) {
-            logger.debug("doSearch(): Invalid URI syntax", ex);
+            LOGGER.debug("doSearch(): Invalid URI syntax", ex);
             return null;
         }
         catch (XPathExpressionException e) {
-            logger.debug("doSearch(): Invalid XPath", e);
+            LOGGER.debug("doSearch(): Invalid XPath", e);
             return null;
         }
     }
@@ -265,7 +208,7 @@ public class IISHRecordLookupService implements RecordLookupService {
     /**
      * Search metadata by PID.
      *
-     * @param pid The PID to search for.
+     * @param pid      The PID to search for.
      * @param metadata Whether we want the metadata record.
      * @return The main record node.
      * @throws NoSuchPidException Thrown when the search returns nothing.
@@ -284,14 +227,9 @@ public class IISHRecordLookupService implements RecordLookupService {
             throw new RuntimeException(e);
         }
 
-        String query;
-        if (metadata) {
-            query = getQuery("dc.identifier+=+\"" + encodedPid + "\"", true);
-        }
-        else {
-            query = getQuery("marc.852$j=+\"" + encodedPid + "\"", false);
-        }
-
+        String query = metadata
+                ? getQuery("dc.identifier+=+\"" + encodedPid + "\"", true)
+                : getQuery("marc.852$j=+\"" + encodedPid + "\"", false);
 
         Node all = doSearch(query, 1, 1);
         NodeList search = null;
@@ -302,13 +240,13 @@ public class IISHRecordLookupService implements RecordLookupService {
             search = (NodeList) xpSearchMeta.evaluate(all, XPathConstants.NODESET);
         }
         catch (XPathExpressionException e) {
-            logger.debug("searchByPid(): Invalid XPath", e);
+            LOGGER.debug("searchByPid(): Invalid XPath", e);
             throw new NoSuchPidException();
             // Handle this in case the IISH API is down.
         }
 
         if (resultCount == 0 || search == null) {
-            logger.debug("searchByPid(): Zero results");
+            LOGGER.debug("searchByPid(): Zero results");
             throw new NoSuchPidException();
         }
 
@@ -368,7 +306,7 @@ public class IISHRecordLookupService implements RecordLookupService {
             String url = xp856uUrl.evaluate(node);
             if (url.endsWith("?locatt=view:ead")) {
                 URL eadUrl = new URL(url);
-                logger.debug(String.format("getEADNode(): Querying EAD URL: %s", eadUrl.toString()));
+                LOGGER.debug(String.format("getEADNode(): Querying EAD URL: %s", eadUrl.toString()));
                 HttpURLConnection conn = (HttpURLConnection) eadUrl.openConnection();
 
                 int status = conn.getResponseCode();
@@ -385,11 +323,11 @@ public class IISHRecordLookupService implements RecordLookupService {
             return null;
         }
         catch (IOException ex) {
-            logger.debug("getEADNode(): API Connect Failed", ex);
+            LOGGER.debug("getEADNode(): API Connect Failed", ex);
             throw new NoSuchPidException();
         }
         catch (XPathExpressionException ex) {
-            logger.debug("getEADNode(): Invalid XPath", ex);
+            LOGGER.debug("getEADNode(): Invalid XPath", ex);
             throw new NoSuchPidException();
         }
     }

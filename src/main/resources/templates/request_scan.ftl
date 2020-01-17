@@ -28,7 +28,7 @@
     <#elseif holding??>
       <ul class="messages">
         <li>
-          &quot;${holding.record.title?html} - ${holding.signature?html}&quot;
+          &quot;${holding.record.title?html} - ${holding.identity?html}&quot;
           <@_ "scan.changedFrom" "has changed from status" />
           &quot;<@_ "holding.statusType.${oldStatus?string}" oldStatus?string/>&quot;
           <@_ "scan.changedTo" "to" />

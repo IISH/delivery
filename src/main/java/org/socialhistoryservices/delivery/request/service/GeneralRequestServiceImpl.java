@@ -28,16 +28,6 @@ public class GeneralRequestServiceImpl implements GeneralRequestService {
     }
 
     /**
-     * Updates the status of a holding.
-     *
-     * @param holding       The holding.
-     * @param status        The new status.
-     */
-    public void updateHoldingStatus(Holding holding, Holding.Status status) {
-        holding.setStatus(status);
-    }
-
-    /**
      * Get an active request relating to a specific Holding.
      *
      * @param holding Holding to find a request for.
