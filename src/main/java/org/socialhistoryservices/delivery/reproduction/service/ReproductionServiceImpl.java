@@ -309,10 +309,8 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
         if (r == null)
             return;
 
-        Holding.Status newStatus = super.markItem(h);
+        super.markItem(h);
         markReproduction(r);
-
-        records.updateHoldingStatus(h, newStatus);
         saveReproduction(r);
     }
 

@@ -242,13 +242,13 @@ public abstract class AbstractRequestService implements RequestService {
     protected Holding.Status markItem(Holding h) {
         switch (h.getStatus()) {
             case RESERVED:
-                h.setStatus(Holding.Status.IN_USE);
+                records.updateHoldingStatus(h, Holding.Status.IN_USE);
                 break;
             case IN_USE:
-                h.setStatus(Holding.Status.RETURNED);
+                records.updateHoldingStatus(h, Holding.Status.RETURNED);
                 break;
             case RETURNED:
-                h.setStatus(Holding.Status.AVAILABLE);
+                records.updateHoldingStatus(h, Holding.Status.AVAILABLE);
                 break;
         }
         return h.getStatus();

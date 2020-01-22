@@ -197,10 +197,8 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
         if (res == null)
             return;
 
-        Holding.Status newStatus = super.markItem(h);
+        super.markItem(h);
         markReservation(res);
-
-        records.updateHoldingStatus(h, newStatus);
         saveReservation(res);
     }
 
