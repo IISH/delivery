@@ -13,24 +13,28 @@ import java.util.List;
 public interface UserService {
     /**
      * Add a User to the database.
+     *
      * @param obj User to add.
      */
     void addUser(User obj);
 
     /**
      * Remove a User from the database.
+     *
      * @param obj User to remove.
      */
     void removeUser(User obj);
 
     /**
      * Save changes to a User in the database.
+     *
      * @param obj User to save.
      */
     void saveUser(User obj);
 
     /**
      * Retrieve the User matching the given Id.
+     *
      * @param id Id of the User to retrieve.
      * @return The User matching the Id.
      */
@@ -38,6 +42,7 @@ public interface UserService {
 
     /**
      * Retrieve the User matching the given username.
+     *
      * @param name Username of the User to retrieve.
      * @return The User matching the username.
      */
@@ -45,12 +50,14 @@ public interface UserService {
 
     /**
      * Get a criteria builder for querying Users.
+     *
      * @return the CriteriaBuilder.
      */
     CriteriaBuilder getUserCriteriaBuilder();
 
     /**
      * List all Users matching a built query.
+     *
      * @param query The query to match by.
      * @return A list of matching Users.
      */
@@ -58,12 +65,14 @@ public interface UserService {
 
     /**
      * List all Users.
+     *
      * @return A list of Users.
      */
     List<User> listUsers();
 
     /**
      * Get a single User matching a built query.
+     *
      * @param query The query to match by.
      * @return The matching User.
      */
@@ -71,24 +80,28 @@ public interface UserService {
 
     /**
      * Add a Group to the database.
+     *
      * @param obj Group to add.
      */
     void addGroup(Group obj);
 
     /**
      * Remove a Group from the database.
+     *
      * @param obj Group to remove.
      */
     void removeGroup(Group obj);
 
     /**
      * Save changes to a Group in the database.
+     *
      * @param obj Group to save.
      */
     void saveGroup(Group obj);
 
     /**
      * Retrieve the Group matching the given Id.
+     *
      * @param id Id of the Group to retrieve.
      * @return The Group matching the Id.
      */
@@ -96,12 +109,14 @@ public interface UserService {
 
     /**
      * Get a criteria builder for querying Groups.
+     *
      * @return the CriteriaBuilder.
      */
     CriteriaBuilder getGroupCriteriaBuilder();
 
     /**
      * List all Groups matching a built query.
+     *
      * @param query The query to match by.
      * @return A list of matching Groups.
      */
@@ -109,15 +124,16 @@ public interface UserService {
 
     /**
      * List all Groups.
+     *
      * @return A list of Groups.
      */
     List<Group> listGroups();
 
     /**
      * Get a single Group matching a built query.
+     *
      * @param query The query to match by.
      * @return The matching Group.
      */
     Group getGroup(CriteriaQuery<Group> query);
-
 }

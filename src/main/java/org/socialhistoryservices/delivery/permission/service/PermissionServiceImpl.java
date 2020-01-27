@@ -26,6 +26,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     /**
      * Add a Permission to the database.
+     *
      * @param obj Permission to add.
      */
     public void addPermission(Permission obj) {
@@ -34,6 +35,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     /**
      * Remove a Permission from the database.
+     *
      * @param obj Permission to remove.
      */
     public void removePermission(Permission obj) {
@@ -42,6 +44,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     /**
      * Remove a RecordPermission from the database.
+     *
      * @param obj RecordPermission to remove.
      */
     public void removeRecordPermission(RecordPermission obj) {
@@ -50,6 +53,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     /**
      * Save changes to a Permission in the database.
+     *
      * @param obj Permission to save.
      */
     public void savePermission(Permission obj) {
@@ -58,6 +62,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     /**
      * Retrieve the Permission matching the given Id.
+     *
      * @param id Id of the Permission to retrieve.
      * @return The Permission matching the Id.
      */
@@ -67,6 +72,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     /**
      * Get a criteria builder for querying Permissions.
+     *
      * @return the CriteriaBuilder.
      */
     public CriteriaBuilder getPermissionCriteriaBuilder() {
@@ -75,6 +81,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     /**
      * List all RecordPermissions matching a built query.
+     *
      * @param query The query to match by.
      * @return A list of matching RecordPermissions.
      */
@@ -84,9 +91,10 @@ public class PermissionServiceImpl implements PermissionService {
 
     /**
      * List all RecordPermissions matching a built query.
-     * @param query The query to match by.
+     *
+     * @param query       The query to match by.
      * @param firstResult The first result to obtain
-     * @param maxResults The max number of results to obtain
+     * @param maxResults  The max number of results to obtain
      * @return A list of matching RecordPermissions.
      */
     public List<RecordPermission> listRecordPermissions(CriteriaQuery<RecordPermission> query,
@@ -96,6 +104,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     /**
      * Count all RecordPermissions matching a built query.
+     *
      * @param query The criteria query to execute
      * @return A count of matching RecordPermissions.
      */
@@ -105,6 +114,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     /**
      * Get a single Permission matching a built query.
+     *
      * @param query The query to match by.
      * @return The matching Permission.
      */
@@ -112,8 +122,9 @@ public class PermissionServiceImpl implements PermissionService {
         return permissionDAO.get(query);
     }
 
-        /**
+    /**
      * Fetch a permission by its code.
+     *
      * @param code The code of a permission.
      * @return The permission, or null if not found.
      */
@@ -131,6 +142,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     /**
      * Check whether there are any permission requests made on the record.
+     *
      * @param record Record to check for permission requests for.
      * @return Whether any permission requests have been made including this record.
      */

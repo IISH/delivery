@@ -22,7 +22,9 @@ import java.util.List;
 @Entity
 @Table(name = "records", indexes = {@Index(columnList = "external_info_id", name = "records_external_info_fk")})
 public class Record {
-    /** Type of restrictions on the use of the record. */
+    /**
+     * Type of restrictions on the use of the record.
+     */
     public enum RestrictionType {
         RESTRICTED,
         OPEN,
@@ -30,36 +32,46 @@ public class Record {
         INHERIT,
     }
 
-    /** Stores information about the number of pages. */
+    /**
+     * Stores information about the number of pages.
+     */
     @Transient
     private Pages pages;
 
-    /** Stores information about the number of copies */
+    /**
+     * Stores information about the number of copies
+     */
     @Transient
     private Copies copies;
 
-    /** The Record's id. */
+    /**
+     * The Record's id.
+     */
     @Id
     @GeneratedValue
-    @Column(name="id")
+    @Column(name = "id")
     private int id;
 
     /**
      * Get the Record's id.
+     *
      * @return the Record's id.
      */
     public int getId() {
         return id;
     }
 
-    /** The Record's pid. */
+    /**
+     * The Record's pid.
+     */
     @NotBlank
-    @Size(max=255)
-    @Column(name="pid", nullable=false, unique = true)
+    @Size(max = 255)
+    @Column(name = "pid", nullable = false, unique = true)
     private String pid;
 
     /**
      * Get the Record's pid.
+     *
      * @return the Record's pid.
      */
     public String getPid() {
@@ -68,18 +80,20 @@ public class Record {
 
     /**
      * Set the Record's pid.
+     *
      * @param pid the Record's pid.
      */
     public void setPid(String pid) {
         this.pid = pid;
     }
 
-    @OneToOne(cascade=CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name="external_info_id")
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "external_info_id")
     private ExternalRecordInfo externalInfo;
 
     /**
      * Get the external record info.
+     *
      * @return The info object.
      */
     public ExternalRecordInfo getExternalInfo() {
@@ -88,6 +102,7 @@ public class Record {
 
     /**
      * Set the external info (preferably from IISHRecordLookupService).
+     *
      * @param info The info.
      */
     public void setExternalInfo(ExternalRecordInfo info) {
@@ -95,11 +110,12 @@ public class Record {
     }
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="external_info_updated")
+    @Column(name = "external_info_updated")
     private Date externalInfoUpdated;
 
     /**
      * Get the date/time the external info of this record was last updated.
+     *
      * @return The date/time the external info of this record was last updated.
      */
     public Date getExternalInfoUpdated() {
@@ -108,6 +124,7 @@ public class Record {
 
     /**
      * Set the date/time the external info of this record was last updated.
+     *
      * @param externalInfoUpdated The date/time the external info of this record was last updated.
      */
     public void setExternalInfoUpdated(Date externalInfoUpdated) {
@@ -116,6 +133,7 @@ public class Record {
 
     /**
      * Get the Record's title.
+     *
      * @return the Record's title.
      */
     public String getTitle() {
@@ -124,6 +142,7 @@ public class Record {
 
     /**
      * Set the Record's title.
+     *
      * @param title the Record's title.
      */
     public void setTitle(String title) {
@@ -132,6 +151,7 @@ public class Record {
 
     /**
      * Get the copyright holder.
+     *
      * @return The holder of the copyright.
      */
     public String getCopyright() {
@@ -153,6 +173,7 @@ public class Record {
 
     /**
      * Get the publication status.
+     *
      * @return the publication status.
      */
     public ExternalRecordInfo.PublicationStatus getPublicationStatus() {
@@ -161,6 +182,7 @@ public class Record {
 
     /**
      * Get the restriction.
+     *
      * @return the restriction.
      */
     public ExternalRecordInfo.Restriction getRestriction() {
@@ -172,17 +194,19 @@ public class Record {
 
     /**
      * Get the physical description.
+     *
      * @return the physical description.
      */
     public String getPhysicalDescription() {
         return externalInfo.getPhysicalDescription();
     }
 
-    @OneToMany(mappedBy="record", cascade=CascadeType.ALL, orphanRemoval=true)
+    @OneToMany(mappedBy = "record", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ArchiveHoldingInfo> archiveHoldingInfo = new ArrayList<>();
 
     /**
      * Get the archive holding info.
+     *
      * @return The info object.
      */
     public List<ArchiveHoldingInfo> getArchiveHoldingInfo() {
@@ -191,6 +215,7 @@ public class Record {
 
     /**
      * Set the archive holding info (preferably from IISHRecordLookupService.getArchiveHoldingInfoByPid).
+     *
      * @param archiveHoldingInfo The info.
      */
     public void setArchiveHoldingInfo(List<ArchiveHoldingInfo> archiveHoldingInfo) {
@@ -201,13 +226,16 @@ public class Record {
         }
     }
 
-    /** The Record's parent. */
+    /**
+     * The Record's parent.
+     */
     @ManyToOne
-    @JoinColumn(name="parent_id")
+    @JoinColumn(name = "parent_id")
     private Record parent;
 
     /**
      * Get the Record's parent.
+     *
      * @return the Record's parent.
      */
     public Record getParent() {
@@ -216,6 +244,7 @@ public class Record {
 
     /**
      * Set the Record's parent.
+     *
      * @param parent the Record's parent.
      */
     public void setParent(Record parent) {
@@ -224,6 +253,7 @@ public class Record {
 
     /**
      * Get the top-level root of this record.
+     *
      * @return The top record.
      */
     public Record getRoot() {
@@ -237,11 +267,12 @@ public class Record {
      * Child records in this parent.
      */
     @OrderBy("pid asc")
-    @OneToMany(mappedBy="parent", cascade=CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Record> children;
 
     /**
      * Set the set of children associated with this record.
+     *
      * @param cl The list of child records.
      */
     public void setChildren(List<Record> cl) {
@@ -250,6 +281,7 @@ public class Record {
 
     /**
      * Get the set of children associated with this record.
+     *
      * @return The set of children.
      */
     public List<Record> getChildren() {
@@ -261,11 +293,12 @@ public class Record {
      */
     @NotNull
     @OrderBy
-    @OneToMany(mappedBy="record", cascade=CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "record", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Holding> holdings;
 
     /**
      * Get the set of holdings associated with this record.
+     *
      * @return The set of holdings.
      */
     public List<Holding> getHoldings() {
@@ -274,23 +307,26 @@ public class Record {
 
     /**
      * Add a set of holdings to this record.
+     *
      * @param hs The set of holdings to add.
      */
     public void setHoldings(List<Holding> hs) {
         holdings = hs;
     }
 
-	/**
-	 * Add a holding to this record.
-	 * @param h The holding to add.
-	 */
-	public void addHolding(Holding h) {
-		holdings.add(h);
-	}
+    /**
+     * Add a holding to this record.
+     *
+     * @param h The holding to add.
+     */
+    public void addHolding(Holding h) {
+        holdings.add(h);
+    }
 
     /**
      * Merge other record's data with this record. ID, title,
      * and PID are not copied.
+     *
      * @param other The other record.
      */
     public void mergeWith(Record other) {
@@ -303,7 +339,8 @@ public class Record {
         // Merge holdings.
         if (other.getHoldings() == null) {
             holdings = new ArrayList<>();
-        } else {
+        }
+        else {
             // Delete holdings that were not provided.
             deleteHoldingsNotInProvidedRecord(other);
 
@@ -314,6 +351,7 @@ public class Record {
 
     /**
      * Add/Update the holdings provided by the provided record.
+     *
      * @param other The provided record.
      */
     private void addOrUpdateHoldingsProvidedByRecord(Record other) {
@@ -336,6 +374,7 @@ public class Record {
 
     /**
      * Remove the holdings from this record, which are not in the other record.
+     *
      * @param other The other record.
      */
     private void deleteHoldingsNotInProvidedRecord(Record other) {
@@ -359,6 +398,7 @@ public class Record {
 
     /**
      * Returns the Pages object for this record.
+     *
      * @return The Pages object.
      */
     public Pages getPages() {
@@ -369,22 +409,24 @@ public class Record {
 
     /**
      * Returns the Copies object for this record.
+     *
      * @return The Copies object.
      */
-    public Copies getCopies(){
-        if(copies == null)
+    public Copies getCopies() {
+        if (copies == null)
             copies = new Copies(this);
         return copies;
     }
 
     /**
      * Helper method to determine the price for this reocrd.
+     *
      * @param price The price per page/copy.
      * @return The total price for this record based on the given price per page/copy.
      */
-    public BigDecimal determinePrice(BigDecimal price){
-        if(this.externalInfo.getMaterialType() == ExternalRecordInfo.MaterialType.BOOK){
-            if(getPages().containsNumberOfPages())
+    public BigDecimal determinePrice(BigDecimal price) {
+        if (this.externalInfo.getMaterialType() == ExternalRecordInfo.MaterialType.BOOK) {
+            if (getPages().containsNumberOfPages())
                 price = price.multiply(new BigDecimal(pages.getNumberOfPages()));
         }
         else {
@@ -396,6 +438,7 @@ public class Record {
 
     /**
      * Determine whether this record is open for reproductions.
+     *
      * @return True if this record is open for reproduction requests.
      */
     public boolean isOpenForReproduction() {

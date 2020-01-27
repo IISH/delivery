@@ -37,6 +37,7 @@ public interface HoldingReproductionDAO {
 
     /**
      * Count all HoldingReproductions matching a built query.
+     *
      * @param q The criteria query to execute
      * @return The number of counted results.
      */
@@ -44,6 +45,7 @@ public interface HoldingReproductionDAO {
 
     /**
      * Retrieve the HoldingReproduction matching the given ID.
+     *
      * @param id ID of the HoldingReproduction to retrieve.
      * @return The HoldingReproduction matching the ID.
      */

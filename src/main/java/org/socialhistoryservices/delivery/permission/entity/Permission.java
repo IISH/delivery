@@ -13,16 +13,19 @@ import java.util.*;
  * A permission request in order to view a particular set of restricted records.
  */
 @Entity
-@Table(name="permissions")
+@Table(name = "permissions")
 public class Permission {
-    /** The Permission's id. */
+    /**
+     * The Permission's id.
+     */
     @Id
     @GeneratedValue
-    @Column(name="id")
+    @Column(name = "id")
     private int id;
 
     /**
      * Get the Permission's id.
+     *
      * @return the Permission's id.
      */
     public int getId() {
@@ -31,20 +34,24 @@ public class Permission {
 
     /**
      * Set the Permission's id.
+     *
      * @param id the Permission's id.
      */
     public void setId(int id) {
         this.id = id;
     }
 
-    /** The Permission's name. */
+    /**
+     * The Permission's name.
+     */
     @NotBlank
     @Size(max = 255)
-    @Column(name="name", nullable=false)
+    @Column(name = "name", nullable = false)
     private String name;
 
     /**
      * Get the Permission's name.
+     *
      * @return the Permission's name.
      */
     public String getName() {
@@ -53,20 +60,24 @@ public class Permission {
 
     /**
      * Set the Permission's name.
+     *
      * @param name the Permission's name.
      */
     public void setName(String name) {
         this.name = name;
     }
 
-    /** The Permission's code. */
+    /**
+     * The Permission's code.
+     */
     @NotBlank
     @Size(max = 255)
-    @Column(name="code")
+    @Column(name = "code")
     private String code;
 
     /**
      * Get the Permission's code.
+     *
      * @return the Permission's code.
      */
     public String getCode() {
@@ -75,6 +86,7 @@ public class Permission {
 
     /**
      * Set the Permission's code.
+     *
      * @param code the Permission's code.
      */
     public void setCode(String code) {
@@ -88,14 +100,17 @@ public class Permission {
         code = RandomStringUtils.randomAlphanumeric(20);
     }
 
-    /** The Permission's email. */
+    /**
+     * The Permission's email.
+     */
     @NotBlank
     @Size(max = 255)
-    @Column(name="email", nullable=false)
+    @Column(name = "email", nullable = false)
     private String email;
 
     /**
      * Get the Permission's email.
+     *
      * @return the Permission's email.
      */
     public String getEmail() {
@@ -104,19 +119,23 @@ public class Permission {
 
     /**
      * Set the Permission's email.
+     *
      * @param email the Permission's email.
      */
     public void setEmail(String email) {
         this.email = email;
     }
 
-    /** The Permission's researchSubject. */
+    /**
+     * The Permission's researchSubject.
+     */
     @NotBlank
-    @Column(name="research_subject", columnDefinition="TEXT", nullable=false)
+    @Column(name = "research_subject", columnDefinition = "TEXT", nullable = false)
     private String researchSubject;
 
     /**
      * Get the Permission's researchSubject.
+     *
      * @return the Permission's researchSubject.
      */
     public String getResearchSubject() {
@@ -125,19 +144,23 @@ public class Permission {
 
     /**
      * Set the Permission's researchSubject.
+     *
      * @param researchSubject the Permission's researchSubject.
      */
     public void setResearchSubject(String researchSubject) {
         this.researchSubject = researchSubject;
     }
 
-    /** The Permission's researchOrganization. */
+    /**
+     * The Permission's researchOrganization.
+     */
     @NotBlank
-    @Column(name="research_organization", columnDefinition="TEXT", nullable=false)
+    @Column(name = "research_organization", columnDefinition = "TEXT", nullable = false)
     private String researchOrganization;
 
     /**
      * Get the Permission's researchOrganization.
+     *
      * @return the Permission's researchOrganization.
      */
     public String getResearchOrganization() {
@@ -146,18 +169,22 @@ public class Permission {
 
     /**
      * Set the Permission's researchOrganization.
+     *
      * @param researchOrganization the Permission's researchOrganization.
      */
     public void setResearchOrganization(String researchOrganization) {
         this.researchOrganization = researchOrganization;
     }
 
-    /** The Permission's explanation. */
-    @Column(name="explanation", columnDefinition="TEXT")
+    /**
+     * The Permission's explanation.
+     */
+    @Column(name = "explanation", columnDefinition = "TEXT")
     private String explanation;
 
     /**
      * Get the Permission's explanation.
+     *
      * @return the Permission's explanation.
      */
     public String getExplanation() {
@@ -166,19 +193,23 @@ public class Permission {
 
     /**
      * Set the Permission's explanation.
+     *
      * @param explanation the Permission's explanation.
      */
     public void setExplanation(String explanation) {
         this.explanation = explanation;
     }
 
-    /** The Permission's address. */
+    /**
+     * The Permission's address.
+     */
     @Size(max = 255)
-    @Column(name="address")
+    @Column(name = "address")
     private String address;
 
     /**
      * Get the Permission's address.
+     *
      * @return the Permission's address.
      */
     public String getAddress() {
@@ -187,18 +218,22 @@ public class Permission {
 
     /**
      * Set the Permission's address.
+     *
      * @param address the Permission's address.
      */
     public void setAddress(String address) {
         this.address = address;
     }
 
-    /** The Permission's request locale. */
-    @Column(name="requestlocale", nullable=false)
+    /**
+     * The Permission's request locale.
+     */
+    @Column(name = "requestlocale", nullable = false)
     private Locale requestLocale;
 
     /**
      * Get the locale in which this permission was requested.
+     *
      * @return the Permission's request locale.
      */
     public Locale getRequestLocale() {
@@ -207,6 +242,7 @@ public class Permission {
 
     /**
      * Set the Permission's request locale.
+     *
      * @param locale the Permission's request locale.
      */
     public void setRequestLocale(Locale locale) {
@@ -216,11 +252,12 @@ public class Permission {
     /**
      * Permissions per record in this permission request.
      */
-    @OneToMany(mappedBy="permission", cascade=CascadeType.ALL, orphanRemoval=true)
+    @OneToMany(mappedBy = "permission", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecordPermission> recordPermissions;
 
     /**
      * Get the per record permissions.
+     *
      * @return A list of permissions per record.
      */
     public List<RecordPermission> getRecordPermissions() {
@@ -229,6 +266,7 @@ public class Permission {
 
     /**
      * Add a record permission to a permission.
+     *
      * @param rp The record permission to add.
      */
     public void addRecordPermission(RecordPermission rp) {
@@ -237,6 +275,7 @@ public class Permission {
 
     /**
      * Remove a record permission from a permission.
+     *
      * @param rp The record permission to remove.
      */
     public void removeRecordPermission(RecordPermission rp) {
@@ -246,6 +285,7 @@ public class Permission {
     /**
      * Check if this permission has a granted clause for
      * the given record.
+     *
      * @param rec Record to check for.
      * @return Whether permission has been granted for this record.
      */
@@ -255,7 +295,7 @@ public class Permission {
 
         for (RecordPermission p : recordPermissions) {
             boolean recordMatch = p.getRecord().equals(rec) ||
-                ((rec.getParent() != null) && p.getRecord().equals(rec.getParent()));
+                    ((rec.getParent() != null) && p.getRecord().equals(rec.getParent()));
             boolean valid = (p.getDateGranted() != null) && p.getDateGranted().after(minDateCalender.getTime());
 
             if (recordMatch && p.getGranted() && valid)
@@ -265,11 +305,10 @@ public class Permission {
     }
 
     /**
-     * Default contstructor.
+     * Default constructor.
      */
     public Permission() {
         recordPermissions = new ArrayList<>();
         setRequestLocale(LocaleContextHolder.getLocale());
     }
-
 }

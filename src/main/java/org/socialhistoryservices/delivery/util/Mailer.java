@@ -23,12 +23,13 @@ public abstract class Mailer extends TemplatePreparation {
      * @param name  The name of the template.
      * @param model The model to pass to the template.
      * @return The template contents.
-     * @throws org.springframework.mail.MailPreparationException Thrown when template parsing fails.
+     * @throws MailPreparationException Thrown when template parsing fails.
      */
     protected String templateToString(String name, Model model) throws MailPreparationException {
         try {
             return super.templateToString(name, model);
-        } catch (TemplatePreparationException mpe) {
+        }
+        catch (TemplatePreparationException mpe) {
             throw new MailPreparationException(mpe);
         }
     }
@@ -40,12 +41,13 @@ public abstract class Mailer extends TemplatePreparation {
      * @param model  The model to pass to the template.
      * @param locale The locale to parse the template in.
      * @return The template contents.
-     * @throws org.springframework.mail.MailPreparationException Thrown when template parsing fails.
+     * @throws MailPreparationException Thrown when template parsing fails.
      */
     protected String templateToString(String name, Model model, Locale locale) throws MailPreparationException {
         try {
             return super.templateToString(name, model, locale);
-        } catch (TemplatePreparationException mpe) {
+        }
+        catch (TemplatePreparationException mpe) {
             throw new MailPreparationException(mpe);
         }
     }

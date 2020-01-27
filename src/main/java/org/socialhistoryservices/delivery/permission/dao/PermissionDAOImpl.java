@@ -11,8 +11,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import java.util.List;
 
 /**
- * Represents the Data Access Object of Permissions (to request
- * Records which have a restricted status).
+ * Represents the Data Access Object of Permissions (to request Records which have a restricted status).
  */
 @Repository
 public class PermissionDAOImpl implements PermissionDAO {
@@ -20,6 +19,7 @@ public class PermissionDAOImpl implements PermissionDAO {
 
     /**
      * Set the entity manager to use in this DAO, internal.
+     *
      * @param entityManager The manager.
      */
     @PersistenceContext
@@ -29,6 +29,7 @@ public class PermissionDAOImpl implements PermissionDAO {
 
     /**
      * Add a Permission to the database.
+     *
      * @param obj Permission to add.
      */
     public void add(Permission obj) {
@@ -37,28 +38,35 @@ public class PermissionDAOImpl implements PermissionDAO {
 
     /**
      * Remove a Permission from the database.
+     *
      * @param obj Permission to remove.
      */
     public void remove(Permission obj) {
         try {
             obj = entityManager.getReference(Permission.class, obj.getId());
             entityManager.remove(obj);
-        } catch (EntityNotFoundException ignored) {}
+        }
+        catch (EntityNotFoundException ignored) {
+        }
     }
 
     /**
      * Remove a RecordPermission from the database.
+     *
      * @param obj RecordPermission to remove.
      */
     public void remove(RecordPermission obj) {
         try {
             obj = entityManager.getReference(RecordPermission.class, obj.getId());
             entityManager.remove(obj);
-        } catch (EntityNotFoundException ignored) {}
+        }
+        catch (EntityNotFoundException ignored) {
+        }
     }
 
     /**
      * Save changes to a Permission in the database.
+     *
      * @param obj Permission to save.
      */
     public void save(Permission obj) {
@@ -67,6 +75,7 @@ public class PermissionDAOImpl implements PermissionDAO {
 
     /**
      * Retrieve the Permission matching the given Id.
+     *
      * @param id Id of the Permission to retrieve.
      * @return The Permission matching the Id.
      */
@@ -76,6 +85,7 @@ public class PermissionDAOImpl implements PermissionDAO {
 
     /**
      * Get a criteria builder for querying Permissions.
+     *
      * @return the CriteriaBuilder.
      */
     public CriteriaBuilder getCriteriaBuilder() {
@@ -84,6 +94,7 @@ public class PermissionDAOImpl implements PermissionDAO {
 
     /**
      * List all RecordPermissions matching a built query.
+     *
      * @param query The query to match by.
      * @return A list of matching RecordPermissions.
      */
@@ -93,21 +104,23 @@ public class PermissionDAOImpl implements PermissionDAO {
 
     /**
      * List all RecordPermissions matching a built query.
-     * @param query The query to match by.
+     *
+     * @param query       The query to match by.
      * @param firstResult The first result to obtain
-     * @param maxResults The max number of results to obtain
+     * @param maxResults  The max number of results to obtain
      * @return A list of matching RecordPermissions.
      */
     public List<RecordPermission> list(CriteriaQuery<RecordPermission> query, int firstResult, int maxResults) {
         return entityManager
-            .createQuery(query)
-            .setFirstResult(firstResult)
-            .setMaxResults(maxResults)
-            .getResultList();
+                .createQuery(query)
+                .setFirstResult(firstResult)
+                .setMaxResults(maxResults)
+                .getResultList();
     }
 
     /**
      * Count all RecordPermissions matching a built query.
+     *
      * @param q The criteria query to execute
      * @return The number of counted results.
      */
@@ -117,27 +130,29 @@ public class PermissionDAOImpl implements PermissionDAO {
 
     /**
      * Get a single Permission matching a built query.
+     *
      * @param query The query to match by.
      * @return The matching Permission.
      */
     public Permission get(CriteriaQuery<Permission> query) {
         try {
-            TypedQuery q = entityManager.createQuery(query);
+            TypedQuery<Permission> q = entityManager.createQuery(query);
             q.setMaxResults(1);
-            return (Permission)q.getSingleResult();
-        } catch (NoResultException ex) {
+            return q.getSingleResult();
+        }
+        catch (NoResultException ex) {
             return null;
         }
     }
 
     /**
      * Check whether there are any permission requests made on the record.
+     *
      * @param record Record to check for permission requests for.
      * @return Whether any permission requests have been made including this record.
      */
     public boolean hasPermissions(Record record) {
-        String query = "select p from RecordPermission p join p.record r"+
-                       " where r.id = :id";
+        String query = "select p from RecordPermission p join p.record r where r.id = :id";
 
         Query q = entityManager.createQuery(query);
         q.setParameter("id", record.getId());
@@ -145,7 +160,8 @@ public class PermissionDAOImpl implements PermissionDAO {
 
         try {
             return q.getSingleResult() != null;
-        } catch (NoResultException ex) {
+        }
+        catch (NoResultException ex) {
             return false;
         }
     }

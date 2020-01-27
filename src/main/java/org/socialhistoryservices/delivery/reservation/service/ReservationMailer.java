@@ -15,20 +15,20 @@ import org.springframework.ui.Model;
 public class ReservationMailer extends RequestMailer {
 
     /**
-     * Mail a confirmation message to a visitor who has just created a
-     * reservation.
+     * Mail a confirmation message to a visitor who has just created a reservation.
+     *
      * @param res The reservation to extract mail details from.
-     * @throws org.springframework.mail.MailException Thrown when sending
-     * mail somehow failed.
+     * @throws MailException Thrown when sending mail somehow failed.
      */
     public void mailConfirmation(Reservation res) throws MailException {
-        assert res.getStatus() == Reservation.Status.PENDING : "Can only mail" +
-                " confirmation when Reservation status is PENDING";
+        assert res.getStatus() == Reservation.Status.PENDING
+                : "Can only mail confirmation when Reservation status is PENDING";
 
         Model model = new ExtendedModelMap();
         model.addAttribute("reservation", res);
 
         String subject = getMessage("reservationMail.confirmationSubject", "Delivery: ");
-        sendMail(res, subject, "mail/reservation_confirmation.mail.ftl", model, LocaleContextHolder.getLocale());
+        sendMail(res, subject, "mail/reservation_confirmation.mail.ftl", model,
+                LocaleContextHolder.getLocale());
     }
 }

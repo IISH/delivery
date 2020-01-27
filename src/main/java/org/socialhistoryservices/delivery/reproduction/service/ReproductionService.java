@@ -5,7 +5,6 @@ import org.socialhistoryservices.delivery.reproduction.entity.*;
 import org.socialhistoryservices.delivery.reproduction.util.ReproductionStandardOptions;
 import org.socialhistoryservices.delivery.request.service.ClosedException;
 import org.socialhistoryservices.delivery.request.service.NoHoldingsException;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.validation.BindingResult;
 
 import javax.persistence.Tuple;
@@ -105,6 +104,7 @@ public interface ReproductionService {
 
     /**
      * Count all HoldingReproductions matching a built query.
+     *
      * @param q The criteria query to execute
      * @return A count of matching HoldingReproductions.
      */

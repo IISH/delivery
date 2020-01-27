@@ -75,7 +75,7 @@ public interface ReproductionDAO {
     /**
      * Get an active reproduction relating to a specific Holding.
      *
-     * @param h      Holding to find a reproduction for.
+     * @param h Holding to find a reproduction for.
      * @return The active reproduction, null if none exist.
      */
     Reproduction getActiveFor(Holding h);

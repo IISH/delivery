@@ -82,8 +82,7 @@ public class PayWayService {
         addProject(message);
         signTransaction(message, true);
 
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-        try {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             List<NameValuePair> params = getNameValuePairs(message);
             HttpPost httpPost = new HttpPost(this.address + "/" + apiName);
             httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
@@ -96,14 +95,10 @@ public class PayWayService {
             if (!isValid(returnMessage)) {
                 throw new InvalidPayWayMessageException(returnMessage);
             }
-        } catch (IOException ioe) {
+        }
+        catch (IOException ioe) {
             logger.debug("send(): PayWay connection failed", ioe);
             throw new InvalidPayWayMessageException(returnMessage, ioe);
-        } finally {
-            try {
-                httpClient.close();
-            } catch (IOException e) {
-            }
         }
 
         return returnMessage;
@@ -182,7 +177,7 @@ public class PayWayService {
     /**
      * Transforms the response from PayWay to a PayWay message.
      */
-    private class PayWayResponseHandler implements ResponseHandler<PayWayMessage> {
+    private static class PayWayResponseHandler implements ResponseHandler<PayWayMessage> {
         @Override
         public PayWayMessage handleResponse(HttpResponse httpResponse) throws IOException {
             ObjectMapper mapper = new ObjectMapper();

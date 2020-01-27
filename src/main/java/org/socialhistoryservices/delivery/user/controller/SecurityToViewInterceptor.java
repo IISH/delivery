@@ -12,17 +12,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Intercepts traffic before it is passed to a view, then adding the current
- * user details.
+ * Intercepts traffic before it is passed to a view, then adding the current user details.
  */
 public class SecurityToViewInterceptor extends HandlerInterceptorAdapter {
 
     /**
      * Expose the current user to the views.
      */
-    public void postHandle(HttpServletRequest request,
-            HttpServletResponse response, Object handler,
-            ModelAndView model) {
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+                           ModelAndView model) {
         if (model != null) {
             model.addObject("_sec", new UserExposer());
         }
@@ -31,8 +29,7 @@ public class SecurityToViewInterceptor extends HandlerInterceptorAdapter {
     /**
      * Replacement for JspTaglibs , which is not working in unit tests.
      */
-    public class UserExposer {
-
+    public static class UserExposer {
         private Authentication auth;
 
         /**
@@ -44,6 +41,7 @@ public class SecurityToViewInterceptor extends HandlerInterceptorAdapter {
 
         /**
          * Get whether the user is anonymous.
+         *
          * @return Whether the user is anonymous.
          */
         public boolean isAnonymous() {
@@ -52,14 +50,16 @@ public class SecurityToViewInterceptor extends HandlerInterceptorAdapter {
 
         /**
          * Get the UserDetails object.
+         *
          * @return The user details object.
          */
         public UserDetails getPrincipal() {
-            return (UserDetails)auth.getPrincipal();
+            return (UserDetails) auth.getPrincipal();
         }
 
         /**
          * Checks if the provided roles are not granted (AND)
+         *
          * @param roleStr A comma separated string of roles.
          * @return True iff all roles in roleStr are NOT granted upon the user.
          */
@@ -77,6 +77,7 @@ public class SecurityToViewInterceptor extends HandlerInterceptorAdapter {
 
         /**
          * Checks if the provided roles are all granted (AND)
+         *
          * @param roleStr A comma separated string of roles.
          * @return True iff all roles in roleStr are granted upon the user.
          */
@@ -99,13 +100,12 @@ public class SecurityToViewInterceptor extends HandlerInterceptorAdapter {
 
         /**
          * Checks if the provided roles are granted (OR)
+         *
          * @param roleStr A comma separated string of roles.
-         * @return True iff any of the roles in roleStr are granted upon the
-         * user.
+         * @return True iff any of the roles in roleStr are granted upon the user.
          */
         public boolean ifAnyGranted(String roleStr) {
             return !ifNotGranted(roleStr);
         }
-
     }
 }

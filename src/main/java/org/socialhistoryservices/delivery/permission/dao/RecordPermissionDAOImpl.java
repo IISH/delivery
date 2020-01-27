@@ -18,6 +18,7 @@ public class RecordPermissionDAOImpl implements RecordPermissionDAO {
 
     /**
      * Set the entity manager to use in this DAO, internal.
+     *
      * @param entityManager The manager.
      */
     @PersistenceContext
@@ -27,6 +28,7 @@ public class RecordPermissionDAOImpl implements RecordPermissionDAO {
 
     /**
      * Add a RecordPermission to the database.
+     *
      * @param obj RecordPermission to add.
      */
     public void add(RecordPermission obj) {
@@ -35,18 +37,21 @@ public class RecordPermissionDAOImpl implements RecordPermissionDAO {
 
     /**
      * Remove a RecordPermission from the database.
+     *
      * @param obj RecordPermission to remove.
      */
     public void remove(RecordPermission obj) {
         try {
-            obj = entityManager.getReference(RecordPermission.class,
-                    obj.getId());
+            obj = entityManager.getReference(RecordPermission.class, obj.getId());
             entityManager.remove(obj);
-        } catch (EntityNotFoundException ignored) {}
+        }
+        catch (EntityNotFoundException ignored) {
+        }
     }
 
     /**
      * Save changes to a RecordPermission in the database.
+     *
      * @param obj RecordPermission to save.
      */
     public void save(RecordPermission obj) {
@@ -55,6 +60,7 @@ public class RecordPermissionDAOImpl implements RecordPermissionDAO {
 
     /**
      * Retrieve the RecordPermission matching the given Id.
+     *
      * @param id Id of the RecordPermission to retrieve.
      * @return The RecordPermission matching the Id.
      */
@@ -64,6 +70,7 @@ public class RecordPermissionDAOImpl implements RecordPermissionDAO {
 
     /**
      * Get a criteria builder for querying RecordPermissions.
+     *
      * @return the CriteriaBuilder.
      */
     public CriteriaBuilder getCriteriaBuilder() {
@@ -72,6 +79,7 @@ public class RecordPermissionDAOImpl implements RecordPermissionDAO {
 
     /**
      * List all RecordPermissions matching a built query.
+     *
      * @param query The query to match by.
      * @return A list of matching RecordPermissions.
      */
@@ -81,15 +89,17 @@ public class RecordPermissionDAOImpl implements RecordPermissionDAO {
 
     /**
      * Get a single RecordPermission matching a built query.
+     *
      * @param query The query to match by.
      * @return The matching RecordPermission.
      */
     public RecordPermission get(CriteriaQuery<RecordPermission> query) {
         try {
-            TypedQuery q = entityManager.createQuery(query);
+            TypedQuery<RecordPermission> q = entityManager.createQuery(query);
             q.setMaxResults(1);
-            return (RecordPermission)q.getSingleResult();
-        } catch (NoResultException ex) {
+            return q.getSingleResult();
+        }
+        catch (NoResultException ex) {
             return null;
         }
     }

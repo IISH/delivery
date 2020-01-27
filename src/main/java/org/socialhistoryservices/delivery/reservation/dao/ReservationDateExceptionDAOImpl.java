@@ -16,6 +16,7 @@ public class ReservationDateExceptionDAOImpl implements ReservationDateException
 
     /**
      * Set the entity manager to use in this DAO, internal.
+     *
      * @param entityManager The manager.
      */
     @PersistenceContext
@@ -25,33 +26,39 @@ public class ReservationDateExceptionDAOImpl implements ReservationDateException
 
     /**
      * Add a Reservation to the database.
+     *
      * @param obj Reservation to add.
      */
-    public void add(ReservationDateException obj){
+    public void add(ReservationDateException obj) {
         entityManager.persist(obj);
     }
 
     /**
      * Remove a Reservation from the database.
+     *
      * @param obj Reservation to remove.
      */
-    public void remove(ReservationDateException obj){
-        try{
+    public void remove(ReservationDateException obj) {
+        try {
             obj = entityManager.getReference(ReservationDateException.class, obj.getId());
             entityManager.remove(obj);
-        } catch (EntityNotFoundException ignored) {}
+        }
+        catch (EntityNotFoundException ignored) {
+        }
     }
 
     /**
      * Save changes to a Reservation in the database.
+     *
      * @param obj Reservation to save.
      */
-    public void save(ReservationDateException obj){
+    public void save(ReservationDateException obj) {
         entityManager.merge(obj);
     }
 
     /**
      * List all ReservationDateExceptions matching a built query.
+     *
      * @param q The criteria query to execute.
      * @return A list of matching ReservationDateExceptions.
      */
@@ -61,14 +68,20 @@ public class ReservationDateExceptionDAOImpl implements ReservationDateException
 
     /**
      * Get a criteria builder for querying ReservationDateExceptions.
+     *
      * @return the CriteriaBuilder.
      */
-    public CriteriaBuilder getCriteriaBuilder() { return entityManager.getCriteriaBuilder(); }
+    public CriteriaBuilder getCriteriaBuilder() {
+        return entityManager.getCriteriaBuilder();
+    }
 
     /**
      * Get a ReservationDateException matching a given id.
+     *
      * @param id The id to match the ReservationDateException on.
      * @return A ReservationDateException matching the id.
      */
-    public ReservationDateException getById(int id) {return entityManager.find(ReservationDateException.class, id); }
+    public ReservationDateException getById(int id) {
+        return entityManager.find(ReservationDateException.class, id);
+    }
 }

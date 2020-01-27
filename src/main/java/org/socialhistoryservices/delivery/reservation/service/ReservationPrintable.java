@@ -19,7 +19,8 @@ public class ReservationPrintable extends RequestPrintable {
      * @param mSource The message source to fetch localized messages.
      * @param format  The date format to use.
      */
-    public ReservationPrintable(HoldingReservation hr, MessageSource mSource, DateFormat format, DeliveryProperties prop) {
+    public ReservationPrintable(HoldingReservation hr, MessageSource mSource, DateFormat format,
+                                DeliveryProperties prop) {
         super(hr, mSource, format, prop);
     }
 

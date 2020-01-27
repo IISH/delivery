@@ -13,7 +13,7 @@ import java.util.Locale;
 
 @Configuration
 @ComponentScan
-public class LocalizationConfiguration extends WebMvcConfigurerAdapter{
+public class LocalizationConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

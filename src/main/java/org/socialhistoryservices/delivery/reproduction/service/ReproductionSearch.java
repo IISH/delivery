@@ -123,7 +123,8 @@ public class ReproductionSearch extends ListRequestSearch<HoldingReproduction> {
                     Expression<Boolean> exStatus = cb.equal(rRoot.get(Reproduction_.status),
                             Reproduction.Status.valueOf(status));
                     where = (where != null) ? cb.and(where, exStatus) : exStatus;
-                } catch (IllegalArgumentException ex) {
+                }
+                catch (IllegalArgumentException ex) {
                     throw new InvalidRequestException("No such status: " + status);
                 }
             }
@@ -177,7 +178,7 @@ public class ReproductionSearch extends ListRequestSearch<HoldingReproduction> {
                     cb.like(cb.lower(rRoot.get(Reproduction_.customerName)), "%" + search + "%"),
                     cb.like(cb.lower(rRoot.get(Reproduction_.customerEmail)), "%" + search + "%"),
                     cb.like(cb.lower(hRoot.get(Holding_.signature)), "%" + search + "%"),
-                    cb.like(cb.lower(phRoot.<String>get(Holding_.signature)), "%" + search + "%")
+                    cb.like(cb.lower(phRoot.get(Holding_.signature)), "%" + search + "%")
             );
 
             where = (where != null) ? cb.and(where, exSearch) : exSearch;
@@ -197,7 +198,7 @@ public class ReproductionSearch extends ListRequestSearch<HoldingReproduction> {
                                                              From<?, Reproduction> rRoot, From<?, Holding> hRoot) {
         boolean containsSort = p.containsKey("sort");
         boolean containsSortDir = p.containsKey("sort_dir");
-        Expression e = rRoot.get(Reproduction_.creationDate);
+        Expression<?> e = rRoot.get(Reproduction_.creationDate);
 
         if (containsSort) {
             String sort = p.get("sort")[0];

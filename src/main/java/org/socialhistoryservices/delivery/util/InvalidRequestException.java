@@ -44,7 +44,6 @@ public class InvalidRequestException extends RuntimeException {
             else {
                 msg.append("'").append(err.getObjectName()).append("':").append(err.getDefaultMessage()).append("\n");
             }
-
         }
         return new InvalidRequestException(msg.toString());
     }

@@ -12,24 +12,28 @@ import java.util.List;
 public interface UserDAO {
     /**
      * Add a User to the database.
+     *
      * @param obj User to add.
      */
     void add(User obj);
 
     /**
      * Remove a User from the database.
+     *
      * @param obj User to remove.
      */
     void remove(User obj);
 
     /**
      * Save changes to a User in the database.
+     *
      * @param obj User to save.
      */
     void save(User obj);
 
     /**
      * Retrieve the User matching the given Id.
+     *
      * @param id Id of the User to retrieve.
      * @return The User matching the Id.
      */
@@ -37,12 +41,14 @@ public interface UserDAO {
 
     /**
      * Get a criteria builder for querying Users.
+     *
      * @return the CriteriaBuilder.
      */
     CriteriaBuilder getCriteriaBuilder();
 
     /**
      * List all Users matching a built query.
+     *
      * @param query The query to match by.
      * @return A list of matching Users.
      */
@@ -50,6 +56,7 @@ public interface UserDAO {
 
     /**
      * Get a single User matching a built query.
+     *
      * @param query The query to match by.
      * @return The matching User.
      */

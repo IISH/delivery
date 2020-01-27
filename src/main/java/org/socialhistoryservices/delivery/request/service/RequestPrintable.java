@@ -1,7 +1,6 @@
 package org.socialhistoryservices.delivery.request.service;
 
 import org.krysalis.barcode4j.BarcodeDimension;
-import org.krysalis.barcode4j.HumanReadablePlacement;
 import org.krysalis.barcode4j.output.java2d.Java2DCanvasProvider;
 import org.krysalis.barcode4j.tools.UnitConv;
 import org.socialhistoryservices.delivery.config.DeliveryProperties;
@@ -19,7 +18,6 @@ import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
-import java.awt.print.PrinterException;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.text.DateFormat;
@@ -48,7 +46,7 @@ public abstract class RequestPrintable implements Printable {
     private Locale l;
     private MessageSource msgSource;
 
-    protected class DrawInfo {
+    protected static class DrawInfo {
         public int offsetX;
         public int offsetY;
         public int width;
@@ -115,9 +113,8 @@ public abstract class RequestPrintable implements Printable {
      * @param pf   The page format.
      * @param page The current page number.
      * @return Whether the page rendered successfully.
-     * @throws java.awt.print.PrinterException Thrown when something went wrong.
      */
-    public int print(Graphics g, PageFormat pf, int page) throws PrinterException {
+    public int print(Graphics g, PageFormat pf, int page) {
         int pageWidth = (int) pf.getImageableWidth();
         int pageHeight = (int) pf.getImageableHeight();
 
@@ -204,7 +201,7 @@ public abstract class RequestPrintable implements Printable {
     protected void drawCreationDate(DrawInfo drawInfo) {
         String dateLabel = getMessage("request.creationDate", "Created at");
         String dateTimeFormat = deliveryProperties.getDateFormat() + " " +
-            deliveryProperties.getTimeFormat();
+                deliveryProperties.getTimeFormat();
 
         SimpleDateFormat spdf = new SimpleDateFormat(dateTimeFormat);
 
@@ -445,14 +442,14 @@ public abstract class RequestPrintable implements Printable {
             DrawInfo drawInfo = drawValueInfo.drawInfo;
             Graphics2D g2d = drawInfo.g2d;
             g2d.setFont(drawValueInfo.boldKey
-                ? boldFont.deriveFont((float) drawValueInfo.font.getSize())
-                : normalFont.deriveFont((float) drawValueInfo.font.getSize()));
+                    ? boldFont.deriveFont((float) drawValueInfo.font.getSize())
+                    : normalFont.deriveFont((float) drawValueInfo.font.getSize()));
             g2d.drawString(drawValueInfo.key + ":",
-                drawInfo.offsetX + drawInfo.valueOffset, drawInfo.offsetY);
+                    drawInfo.offsetX + drawInfo.valueOffset, drawInfo.offsetY);
 
             float offset = drawValueInfo.tab
-                ? KEY_TAB_OFFSET
-                : g2d.getFontMetrics().stringWidth(drawValueInfo.key + ": ");
+                    ? KEY_TAB_OFFSET
+                    : g2d.getFontMetrics().stringWidth(drawValueInfo.key + ": ");
             drawInfo.valueOffset = drawInfo.valueOffset + offset;
         }
     }

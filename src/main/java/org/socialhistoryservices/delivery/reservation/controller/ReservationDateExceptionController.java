@@ -31,53 +31,54 @@ public class ReservationDateExceptionController extends AbstractRequestControlle
     @Autowired
     private ReservationDateExceptionService reservationDateExceptions;
 
-
     /**
      * Process the deletion of selected ReservationDateExceptions. If none selected it goes back to the default page.
+     *
      * @param checked List of checked ReservationDateException's ids.
-     * @param model The Model to add response attributes to.
+     * @param model   The Model to add response attributes to.
      * @return The view to resolve.
      */
-    @RequestMapping(value = "/date_exception",
-                    method = RequestMethod.POST,
-                    params = "deleteDateException")
+    @RequestMapping(value = "/date_exception", method = RequestMethod.POST, params = "deleteDateException")
     @PreAuthorize("hasRole('ROLE_DATE_EXCEPTION_DELETE')")
-    public String processDateExceptionDeleteForm(@RequestParam(required = false) ArrayList<String> checked,
-                                                    Model model,
-                                                    @ModelAttribute("reservationDateExceptions")
-                                                    ArrayList<ReservationDateException> resExceptions,
-                                                    BindingResult result) {
-        if(checked != null){
+    public String processDateExceptionDeleteForm(@RequestParam(required = false) ArrayList<String> checked, Model model,
+                                                 @ModelAttribute("reservationDateExceptions")
+                                                         ArrayList<ReservationDateException> resExceptions,
+                                                 BindingResult result) {
+        if (checked != null) {
             List<ReservationDateException> reservationDateExceptionList = new ArrayList<>();
-            for(String s : checked) {
-                reservationDateExceptionList.add(reservationDateExceptions.getReservationDateExceptionsById(Integer.parseInt(s)));
+
+            for (String s : checked) {
+                reservationDateExceptionList.add(
+                        reservationDateExceptions.getReservationDateExceptionsById(Integer.parseInt(s)));
             }
+
             try {
                 for (ReservationDateException res : reservationDateExceptionList) {
                     reservationDateExceptions.removeReservationDateException(res);
                 }
-            }catch (Exception e){
-                String msg = messageSource.getMessage("reservationDateExceptionOverview.cannotDelete", new Object[]{}, LocaleContextHolder.getLocale());
-                result.addError(new FieldError(result.getObjectName(), "",
-                    resExceptions, false,
-                    null, null, msg));
+            }
+            catch (Exception e) {
+                String msg = messageSource.getMessage("reservationDateExceptionOverview.cannotDelete",
+                        new Object[]{}, LocaleContextHolder.getLocale());
+                result.addError(new FieldError(result.getObjectName(), "", resExceptions,
+                        false, null, null, msg));
             }
         }
-        if(!result.hasErrors())
-            return "redirect:/reservation_date_exception/date_exception";
-        else
-            return "reservation_date_exception/date_exception";
+
+        return !result.hasErrors()
+                ? "redirect:/reservation_date_exception/date_exception"
+                : "reservation_date_exception/date_exception";
     }
 
     /**
      * Show the date exception form for reservation date exceptions.
+     *
      * @param model The model to add attributes to.
      * @return The view to resolve.
      */
-    @RequestMapping(value = "/date_exception",
-        method = RequestMethod.GET)
+    @RequestMapping(value = "/date_exception", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ROLE_DATE_EXCEPTION_VIEW')")
-    public String showDateExceptionForm(Model model, HttpServletRequest req){
+    public String showDateExceptionForm(Model model, HttpServletRequest req) {
         model.addAttribute("reservationDateExceptions", getDateExceptions(req));
         ReservationDateException reservationDateException = new ReservationDateException();
         model.addAttribute("reservationDateException", reservationDateException);
@@ -86,45 +87,41 @@ public class ReservationDateExceptionController extends AbstractRequestControlle
 
     /**
      * Process the adding of a ReservationDateException.
-     * @param req The HTTP request object.
+     *
+     * @param req        The HTTP request object.
      * @param newResDate The ReservationDateException.
-     * @param result The BindingResult to hold the errors.
-     * @param model The Model to add attributes to.
+     * @param result     The BindingResult to hold the errors.
+     * @param model      The Model to add attributes to.
      * @return The view to resolve
      */
-    @RequestMapping(value = "/date_exception",
-        method = RequestMethod.POST)
+    @RequestMapping(value = "/date_exception", method = RequestMethod.POST)
     @PreAuthorize("hasRole('ROLE_DATE_EXCEPTION_CREATE')")
     public String processDateExceptionForm(HttpServletRequest req, @ModelAttribute("reservationDateException")
-                                            ReservationDateException newResDate,
-                                            BindingResult result,
-                                            Model model){
-        if(reservationDateExceptions.isValid(newResDate,result)) {
+            ReservationDateException newResDate, BindingResult result, Model model) {
+        if (reservationDateExceptions.isValid(newResDate, result)) {
             try {
-                if (newResDate.getEndDate() == null) {
-//                    newResDate.setEndDate(new Date(7226582400000L));
-                }
                 reservationDateExceptions.addReservationDateException(newResDate);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 model.addAttribute("error", e.getMessage());
             }
         }
 
         model.addAttribute("reservationDateException", newResDate);
-        if(!result.hasErrors())
+        if (!result.hasErrors())
             return "redirect:/reservation_date_exception/date_exception";
-        else {
-            model.addAttribute("reservationDateExceptions", getDateExceptions(req));
-            return "reservation_date_exception";
-        }
+
+        model.addAttribute("reservationDateExceptions", getDateExceptions(req));
+        return "reservation_date_exception";
     }
 
     /**
      * List all ReservationDateExceptions existing in the database whilst discarding the date
      * exceptions before the current date.
+     *
      * @return A list with existing ReservationDateExceptions.
      */
-    public List<ReservationDateException> getDateExceptions(HttpServletRequest req){
+    public List<ReservationDateException> getDateExceptions(HttpServletRequest req) {
         Map<String, String[]> p = req.getParameterMap();
         CriteriaBuilder builder = reservationDateExceptions.getReservationDateExceptionCriteriaBuilder();
         CriteriaQuery<ReservationDateException> query = builder.createQuery(ReservationDateException.class);
@@ -139,7 +136,7 @@ public class ReservationDateExceptionController extends AbstractRequestControlle
         where = addExceptionEndDateFilter(p, builder, root, where);
 
         // Set the where clause
-        if(where != null){
+        if (where != null) {
             query.where(where);
         }
 
@@ -149,16 +146,16 @@ public class ReservationDateExceptionController extends AbstractRequestControlle
 
         // Remove the dates that are before the current date so only future dates are shown
         Calendar cal = Calendar.getInstance();
-        for (Iterator<ReservationDateException> iterator = result.iterator(); iterator.hasNext();) {
+        for (Iterator<ReservationDateException> iterator = result.iterator(); iterator.hasNext(); ) {
             while (iterator.hasNext()) {
                 ReservationDateException temp = iterator.next();
-                if(temp.getEndDate() != null){
-                    if(temp.getEndDate().before(cal.getTime())){
+                if (temp.getEndDate() != null) {
+                    if (temp.getEndDate().before(cal.getTime())) {
                         iterator.remove();
                     }
                 }
-                else{
-                    if(temp.getStartDate().before(cal.getTime())){
+                else {
+                    if (temp.getStartDate().before(cal.getTime())) {
                         iterator.remove();
                     }
                 }
@@ -169,42 +166,45 @@ public class ReservationDateExceptionController extends AbstractRequestControlle
 
     /**
      * Parse the sort and sort_dir filters into an Order to be used in a query
-     * @param p The parameter list to search the filter values in.
-     * @param cb The CriteriaBuilder used to construct the Order.
+     *
+     * @param p       The parameter list to search the filter values in.
+     * @param cb      The CriteriaBuilder used to construct the Order.
      * @param resRoot The root of the ReservationDateException used to construct the Order.
-     * @return The order the query should be sorted in (asc/desc) on provided column. Defaults
-     * to asc.
+     * @return The order the query should be sorted in (asc/desc) on provided column. Defaults to asc.
      */
     private Order parseDateExceptionSortFilter(Map<String, String[]> p, CriteriaBuilder cb,
-                                               From<?,ReservationDateException> resRoot) {
+                                               From<?, ReservationDateException> resRoot) {
         boolean containsSort = p.containsKey("sort");
         boolean containsSortDir = p.containsKey("sort_dir");
-        Expression e = resRoot.get(ReservationDateException_.startDate);
+        Expression<Date> e = resRoot.get(ReservationDateException_.startDate);
+
         if (containsSort) {
             String sort = p.get("sort")[0];
             if (sort.equals("startDate")) {
                 e = resRoot.get(ReservationDateException_.startDate);
-            }else if(sort.equals("endDate")) {
+            }
+            else if (sort.equals("endDate")) {
                 e = resRoot.get(ReservationDateException_.endDate);
             }
         }
-        if (containsSortDir &&
-            p.get("sort_dir")[0].toLowerCase().equals("asc")) {
+
+        if (containsSortDir && p.get("sort_dir")[0].toLowerCase().equals("asc")) {
             return cb.asc(e);
         }
+
         return cb.desc(e);
     }
 
     /**
      * Add the startDate filter to the where clause, if present.
-     * @param p The parameter list to search the given filter value in.
-     * @param cb The CriteriaBuilder used to construct the order.
+     *
+     * @param p       The parameter list to search the given filter value in.
+     * @param cb      The CriteriaBuilder used to construct the order.
      * @param resRoot The ReservationDateException root used to construct the order.
-     * @param where The already present where clause, or null if none present.
+     * @param where   The already present where clause, or null if none present.
      * @return The (updated) where clause, or null if the filter did not exist.
      */
-    private Expression<Boolean> addExceptionStartDateFilter(Map<String, String[]> p,
-                                                            CriteriaBuilder cb,
+    private Expression<Boolean> addExceptionStartDateFilter(Map<String, String[]> p, CriteriaBuilder cb,
                                                             Root<ReservationDateException> resRoot,
                                                             Expression<Boolean> where) {
         Date date = getDateFilter(p);
@@ -217,14 +217,14 @@ public class ReservationDateExceptionController extends AbstractRequestControlle
 
     /**
      * Add the endDate filter to the where clause, if present.
-     * @param p The parameter list to search the given filter value in.
-     * @param cb The CriteriaBuilder used to construct the order.
+     *
+     * @param p       The parameter list to search the given filter value in.
+     * @param cb      The CriteriaBuilder used to construct the order.
      * @param resRoot The ReservationDateException root used to construct the order.
-     * @param where The already present where clause, or null if none present.
+     * @param where   The already present where clause, or null if none present.
      * @return The (updated) where clause, or null if the filter did not exist.
      */
-    private Expression<Boolean> addExceptionEndDateFilter(Map<String, String[]> p,
-                                                          CriteriaBuilder cb,
+    private Expression<Boolean> addExceptionEndDateFilter(Map<String, String[]> p, CriteriaBuilder cb,
                                                           Root<ReservationDateException> resRoot,
                                                           Expression<Boolean> where) {
         Date date = getDateFilter(p);

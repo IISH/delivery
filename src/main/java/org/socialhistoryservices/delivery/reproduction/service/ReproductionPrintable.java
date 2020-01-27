@@ -107,7 +107,7 @@ public class ReproductionPrintable extends RequestPrintable {
         drawValueInfo.key = getMessage("reproduction.payed", "Paid?");
 
         if ((order != null) && (hr.getReproduction().getStatus().ordinal() >= Reproduction.Status.ACTIVE.ordinal())) {
-            drawValueInfo.value = getMessage("yes", "Yes") + " (#" + String.valueOf(order.getId()) + ")";
+            drawValueInfo.value = getMessage("yes", "Yes") + " (#" + order.getId() + ")";
         }
         else {
             drawValueInfo.value = getMessage("no", "No");
@@ -152,7 +152,7 @@ public class ReproductionPrintable extends RequestPrintable {
         else {
             DrawValueInfo drawValueInfoCustomHeading = new DrawValueInfo(drawInfo);
             drawValueInfoCustomHeading.value =
-                getMessage("reproduction.customReproduction.backend", "Custom reproduction");
+                    getMessage("reproduction.customReproduction.backend", "Custom reproduction");
             drawValueInfoCustomHeading.font = boldFont;
             drawKeyValueNewLine(drawValueInfoCustomHeading);
 

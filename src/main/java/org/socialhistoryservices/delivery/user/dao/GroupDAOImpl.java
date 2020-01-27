@@ -17,6 +17,7 @@ public class GroupDAOImpl implements GroupDAO {
 
     /**
      * Set the entity manager to use in this DAO, internal.
+     *
      * @param entityManager The manager.
      */
     @PersistenceContext
@@ -26,6 +27,7 @@ public class GroupDAOImpl implements GroupDAO {
 
     /**
      * Add a Group to the database.
+     *
      * @param obj Group to add.
      */
     public void add(Group obj) {
@@ -34,17 +36,21 @@ public class GroupDAOImpl implements GroupDAO {
 
     /**
      * Remove a Group from the database.
+     *
      * @param obj Group to remove.
      */
     public void remove(Group obj) {
         try {
             obj = entityManager.getReference(Group.class, obj.getId());
             entityManager.remove(obj);
-        } catch (EntityNotFoundException ignored) {}
+        }
+        catch (EntityNotFoundException ignored) {
+        }
     }
 
     /**
      * Save changes to a Group in the database.
+     *
      * @param obj Group to save.
      */
     public void save(Group obj) {
@@ -53,6 +59,7 @@ public class GroupDAOImpl implements GroupDAO {
 
     /**
      * Retrieve the Group matching the given Id.
+     *
      * @param id Id of the Group to retrieve.
      * @return The Group matching the Id.
      */
@@ -62,6 +69,7 @@ public class GroupDAOImpl implements GroupDAO {
 
     /**
      * Get a criteria builder for querying Groups.
+     *
      * @return the CriteriaBuilder.
      */
     public CriteriaBuilder getCriteriaBuilder() {
@@ -70,6 +78,7 @@ public class GroupDAOImpl implements GroupDAO {
 
     /**
      * List all Groups matching a built query.
+     *
      * @param query The query to match by.
      * @return A list of matching Groups.
      */
@@ -79,15 +88,17 @@ public class GroupDAOImpl implements GroupDAO {
 
     /**
      * Get a single Group matching a built query.
+     *
      * @param query The query to match by.
      * @return The matching Group.
      */
     public Group get(CriteriaQuery<Group> query) {
         try {
-            TypedQuery q = entityManager.createQuery(query);
+            TypedQuery<Group> q = entityManager.createQuery(query);
             q.setMaxResults(1);
-            return (Group)q.getSingleResult();
-        } catch (NoResultException ex) {
+            return q.getSingleResult();
+        }
+        catch (NoResultException ex) {
             return null;
         }
     }

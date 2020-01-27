@@ -1,6 +1,7 @@
 package org.socialhistoryservices.delivery.reproduction.util;
 
 import org.socialhistoryservices.delivery.record.entity.Record;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,7 +14,7 @@ public class Copies {
     private Record record;
     private int numberOfCopies;
 
-    public Copies(Record record){
+    public Copies(Record record) {
         this.record = record;
         this.numberOfCopies = determineNumberOfCopies();
     }
@@ -22,7 +23,7 @@ public class Copies {
         return numberOfCopies;
     }
 
-    public boolean containsNumberOfCopies(){
+    public boolean containsNumberOfCopies() {
         return numberOfCopies > NO_NUMBER_OF_COPIES;
     }
 

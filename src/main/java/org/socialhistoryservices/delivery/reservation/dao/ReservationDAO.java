@@ -15,24 +15,28 @@ import java.util.List;
 public interface ReservationDAO {
     /**
      * Add a Reservation to the database.
+     *
      * @param obj Reservation to add.
      */
     void add(Reservation obj);
 
     /**
      * Remove a Reservation from the database.
+     *
      * @param obj Reservation to remove.
      */
     void remove(Reservation obj);
 
     /**
      * Save changes to a Reservation in the database.
+     *
      * @param obj Reservation to save.
      */
     void save(Reservation obj);
 
     /**
      * Retrieve the Reservation matching the given Id.
+     *
      * @param id Id of the Reservation to retrieve.
      * @return The Reservation matching the Id.
      */
@@ -40,26 +44,30 @@ public interface ReservationDAO {
 
     /**
      * Get a criteria builder for querying Reservations.
+     *
      * @return the CriteriaBuilder.
      */
     CriteriaBuilder getCriteriaBuilder();
 
     /**
      * List all Reservations matching a built query.
+     *
      * @param q The criteria query to execute
      * @return A list of matching Reservations.
      */
     List<Reservation> list(CriteriaQuery<Reservation> q);
 
-	/**
-	 * List all Tuples matching a built query.
-	 * @param q The criteria query to execute
-	 * @return A list of matching Tuples.
-	 */
+    /**
+     * List all Tuples matching a built query.
+     *
+     * @param q The criteria query to execute
+     * @return A list of matching Tuples.
+     */
     List<Tuple> listForTuple(CriteriaQuery<Tuple> q);
 
     /**
      * Get a single Reservation matching a built query.
+     *
      * @param query The query to match by.
      * @return The matching Reservation.
      */
@@ -67,6 +75,7 @@ public interface ReservationDAO {
 
     /**
      * Get an active reservation relating to a specific Holding.
+     *
      * @param h Holding to find a reservation for.
      * @return The active reservation, null if none exist.
      */
@@ -74,6 +83,7 @@ public interface ReservationDAO {
 
     /**
      * Check whether the given record is linked to a pending reservation based on the container.
+     *
      * @param record The record to check on.
      * @return Whether the given record is linked to a pending reservation based on the container.
      */

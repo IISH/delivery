@@ -86,10 +86,7 @@ public abstract class RequestSearch<R> {
         if (fromPredicate != null)
             return fromPredicate;
 
-        if (toPredicate != null)
-            return toPredicate;
-
-        return null;
+        return toPredicate;
     }
 
     /**

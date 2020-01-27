@@ -13,30 +13,35 @@ import java.util.List;
 public interface HoldingDAO {
     /**
      * Add a Holding to the database.
+     *
      * @param obj Holding to add.
      */
     void add(Holding obj);
 
     /**
      * Remove a Holding from the database.
+     *
      * @param obj Holding to remove.
      */
     void remove(Holding obj);
 
-	/**
-	 * Remove the ExternalHoldingInfo of a Holding from the database.
-	 * @param obj Holding of which to remove the ExternalHoldingInfo.
-	 */
+    /**
+     * Remove the ExternalHoldingInfo of a Holding from the database.
+     *
+     * @param obj Holding of which to remove the ExternalHoldingInfo.
+     */
     void removeExternalInfo(Holding obj);
 
     /**
      * Save changes to a Holding in the database.
+     *
      * @param obj Holding to save.
      */
     void save(Holding obj);
 
     /**
      * Retrieve the Holding matching the given Id.
+     *
      * @param id Id of the Holding to retrieve.
      * @return The Holding matching the Id.
      */
@@ -44,12 +49,14 @@ public interface HoldingDAO {
 
     /**
      * Get a criteria builder for querying Holdings.
+     *
      * @return the CriteriaBuilder.
      */
     CriteriaBuilder getCriteriaBuilder();
 
     /**
      * List all Holdings matching a built query.
+     *
      * @param query The query to match by.
      * @return A list of matching Holdings.
      */
@@ -57,6 +64,7 @@ public interface HoldingDAO {
 
     /**
      * Get a single Holding matching a built query.
+     *
      * @param query The query to match by.
      * @return The matching Holding.
      */

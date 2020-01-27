@@ -10,8 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Inserts the request context attribute into the model. This class is needed
- * because there is no other way to achieve setting URLDecode to false when
- * retrieving context URIs.
+ * because there is no other way to achieve setting URLDecode to false when retrieving context URIs.
  */
 public class RequestContextToViewInterceptor extends HandlerInterceptorAdapter {
     /**

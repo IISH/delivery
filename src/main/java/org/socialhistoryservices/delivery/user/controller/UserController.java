@@ -34,6 +34,7 @@ public class UserController extends ErrorHandlingController {
 
     /**
      * The login page.
+     *
      * @param error An error message.
      * @param model The model to add attributes to.
      * @return The view to resolve.
@@ -41,8 +42,8 @@ public class UserController extends ErrorHandlingController {
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(@RequestParam(value = "error", required = false) String error, Model model) {
         if (error != null) {
-            String msg = msgSource.getMessage("security.error", null, "Invalid username and password!",
-                    LocaleContextHolder.getLocale());
+            String msg = msgSource.getMessage("security.error", null,
+                    "Invalid username and password!", LocaleContextHolder.getLocale());
             model.addAttribute("error", msg);
         }
         return "user_login";
@@ -50,7 +51,8 @@ public class UserController extends ErrorHandlingController {
 
     /**
      * Get the list of users to manage.
-     * @param model The model to add attributes to.
+     *
+     * @param model   The model to add attributes to.
      * @param request The HTTP request.
      * @return The view to resolve.
      */
@@ -64,6 +66,7 @@ public class UserController extends ErrorHandlingController {
 
     /**
      * Display a logout page.
+     *
      * @return The view to resolve.
      */
     @RequestMapping(value = "/logout-success", method = RequestMethod.GET)
@@ -73,14 +76,14 @@ public class UserController extends ErrorHandlingController {
 
     /**
      * Change the group a user is in.
-     * @param user The user id.
-     * @param groups The group ids.
-     * @param model The model to add attributes to.
+     *
+     * @param user    The user id.
+     * @param groups  The group ids.
+     * @param model   The model to add attributes to.
      * @param request The HTTP request.
      * @return The view to resolve.
      */
-    @RequestMapping(value = "/", method = RequestMethod.POST,
-                    params = "action=chgrp")
+    @RequestMapping(value = "/", method = RequestMethod.POST, params = "action=chgrp")
     @PreAuthorize("hasRole('ROLE_USER_MODIFY')")
     public String chgrp(
             @RequestParam int user,
@@ -93,7 +96,8 @@ public class UserController extends ErrorHandlingController {
             throw new InvalidRequestException("Invalid user id specified.");
         }
 
-        UserDetails currentUserDetails = (UserDetails) SecurityContextHolder.getContext()
+        UserDetails currentUserDetails = (UserDetails) SecurityContextHolder
+                .getContext()
                 .getAuthentication()
                 .getPrincipal();
         User currentUser = users.getUserByName(currentUserDetails.getUsername());
@@ -101,7 +105,6 @@ public class UserController extends ErrorHandlingController {
         if ((currentUser != null) && (userObj.getId() == currentUser.getId())) {
             throw new InvalidRequestException("Cannot modify own user groups.");
         }
-
 
         userObj.getGroups().clear();
 

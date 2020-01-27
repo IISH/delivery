@@ -45,19 +45,19 @@ public class ReproductionMailer extends RequestMailer {
      */
     public void mailPending(Reproduction reproduction) throws MailException {
         assert reproduction.getStatus() == Reproduction.Status.WAITING_FOR_ORDER_DETAILS :
-            "Can only mail pending when Reproduction status is WAITING_FOR_ORDER_DETAILS";
+                "Can only mail pending when Reproduction status is WAITING_FOR_ORDER_DETAILS";
 
         Model model = getReproductionModel(reproduction);
 
         // Send an email to the customer
         String subjectCustomer = getMessage("reproductionMail.pendingSubjectCustomer", "Confirmation of reproduction",
-            reproduction.getRequestLocale());
+                reproduction.getRequestLocale());
         sendMail(reproduction, subjectCustomer, "mail/reproduction_pending_customer.mail.ftl",
-            model, reproduction.getRequestLocale());
+                model, reproduction.getRequestLocale());
 
         // Send an email to the reading room
         String subjectReadingRoom = getMessage("reproductionMail.pendingSubjectReadingRoom",
-            "New reproduction waiting for offer", ENGLISH_LOCALE);
+                "New reproduction waiting for offer", ENGLISH_LOCALE);
         sendMail(subjectReadingRoom, "mail/reproduction_pending_readingroom.mail.ftl", model, ENGLISH_LOCALE);
     }
 
@@ -69,12 +69,12 @@ public class ReproductionMailer extends RequestMailer {
      */
     public void mailOfferReady(Reproduction reproduction) throws MailException {
         assert reproduction.getStatus() == Reproduction.Status.HAS_ORDER_DETAILS :
-            "Can only mail order ready when Reproduction status is HAS_ORDER_DETAILS";
+                "Can only mail order ready when Reproduction status is HAS_ORDER_DETAILS";
 
         String subject = getMessage("reproductionMail.offerReadySubject",
-            "Confirmation of reproduction - Your offer is ready", reproduction.getRequestLocale());
+                "Confirmation of reproduction - Your offer is ready", reproduction.getRequestLocale());
         sendMail(reproduction, subject, "mail/reproduction_offer_ready.mail.ftl", getReproductionModel(reproduction),
-            reproduction.getRequestLocale());
+                reproduction.getRequestLocale());
     }
 
     /**
@@ -83,14 +83,14 @@ public class ReproductionMailer extends RequestMailer {
      * @param reproduction The reproduction to extract mail details from.
      * @throws MailException Thrown when sending mail somehow failed
      */
-    public void mailReminder(Reproduction reproduction) throws MailException{
+    public void mailReminder(Reproduction reproduction) throws MailException {
         assert reproduction.getStatus() == Reproduction.Status.HAS_ORDER_DETAILS :
-            "Can only mail order ready when Reproduction status is HAS_ORDER_DETAILS";
+                "Can only mail order ready when Reproduction status is HAS_ORDER_DETAILS";
 
         String subject = getMessage("reproductionMail.offerReminderSubject",
-            "Reminder of reproduction - Your order is not paid", reproduction.getRequestLocale());
+                "Reminder of reproduction - Your order is not paid", reproduction.getRequestLocale());
         sendMail(reproduction, subject, "mail/reproduction_payment_reminder.mail.ftl", getReproductionModel(reproduction),
-            reproduction.getRequestLocale());
+                reproduction.getRequestLocale());
     }
 
     /**
@@ -105,7 +105,7 @@ public class ReproductionMailer extends RequestMailer {
     public void mailPayedAndActive(Reproduction reproduction) throws MailException {
         try {
             assert reproduction.getStatus() == Reproduction.Status.ACTIVE :
-                "Can only mail active and payed confirmation when Reproduction status is ACTIVE";
+                    "Can only mail active and payed confirmation when Reproduction status is ACTIVE";
 
             List<HoldingReproduction> inSor = new ArrayList<>();
             List<HoldingReproduction> notInSor = new ArrayList<>();
@@ -125,11 +125,11 @@ public class ReproductionMailer extends RequestMailer {
 
             // First sent the customer a confirmation email
             String subjectCustomer = getMessage("reproductionMail.payedSubject", "Confirmation of payment",
-                reproduction.getRequestLocale());
+                    reproduction.getRequestLocale());
             String invoiceFileName = getMessage("reproductionMail.invoice", "Invoice",
-                reproduction.getRequestLocale());
+                    reproduction.getRequestLocale());
             sendMailWithPdf(reproduction, subjectCustomer, "mail/reproduction_payed.mail.ftl", pdf,
-                invoiceFileName + ".pdf", model, reproduction.getRequestLocale());
+                    invoiceFileName + ".pdf", model, reproduction.getRequestLocale());
 
             // Obtain all SOR URLs
             Map<String, List<String>> urlsForHolding = getSorDownloadURLs(inSor);
@@ -137,7 +137,7 @@ public class ReproductionMailer extends RequestMailer {
 
             // Then sent the reading room / repro the confirmation
             String subjectRepro = getMessage("reproductionMail.activeReproductionSubject", "New active reproduction",
-                ENGLISH_LOCALE);
+                    ENGLISH_LOCALE);
             sendMail(subjectRepro, "mail/reproduction_active.mail.ftl", model, ENGLISH_LOCALE);
         }
         catch (TemplatePreparationException | MessagingException tpe) {
@@ -153,10 +153,10 @@ public class ReproductionMailer extends RequestMailer {
      */
     public void mailCancelled(Reproduction reproduction) throws MailException {
         assert reproduction.getStatus() == Reproduction.Status.CANCELLED :
-            "Can only mail active when Reproduction status is CANCELLED";
+                "Can only mail active when Reproduction status is CANCELLED";
 
         String subject = getMessage("reproductionMail.cancelledReproductionSubject", "Reproduction cancelled",
-            ENGLISH_LOCALE);
+                ENGLISH_LOCALE);
         sendMail(subject, "mail/reproduction_cancelled.mail.ftl", getReproductionModel(reproduction), ENGLISH_LOCALE);
     }
 
@@ -202,32 +202,32 @@ public class ReproductionMailer extends RequestMailer {
                         if (sorMetadata.getFilePids().containsKey("archive pdf")) {
                             String pid = sorMetadata.getFilePids().get("archive pdf").get(0);
                             urls.add(sorAddress + "/file/master/" + pid + "?access_token="
-                                + sorAccessToken + "&contentType=application/save");
+                                    + sorAccessToken + "&contentType=application/save");
                         }
                         else {
                             urls.add(sorAddress + "/pdf/" + holding.determinePid() + "?access_token="
-                                + sorAccessToken + "&contentType=application/save");
+                                    + sorAccessToken + "&contentType=application/save");
                         }
                         break;
                     case SOUND:
                         String metsAudio = (level == ReproductionStandardOption.Level.MASTER) ? "archive audio" : "reference audio";
                         for (String pid : sorMetadata.getFilePids().get(metsAudio)) {
                             urls.add(sorAddress + "/file/" + level.name().toLowerCase() + "/" + pid + "?access_token="
-                                + sorAccessToken + "&contentType=application/save");
+                                    + sorAccessToken + "&contentType=application/save");
                         }
                         break;
                     case MOVING_VISUAL:
                         String metsVideo = (level == ReproductionStandardOption.Level.MASTER) ? "archive video" : "reference video";
                         for (String pid : sorMetadata.getFilePids().get(metsVideo)) {
                             urls.add(sorAddress + "/file/" + level.name().toLowerCase() + "/" + pid + "?access_token="
-                                + sorAccessToken + "&contentType=application/save");
+                                    + sorAccessToken + "&contentType=application/save");
                         }
                         break;
                     case VISUAL:
                         String metsVisual = (level == ReproductionStandardOption.Level.MASTER) ? "archive image" : "hires reference image";
                         String pid = sorMetadata.getFilePids().get(metsVisual).get(0);
                         urls.add(sorAddress + "/file/" + level.name().toLowerCase() + "/" + pid + "?access_token="
-                            + sorAccessToken + "&contentType=application/save");
+                                + sorAccessToken + "&contentType=application/save");
                         break;
                 }
             }

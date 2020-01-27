@@ -181,12 +181,16 @@ public class Reproduction extends Request {
 
     /**
      * Get whether the reminder mail for this reproduction has been sent.
+     *
      * @return Whether the reminder mail for this reproduction has been sent.
      */
-    public boolean isOfferMailReminderSent() { return offerMailReminderSent; }
+    public boolean isOfferMailReminderSent() {
+        return offerMailReminderSent;
+    }
 
     /**
      * Set whether the reminder mail for this reproduction has been sent.
+     *
      * @param offerMailReminderSent Whether the reminder mail for this reproduction has been sent.
      */
     public void setOfferMailReminderSent(boolean offerMailReminderSent) {
@@ -412,10 +416,11 @@ public class Reproduction extends Request {
 
     /**
      * Get the administration costs price without the BTW.
+     *
      * @return the administration costs price without the BTW.
      */
-    public BigDecimal getAdminstrationCostsWithoutTax(){
-        double percentage = (double)this.adminstrationCostsBtwPercentage/100 + 1;
+    public BigDecimal getAdminstrationCostsWithoutTax() {
+        double percentage = (double) this.adminstrationCostsBtwPercentage / 100 + 1;
         BigDecimal percentageDecimal = new BigDecimal(percentage);
         BigDecimal costsWithoutTax = this.adminstrationCosts.subtract(adminstrationCostsDiscount);
         costsWithoutTax = costsWithoutTax.divide(percentageDecimal, 2, BigDecimal.ROUND_HALF_UP);
@@ -474,7 +479,7 @@ public class Reproduction extends Request {
         comment = val;
     }
 
-//    @Enumerated(EnumType.STRING)
+    //    @Enumerated(EnumType.STRING)
     @Column(name = "requestlocale", nullable = false)
     private Locale requestLocale;
 

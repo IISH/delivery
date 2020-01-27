@@ -24,8 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Base class to be used to extend controllers from which can throw special
- * runtime exceptions.
+ * Base class to be used to extend controllers from which can throw special runtime exceptions.
  */
 public class ErrorHandlingController {
     @Autowired
@@ -97,10 +96,11 @@ public class ErrorHandlingController {
             if (!isCaptchaCorrect) {
                 String msg = msgSource.getMessage("captcha.error", null, LocaleContextHolder.getLocale());
 
-                // This prevents the createOrEdit from submitting to the database. Sadly, because the captcha is not part of the model,
+                // This prevents the createOrEdit from submitting to the database.
+                // Sadly, because the captcha is not part of the model,
                 // no corresponding error will be displayed in the form. We have to do this manually.
-                result.addError(
-                        new FieldError(result.getObjectName(), "captcha_response_field", "", false, null, null, msg));
+                result.addError(new FieldError(result.getObjectName(), "captcha_response_field", "",
+                        false, null, null, msg));
                 model.addAttribute("captchaError", msg);
             }
         }

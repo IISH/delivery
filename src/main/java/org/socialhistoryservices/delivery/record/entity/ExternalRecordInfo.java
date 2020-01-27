@@ -15,7 +15,7 @@ import java.util.Set;
  * persistent.
  */
 @Entity
-@Table(name="external_record_info")
+@Table(name = "external_record_info")
 public class ExternalRecordInfo {
 
     public enum MaterialType {
@@ -47,28 +47,34 @@ public class ExternalRecordInfo {
         CLOSED
     }
 
-    /** The id. */
+    /**
+     * The id.
+     */
     @Id
     @GeneratedValue
-    @Column(name="id")
+    @Column(name = "id")
     private int id;
 
     /**
      * Get the info's id.
+     *
      * @return the info's id.
      */
     public int getId() {
         return id;
     }
 
-     /** The Record's title. */
+    /**
+     * The Record's title.
+     */
     @NotBlank
-    @Size(max=125)
-    @Column(name="title", nullable=false)
+    @Size(max = 125)
+    @Column(name = "title", nullable = false)
     private String title;
 
     /**
      * Get the Record's title.
+     *
      * @return The title.
      */
     public String getTitle() {
@@ -77,6 +83,7 @@ public class ExternalRecordInfo {
 
     /**
      * Set the Record's title.
+     *
      * @param title The title.
      */
     public void setTitle(String title) {
@@ -85,11 +92,12 @@ public class ExternalRecordInfo {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name="material_type", nullable=false)
+    @Column(name = "material_type", nullable = false)
     private MaterialType materialType;
 
     /**
      * Get external material type.
+     *
      * @return The external material type, do not rely on this too much.
      */
     public MaterialType getMaterialType() {
@@ -98,6 +106,7 @@ public class ExternalRecordInfo {
 
     /**
      * Se the material type.
+     *
      * @param type The material type to set.
      */
     public void setMaterialType(MaterialType type) {
@@ -107,12 +116,13 @@ public class ExternalRecordInfo {
     /**
      * Holder of the copyright.
      */
-    @Size(max=255)
-    @Column(name="copyright")
+    @Size(max = 255)
+    @Column(name = "copyright")
     private String copyright;
 
     /**
      * Get the holder of the copyright.
+     *
      * @return The holder of the copyright.
      */
     public String getCopyright() {
@@ -121,6 +131,7 @@ public class ExternalRecordInfo {
 
     /**
      * Set the holder of the copyright.
+     *
      * @param copyright The holder of the copyright.
      */
     public void setCopyright(String copyright) {
@@ -129,19 +140,21 @@ public class ExternalRecordInfo {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name="publication_status", nullable=false)
+    @Column(name = "publication_status", nullable = false)
     private PublicationStatus publicationStatus;
 
     /**
      * Get the publication status.
+     *
      * @return the publication status.
      */
     public PublicationStatus getPublicationStatus() {
-            return publicationStatus;
+        return publicationStatus;
     }
 
     /**
      * Set the publication status.
+     *
      * @param publicationStatus the publication status.
      */
     public void setPublicationStatus(PublicationStatus publicationStatus) {
@@ -150,11 +163,12 @@ public class ExternalRecordInfo {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name="restriction", nullable=false)
+    @Column(name = "restriction", nullable = false)
     private Restriction restriction;
 
     /**
      * Get the restriction.
+     *
      * @return the restriction.
      */
     public Restriction getRestriction() {
@@ -163,18 +177,20 @@ public class ExternalRecordInfo {
 
     /**
      * Set the restriction.
+     *
      * @param restriction the restriction.
      */
     public void setRestriction(Restriction restriction) {
         this.restriction = restriction;
     }
 
-    @Size(max=125)
-    @Column(name="author")
+    @Size(max = 125)
+    @Column(name = "author")
     private String author;
 
     /**
      * Get the author.
+     *
      * @return The author if applicable (i.e. archives do not have an author,
      * but books do).
      */
@@ -184,20 +200,22 @@ public class ExternalRecordInfo {
 
     /**
      * Set the author.
+     *
      * @param author The value for the author.
      */
     public void setAuthor(String author) {
         this.author = author;
     }
 
-    @Size(max=30)
-    @Column(name="year")
+    @Size(max = 30)
+    @Column(name = "year")
     private String displayYear;
 
     /**
      * Get the display year, contains all kinds of string characters ("ca."
      * "-" etc.),
      * therefore it is a string instead of an int.
+     *
      * @return The year to display.
      */
     public String getDisplayYear() {
@@ -206,18 +224,20 @@ public class ExternalRecordInfo {
 
     /**
      * Set the display year.
+     *
      * @param year The year to set for display.
      */
     public void setDisplayYear(String year) {
-         displayYear = year;
+        displayYear = year;
     }
 
-    @Size(max=255)
-    @Column(name="physical_description")
+    @Size(max = 255)
+    @Column(name = "physical_description")
     private String physicalDescription;
 
     /**
      * Get the physical description.
+     *
      * @return the physical description.
      */
     public String getPhysicalDescription() {
@@ -226,18 +246,20 @@ public class ExternalRecordInfo {
 
     /**
      * Set the physical description.
+     *
      * @param physicalDescription the physical description.
      */
     public void setPhysicalDescription(String physicalDescription) {
         this.physicalDescription = physicalDescription;
     }
 
-    @Size(max=255)
-    @Column(name="genres")
+    @Size(max = 255)
+    @Column(name = "genres")
     private String genres;
 
     /**
      * Get the genres.
+     *
      * @return the genres.
      */
     public String getGenres() {
@@ -246,6 +268,7 @@ public class ExternalRecordInfo {
 
     /**
      * Get the genres as a set.
+     *
      * @return the genres as a set.
      */
     public Set<String> getGenresSet() {
@@ -254,6 +277,7 @@ public class ExternalRecordInfo {
 
     /**
      * Set the genres.
+     *
      * @param genres the genres.
      */
     public void setGenres(String genres) {
@@ -266,6 +290,7 @@ public class ExternalRecordInfo {
 
     /**
      * Get the container.
+     *
      * @return The container.
      */
     public String getContainer() {
@@ -274,6 +299,7 @@ public class ExternalRecordInfo {
 
     /**
      * Set the container.
+     *
      * @param container The container.
      */
     public void setContainer(String container) {
@@ -282,6 +308,7 @@ public class ExternalRecordInfo {
 
     /**
      * Merge other record's data with this record.
+     *
      * @param other The other record.
      */
     public void mergeWith(ExternalRecordInfo other) {

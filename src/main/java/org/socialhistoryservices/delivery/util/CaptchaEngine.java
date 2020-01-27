@@ -39,16 +39,16 @@ public class CaptchaEngine extends ListImageCaptchaEngine {
 
         WordGenerator dictionaryWords = new DictionaryWordGenerator(new FileDictionary("toddlist"));
         TextPaster randomPaster = new DecoratedRandomTextPaster(
-            6, 7,
-            new SingleColorGenerator(Color.black),
-            new TextDecorator[]{}
+                6, 7,
+                new SingleColorGenerator(Color.black),
+                new TextDecorator[]{}
         );
         BackgroundGenerator back = new UniColorBackgroundGenerator(200, 100, Color.white);
         FontGenerator shearedFont = new RandomFontGenerator(30, 35);
 
         WordToImage word2image = new DeformedComposedWordToImage(
-            shearedFont, back, randomPaster,
-            backDef, textDef, postDef
+                shearedFont, back, randomPaster,
+                backDef, textDef, postDef
         );
 
         this.addFactory(new GimpyFactory(dictionaryWords, word2image));

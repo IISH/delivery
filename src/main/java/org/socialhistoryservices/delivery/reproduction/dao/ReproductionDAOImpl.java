@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -48,7 +47,8 @@ public class ReproductionDAOImpl implements ReproductionDAO {
         try {
             obj = entityManager.getReference(Reproduction.class, obj.getId());
             entityManager.remove(obj);
-        } catch (EntityNotFoundException ignored) {
+        }
+        catch (EntityNotFoundException ignored) {
         }
     }
 
@@ -109,10 +109,11 @@ public class ReproductionDAOImpl implements ReproductionDAO {
      */
     public Reproduction get(CriteriaQuery<Reproduction> query) {
         try {
-            TypedQuery q = entityManager.createQuery(query);
+            TypedQuery<Reproduction> q = entityManager.createQuery(query);
             q.setMaxResults(1);
-            return (Reproduction) q.getSingleResult();
-        } catch (NoResultException ex) {
+            return q.getSingleResult();
+        }
+        catch (NoResultException ex) {
             return null;
         }
     }
@@ -120,7 +121,7 @@ public class ReproductionDAOImpl implements ReproductionDAO {
     /**
      * Get an active reproduction relating to a specific Holding.
      *
-     * @param h      Holding to find a reproduction for.
+     * @param h Holding to find a reproduction for.
      * @return The active reproduction, null if none exist.
      */
     public Reproduction getActiveFor(Holding h) {
@@ -138,10 +139,11 @@ public class ReproductionDAOImpl implements ReproductionDAO {
         cq.orderBy(cb.asc(rRoot.get(Reproduction_.creationDate)));
 
         try {
-            TypedQuery q = entityManager.createQuery(cq);
+            TypedQuery<Reproduction> q = entityManager.createQuery(cq);
             q.setMaxResults(1);
-            return (Reproduction) q.getSingleResult();
-        } catch (NoResultException ex) {
+            return q.getSingleResult();
+        }
+        catch (NoResultException ex) {
             return null;
         }
     }
@@ -164,10 +166,11 @@ public class ReproductionDAOImpl implements ReproductionDAO {
         cq.where(where);
 
         try {
-            TypedQuery q = entityManager.createQuery(cq);
+            TypedQuery<Reproduction> q = entityManager.createQuery(cq);
             q.setMaxResults(1);
             return q.getSingleResult() != null;
-        } catch (NoResultException ex) {
+        }
+        catch (NoResultException ex) {
             return false;
         }
     }

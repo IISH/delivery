@@ -21,24 +21,28 @@ import java.util.List;
 public interface ReservationService {
     /**
      * Add a Reservation to the database.
+     *
      * @param obj Reservation to add.
      */
     void addReservation(Reservation obj);
 
     /**
      * Remove a Reservation from the database.
+     *
      * @param obj Reservation to remove.
      */
     void removeReservation(Reservation obj);
 
     /**
      * Save changes to a Reservation in the database.
+     *
      * @param obj Reservation to save.
      */
     void saveReservation(Reservation obj);
 
     /**
      * Retrieve the Reservation matching the given Id.
+     *
      * @param id Id of the Reservation to retrieve.
      * @return The Reservation matching the Id.
      */
@@ -46,18 +50,21 @@ public interface ReservationService {
 
     /**
      * Get a criteria builder for querying Reservations.
+     *
      * @return the CriteriaBuilder.
      */
     CriteriaBuilder getReservationCriteriaBuilder();
 
-	/**
-	 * Get a criteria builder for querying HoldingReservations.
-	 * @return the CriteriaBuilder.
-	 */
+    /**
+     * Get a criteria builder for querying HoldingReservations.
+     *
+     * @return the CriteriaBuilder.
+     */
     CriteriaBuilder getHoldingReservationCriteriaBuilder();
 
     /**
      * List all Reservations matching a built query.
+     *
      * @param q The criteria query to execute
      * @return A list of matching Reservations.
      */
@@ -65,6 +72,7 @@ public interface ReservationService {
 
     /**
      * List all Tuples matching a built query.
+     *
      * @param q The criteria query to execute
      * @return A list of matching Tuples.
      */
@@ -72,6 +80,7 @@ public interface ReservationService {
 
     /**
      * List all HoldingReservations matching a built query.
+     *
      * @param q The criteria query to execute
      * @return A list of matching HoldingReservations.
      */
@@ -79,9 +88,10 @@ public interface ReservationService {
 
     /**
      * List all HoldingReservations matching a built query.
-     * @param q The criteria query to execute
+     *
+     * @param q           The criteria query to execute
      * @param firstResult The first result to obtain
-     * @param maxResults The max number of results to obtain
+     * @param maxResults  The max number of results to obtain
      * @return A list of matching HoldingReservations.
      */
     List<HoldingReservation> listHoldingReservations(CriteriaQuery<HoldingReservation> q,
@@ -89,6 +99,7 @@ public interface ReservationService {
 
     /**
      * Count all HoldingReservations matching a built query.
+     *
      * @param q The criteria query to execute
      * @return A count of matching HoldingReservations.
      */
@@ -96,6 +107,7 @@ public interface ReservationService {
 
     /**
      * Get a single Reservation matching a built query.
+     *
      * @param query The query to match by.
      * @return The matching Reservation.
      */
@@ -103,55 +115,62 @@ public interface ReservationService {
 
     /**
      * Change the status of all holdings in a reservation.
-     * @param res Reservation to change status for.
+     *
+     * @param res    Reservation to change status for.
      * @param status Status to change holdings to.
      */
     void changeHoldingStatus(Reservation res, Holding.Status status);
 
     /**
      * Mark a specific item in a reservation as seen, bumping it to the next status.
+     *
      * @param res Reservation to change status for.
-     * @param h Holding to bump.
+     * @param h   Holding to bump.
      */
     void markItem(Reservation res, Holding h);
 
     /**
      * Merge the other reservation's fields into this reservation.
+     *
      * @param reservation The reservation.
-     * @param other The other reservation to merge with.
+     * @param other       The other reservation to merge with.
      */
     void merge(Reservation reservation, Reservation other);
 
     /**
      * Set the reservation status and update the associated holdings status
      * accordingly. Only updates status forward.
+     *
      * @param reservation The reservation.
-     * @param status The reservation which changed status.
+     * @param status      The reservation which changed status.
      */
     void updateStatusAndAssociatedHoldingStatus(Reservation reservation, Reservation.Status status);
 
     /**
      * Print a reservation if it was not printed yet.
+     *
      * @param res The reservation to print.
      * @throws PrinterException Thrown when delivering the print job to the
-     * printer failed. Does not say anything if the printer actually printed
-     * (or ran out of paper for example).
+     *                          printer failed. Does not say anything if the printer actually printed
+     *                          (or ran out of paper for example).
      */
     void printReservation(Reservation res) throws PrinterException;
 
     /**
      * Prints holding reservations by using the default printer.
-     * @param hrs The holding reservations to print.
+     *
+     * @param hrs         The holding reservations to print.
      * @param alwaysPrint If set to true, already printed holdings will
-     * also be printed.
+     *                    also be printed.
      * @throws PrinterException Thrown when delivering the print job to the
-     * printer failed. Does not say anything if the printer actually printed
-     * (or ran out of paper for example).
+     *                          printer failed. Does not say anything if the printer actually printed
+     *                          (or ran out of paper for example).
      */
     void printItems(List<HoldingReservation> hrs, boolean alwaysPrint) throws PrinterException;
 
     /**
      * Edit reservations.
+     *
      * @param newRes The new reservation to put in the database.
      * @param oldRes The old reservation in the database (if present).
      * @param result The binding result object to put the validation errors in.
@@ -164,6 +183,7 @@ public interface ReservationService {
 
     /**
      * Validate provided holding part of request.
+     *
      * @param newReq The new request containing holdings.
      * @param oldReq The old request if applicable (or null).
      * @throws ClosedException     Thrown when a holding is provided which
@@ -174,14 +194,15 @@ public interface ReservationService {
 
     /**
      * Get the first valid reservation date after or equal to from.
+     *
      * @param from The date to start from.
-     * @return The first valid date, or null when maxDaysInAdvance was
-     * exceeded.
+     * @return The first valid date, or null when maxDaysInAdvance was exceeded.
      */
     Date getFirstValidReservationDate(Date from);
 
     /**
      * Returns the active reservation with which this holding is associated.
+     *
      * @param holding The Holding to get the active reservation of.
      * @return The active reservation, or null if no active reservation exists.
      */

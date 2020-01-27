@@ -9,19 +9,27 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-/** Date validation annotation. */
-@Target( { METHOD, FIELD, ANNOTATION_TYPE })
+/**
+ * Date validation annotation.
+ */
+@Target({METHOD, FIELD, ANNOTATION_TYPE})
 @Retention(RUNTIME)
 @Constraint(validatedBy = ReservationDateValidator.class)
 @Documented
 public @interface ValidReservationDate {
 
-    /** The message to display when invalidated. */
+    /**
+     * The message to display when invalidated.
+     */
     String message() default "{mvcValidator.reservationDate}";
 
-    /** The group this annotation belongs to. */
+    /**
+     * The group this annotation belongs to.
+     */
     Class<?>[] groups() default {};
 
-    /** The annotation data. */
+    /**
+     * The annotation data.
+     */
     Class<? extends Payload>[] payload() default {};
 }

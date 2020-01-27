@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -21,6 +20,7 @@ public class ReservationDAOImpl implements ReservationDAO {
 
     /**
      * Set the entity manager to use in this DAO, internal.
+     *
      * @param entityManager The manager.
      */
     @PersistenceContext
@@ -30,6 +30,7 @@ public class ReservationDAOImpl implements ReservationDAO {
 
     /**
      * Add a Reservation to the database.
+     *
      * @param obj Reservation to add.
      */
     public synchronized void add(Reservation obj) {
@@ -38,6 +39,7 @@ public class ReservationDAOImpl implements ReservationDAO {
 
     /**
      * Remove a Reservation from the database.
+     *
      * @param obj Reservation to remove.
      */
     public void remove(Reservation obj) {
@@ -45,11 +47,13 @@ public class ReservationDAOImpl implements ReservationDAO {
             obj = entityManager.getReference(Reservation.class, obj.getId());
             entityManager.remove(obj);
         }
-        catch (EntityNotFoundException ignored) {}
+        catch (EntityNotFoundException ignored) {
+        }
     }
 
     /**
      * Save changes to a Reservation in the database.
+     *
      * @param obj Reservation to save.
      */
     public void save(Reservation obj) {
@@ -58,6 +62,7 @@ public class ReservationDAOImpl implements ReservationDAO {
 
     /**
      * Retrieve the Reservation matching the given Id.
+     *
      * @param id Id of the Reservation to retrieve.
      * @return The Reservation matching the Id.
      */
@@ -67,6 +72,7 @@ public class ReservationDAOImpl implements ReservationDAO {
 
     /**
      * Get a criteria builder for querying Reservations.
+     *
      * @return the CriteriaBuilder.
      */
     public CriteriaBuilder getCriteriaBuilder() {
@@ -75,6 +81,7 @@ public class ReservationDAOImpl implements ReservationDAO {
 
     /**
      * List all Reservations matching a built query.
+     *
      * @param q The criteria query to execute
      * @return A list of matching Reservations.
      */
@@ -84,6 +91,7 @@ public class ReservationDAOImpl implements ReservationDAO {
 
     /**
      * List all Tuples matching a built query.
+     *
      * @param q The criteria query to execute
      * @return A list of matching Tuples.
      */
@@ -93,6 +101,7 @@ public class ReservationDAOImpl implements ReservationDAO {
 
     /**
      * Get a single Reservation matching a built query.
+     *
      * @param query The query to match by.
      * @return The matching Reservation.
      */
@@ -109,6 +118,7 @@ public class ReservationDAOImpl implements ReservationDAO {
 
     /**
      * Get an active reservation relating to a specific Holding.
+     *
      * @param h Holding to find a reservation for.
      * @return The active reservation, null if none exist.
      */
@@ -139,6 +149,7 @@ public class ReservationDAOImpl implements ReservationDAO {
 
     /**
      * Check whether the given record is linked to a pending reservation based on the container.
+     *
      * @param record The record to check on.
      * @return Whether the given record is linked to a pending reservation based on the container.
      */

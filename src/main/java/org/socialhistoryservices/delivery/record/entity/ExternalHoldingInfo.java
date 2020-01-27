@@ -7,30 +7,36 @@ import javax.validation.constraints.Size;
  * Extra info extracted from the external API.
  */
 @Entity
-@Table(name="external_holding_info")
+@Table(name = "external_holding_info")
 public class ExternalHoldingInfo {
 
-    /** The id. */
+    /**
+     * The id.
+     */
     @Id
     @GeneratedValue
-    @Column(name="id")
+    @Column(name = "id")
     private int id;
 
     /**
      * Get the info's id.
+     *
      * @return the info's id.
      */
     public int getId() {
         return id;
     }
 
-    /** The Holding's barcode. */
-    @Size(max=255)
-    @Column(name="barcode", unique=true)
+    /**
+     * The Holding's barcode.
+     */
+    @Size(max = 255)
+    @Column(name = "barcode", unique = true)
     private String barcode;
 
     /**
      * Get the Holding's barcode.
+     *
      * @return the Holding's barcode.
      */
     public String getBarcode() {
@@ -39,17 +45,19 @@ public class ExternalHoldingInfo {
 
     /**
      * Set the Holding's barcode.
+     *
      * @param barcode the Holding's barcode.
      */
     public void setBarcode(String barcode) {
         this.barcode = barcode;
     }
 
-    @Column(name="serialnumbers", columnDefinition = "TEXT")
+    @Column(name = "serialnumbers", columnDefinition = "TEXT")
     private String serialNumbers;
 
     /**
      * Get the available serial numbers.
+     *
      * @return The serial numbers available.
      */
     public String getSerialNumbers() {
@@ -58,10 +66,11 @@ public class ExternalHoldingInfo {
 
     /**
      * Set the available serial numbers.
+     *
      * @param nrs The available serial numbers.
      */
     public void setSerialNumbers(String nrs) {
-         serialNumbers = nrs;
+        serialNumbers = nrs;
     }
 
     /**
@@ -91,6 +100,7 @@ public class ExternalHoldingInfo {
 
     /**
      * Merge other record's data with this record.
+     *
      * @param other The other record.
      */
     public void mergeWith(ExternalHoldingInfo other) {
@@ -100,12 +110,13 @@ public class ExternalHoldingInfo {
     }
 
     /**
-	 * Creates a new and empty ExternalHoldingInfo as a placeholder for non-existing holdings.
-	 * @return The new and empty getEmptyExternalInfo.
-	 */
-	public static ExternalHoldingInfo getEmptyExternalInfo() {
-		ExternalHoldingInfo externalHoldingInfo = new ExternalHoldingInfo();
-		externalHoldingInfo.setSerialNumbers("Non-existing holding");
-		return externalHoldingInfo;
-	}
+     * Creates a new and empty ExternalHoldingInfo as a placeholder for non-existing holdings.
+     *
+     * @return The new and empty getEmptyExternalInfo.
+     */
+    public static ExternalHoldingInfo getEmptyExternalInfo() {
+        ExternalHoldingInfo externalHoldingInfo = new ExternalHoldingInfo();
+        externalHoldingInfo.setSerialNumbers("Non-existing holding");
+        return externalHoldingInfo;
+    }
 }

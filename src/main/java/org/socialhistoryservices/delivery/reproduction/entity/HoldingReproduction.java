@@ -12,9 +12,10 @@ import java.math.BigDecimal;
  * Reproduction object representing a reproduction that can be made on a set of records.
  */
 @Entity
-@Table(name = "holding_reproductions", indexes = {@Index(columnList = "completed", name = "holding_reproductions_completed_idx"),
-                                                @Index(columnList = "reproduction_id", name = "holding_reproductions_reproduction_fk"),
-                                                @Index(columnList = "holding_id", name = "holding_reproductions_holding_fk")})
+@Table(name = "holding_reproductions", indexes = {
+        @Index(columnList = "completed", name = "holding_reproductions_completed_idx"),
+        @Index(columnList = "reproduction_id", name = "holding_reproductions_reproduction_fk"),
+        @Index(columnList = "holding_id", name = "holding_reproductions_holding_fk")})
 public class HoldingReproduction extends HoldingRequest {
 
     /**
@@ -75,10 +76,11 @@ public class HoldingReproduction extends HoldingRequest {
 
     /**
      * Get the complete price without the BTW and discount
+     *
      * @return the complete price without the BTW and discount
      */
-    public BigDecimal getCompletePriceWithoutTax(){
-        double percentage = (double)this.btwPercentage/100 + 1;
+    public BigDecimal getCompletePriceWithoutTax() {
+        double percentage = (double) this.btwPercentage / 100 + 1;
         BigDecimal percentageDecimal = new BigDecimal(percentage);
         return this.getCompletePriceWithDiscount().divide(percentageDecimal, 2, BigDecimal.ROUND_HALF_UP);
     }
@@ -470,22 +472,15 @@ public class HoldingReproduction extends HoldingRequest {
             setBtwPrice(otherHr.getBtwPrice());
             setBtwPercentage(otherHr.getBtwPercentage());
             setDiscount(otherHr.getDiscount());
+            setInSor(otherHr.isInSor());
 
-            //if (getStandardOption() != otherHr.getStandardOption()) {
-                setInSor(otherHr.isInSor());
-            //}
+            setStandardOption(otherHr.getStandardOption());
+            setPrice(otherHr.getPrice());
+            setNumberOfPages(otherHr.getNumberOfPages());
+            setDeliveryTime(otherHr.getDeliveryTime());
 
-            //if ((getStandardOption() != otherHr.getStandardOption()) || (otherHr.getStandardOption() == null)) {
-                setStandardOption(otherHr.getStandardOption());
-                setPrice(otherHr.getPrice());
-                setNumberOfPages(otherHr.getNumberOfPages());
-                setDeliveryTime(otherHr.getDeliveryTime());
-            //}
-
-            //if (otherHr.getStandardOption() == null) {
-                setCustomReproductionCustomer(otherHr.getCustomReproductionCustomer());
-                setCustomReproductionReply(otherHr.getCustomReproductionReply());
-            //}
+            setCustomReproductionCustomer(otherHr.getCustomReproductionCustomer());
+            setCustomReproductionReply(otherHr.getCustomReproductionReply());
         }
     }
 }

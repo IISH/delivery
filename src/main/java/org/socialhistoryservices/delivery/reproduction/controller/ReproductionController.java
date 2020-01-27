@@ -42,11 +42,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.awt.print.PrinterException;
 import java.beans.PropertyEditorSupport;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.*;
 
 /**
- * Controller of the Reproducion package, handles all /reproduction/* requests.
+ * Controller of the Reproduction package, handles all /reproduction/* requests.
  */
 @Controller
 @Transactional
@@ -205,8 +204,8 @@ public class ReproductionController extends AbstractRequestController {
         CriteriaQuery<Long> cqCount = search.count();
 
         // Fetch result set
-        List<HoldingReproduction> holdingReproductions = reproductions.listHoldingReproductions(cq,
-            getFirstResult(p), getMaxResults(p));
+        List<HoldingReproduction> holdingReproductions =
+                reproductions.listHoldingReproductions(cq, getFirstResult(p), getMaxResults(p));
         model.addAttribute("holdingReproductions", holdingReproductions);
 
         long holdingReproductionsSize = reproductions.countHoldingReproductions(cqCount);
@@ -272,7 +271,8 @@ public class ReproductionController extends AbstractRequestController {
             if (!hrs.isEmpty()) {
                 try {
                     reproductions.printItems(hrs, false);
-                } catch (PrinterException e) {
+                }
+                catch (PrinterException e) {
                     return "reproduction_print_failure";
                 }
             }
@@ -308,7 +308,8 @@ public class ReproductionController extends AbstractRequestController {
         if (!hrs.isEmpty()) {
             try {
                 reproductions.printItems(hrs, true);
-            } catch (PrinterException e) {
+            }
+            catch (PrinterException e) {
                 // TODO find out what this does?
                 return "reproduction_print_failure";
             }
@@ -477,12 +478,15 @@ public class ReproductionController extends AbstractRequestController {
             else {
                 reproductions.validateReproductionHoldings(reproduction, null);
             }
-        } catch (NoHoldingsException e) {
+        }
+        catch (NoHoldingsException e) {
             throw new ResourceNotFoundException();
-        } catch (ClosedException e) {
+        }
+        catch (ClosedException e) {
             model.addAttribute("error", "restricted");
             return "reproduction_error";
-        } catch (ClosedForReproductionException e) {
+        }
+        catch (ClosedForReproductionException e) {
             model.addAttribute("error", "closed");
             return "reproduction_error";
         }
@@ -565,8 +569,8 @@ public class ReproductionController extends AbstractRequestController {
                 getStandardOptionsNotAvailable(holdings, reproductionStandardOptions);
 
         for (Holding h : holdings) {
-            List<ReproductionStandardOption> standardOptions = new ArrayList<>();
-            standardOptions.addAll(reproductionStandardOptions.get(h.getSignature()));
+            List<ReproductionStandardOption> standardOptions =
+                    new ArrayList<>(reproductionStandardOptions.get(h.getSignature()));
             standardOptions.removeAll(unavailableStandardOptions.get(h.getSignature()));
             availableStandardOptions.put(h.getSignature(), standardOptions);
         }
@@ -585,8 +589,8 @@ public class ReproductionController extends AbstractRequestController {
                                                 Map<String, List<ReproductionStandardOption>> standardOptions,
                                                 Map<String, List<ReproductionStandardOption>> unavailableStandardOptions) {
         for (HoldingReproduction hr : reproduction.getHoldingReproductions()) {
-            List<ReproductionStandardOption> availableOptions = new ArrayList<>();
-            availableOptions.addAll(standardOptions.get(hr.getHolding().getSignature()));
+            List<ReproductionStandardOption> availableOptions =
+                    new ArrayList<>(standardOptions.get(hr.getHolding().getSignature()));
             availableOptions.removeAll(unavailableStandardOptions.get(hr.getHolding().getSignature()));
 
             if (!availableOptions.isEmpty())
@@ -605,7 +609,8 @@ public class ReproductionController extends AbstractRequestController {
     protected void autoPrintReproduction(final Reproduction reproduction) {
         try {
             reproductions.printReproduction(reproduction);
-        } catch (PrinterException e) {
+        }
+        catch (PrinterException e) {
             // Do nothing, let an employee print it later on
             LOGGER.warn("Printing reproduction failed", e);
         }
@@ -627,7 +632,8 @@ public class ReproductionController extends AbstractRequestController {
             // Mail the confirmation (offer is ready) to the customer
             try {
                 reproductionMailer.mailOfferReady(reproduction);
-            } catch (MailException me) {
+            }
+            catch (MailException me) {
                 model.addAttribute("error", "mail");
             }
 
@@ -637,7 +643,8 @@ public class ReproductionController extends AbstractRequestController {
             // Mail the reproduction pending details to the customer and inform the reading room
             try {
                 reproductionMailer.mailPending(reproduction);
-            } catch (MailException me) {
+            }
+            catch (MailException me) {
                 model.addAttribute("error", "mail");
             }
 
@@ -737,10 +744,12 @@ public class ReproductionController extends AbstractRequestController {
                 }
 
                 return "redirect:" + payWayService.getPaymentPageRedirectLink(order.getId());
-            } catch (IncompleteOrderDetailsException onre) {
+            }
+            catch (IncompleteOrderDetailsException onre) {
                 // We already checked for this one though
                 throw new InvalidRequestException("Reproduction is not ready yet.");
-            } catch (OrderRegistrationFailureException orfe) {
+            }
+            catch (OrderRegistrationFailureException orfe) {
                 String msg = msgSource.getMessage("payway.error", null, LocaleContextHolder.getLocale());
                 throw new InvalidRequestException(msg);
             }
@@ -776,10 +785,12 @@ public class ReproductionController extends AbstractRequestController {
 
                 // Otherwise redirect the user to the payment page
                 return "redirect:" + payWayService.getPaymentPageRedirectLink(order.getId());
-            } catch (IncompleteOrderDetailsException onre) {
+            }
+            catch (IncompleteOrderDetailsException onre) {
                 // We already checked for this one though
                 throw new InvalidRequestException("Reproduction is not ready yet.");
-            } catch (OrderRegistrationFailureException orfe) {
+            }
+            catch (OrderRegistrationFailureException orfe) {
                 String msg = msgSource.getMessage("payway.error", null, LocaleContextHolder.getLocale());
                 model.addAttribute("paywayError", msg);
             }
@@ -815,7 +826,7 @@ public class ReproductionController extends AbstractRequestController {
     @RequestMapping(value = "/order/accept", method = RequestMethod.GET, params = "POST")
     public ResponseEntity<String> accept(@RequestParam Map<String, String> requestParams) {
         LOGGER.debug(String.format(
-            "/reproduction/order/accept : Called POST order accept with message %s", requestParams));
+                "/reproduction/order/accept : Called POST order accept with message %s", requestParams));
 
         Reproduction reproduction = getPayWayPost(requestParams);
         if (reproduction != null) {
@@ -843,7 +854,7 @@ public class ReproductionController extends AbstractRequestController {
     @RequestMapping(value = "/order/cancel", method = RequestMethod.GET, params = "POST")
     public ResponseEntity<String> cancel(@RequestParam Map<String, String> requestParams) {
         LOGGER.debug(String.format(
-            "/reproduction/order/cancel : Called POST order cancel with message %s", requestParams));
+                "/reproduction/order/cancel : Called POST order cancel with message %s", requestParams));
 
         Reproduction reproduction = getPayWayPost(requestParams);
         if (reproduction != null)
@@ -867,7 +878,7 @@ public class ReproductionController extends AbstractRequestController {
     @RequestMapping(value = "/order/decline", method = RequestMethod.GET, params = "POST")
     public ResponseEntity<String> decline(@RequestParam Map<String, String> requestParams) {
         LOGGER.debug(String.format(
-            "/reproduction/order/cancel : Called POST order decline with message %s", requestParams));
+                "/reproduction/order/cancel : Called POST order decline with message %s", requestParams));
 
         Reproduction reproduction = getPayWayPost(requestParams);
         if (reproduction != null)
@@ -891,7 +902,7 @@ public class ReproductionController extends AbstractRequestController {
     @RequestMapping(value = "/order/exception", method = RequestMethod.GET, params = "POST")
     public ResponseEntity<String> exception(@RequestParam Map<String, String> requestParams) {
         LOGGER.debug(String.format(
-            "/reproduction/order/exception : Called POST order exception with message %s", requestParams));
+                "/reproduction/order/exception : Called POST order exception with message %s", requestParams));
 
         Reproduction reproduction = getPayWayPost(requestParams);
         if (reproduction != null)
@@ -911,7 +922,7 @@ public class ReproductionController extends AbstractRequestController {
         // Make sure the message is valid
         if (!payWayService.isValid(payWayMessage)) {
             LOGGER.error(String.format(
-                "/reproduction/order : Invalid signature for message %s", payWayMessage));
+                    "/reproduction/order : Invalid signature for message %s", payWayMessage));
             return null;
         }
 
@@ -927,7 +938,7 @@ public class ReproductionController extends AbstractRequestController {
         Reproduction reproduction = order.getReproduction();
         if (reproduction == null) {
             LOGGER.error(String.format("/reproduction/order : Reproduction not found for order in message %s",
-                payWayMessage));
+                    payWayMessage));
             return null;
         }
 
@@ -1010,17 +1021,20 @@ public class ReproductionController extends AbstractRequestController {
                         // Determine which one was updated
                         Reproduction r = (originalReproduction == null) ? reproduction : originalReproduction;
                         reproductionMailer.mailOfferReady(r);
-                    } catch (MailException me) {
+                    }
+                    catch (MailException me) {
                         mailSuccess = false;
                     }
                 }
                 return "redirect:/reproduction/" + originalReproduction.getId() + (!mailSuccess ? "?mail=error" : "");
             }
-        } catch (ClosedException | ClosedForReproductionException e) {
+        }
+        catch (ClosedException | ClosedForReproductionException e) {
             String msg = msgSource.getMessage("reproduction.error.restricted", null, "",
                     LocaleContextHolder.getLocale());
             result.addError(new ObjectError(result.getObjectName(), null, null, msg));
-        } catch (NoHoldingsException e) {
+        }
+        catch (NoHoldingsException e) {
             String msg = msgSource.getMessage("reproduction.error.noHoldings", null, "",
                     LocaleContextHolder.getLocale());
             result.addError(new ObjectError(result.getObjectName(), null, null, msg));
@@ -1126,17 +1140,20 @@ public class ReproductionController extends AbstractRequestController {
                 if (mail) {
                     try {
                         reproductionMailer.mailOfferReady(newReproduction);
-                    } catch (MailException me) {
+                    }
+                    catch (MailException me) {
                         mailSuccess = false;
                     }
                 }
                 return "redirect:/reproduction/" + newReproduction.getId() + (!mailSuccess ? "?mail=error" : "");
             }
-        } catch (ClosedException | ClosedForReproductionException e) {
+        }
+        catch (ClosedException | ClosedForReproductionException e) {
             String msg = msgSource.getMessage("reproduction.error.restricted", null, "",
                     LocaleContextHolder.getLocale());
             result.addError(new ObjectError(result.getObjectName(), null, null, msg));
-        } catch (NoHoldingsException e) {
+        }
+        catch (NoHoldingsException e) {
             String msg = msgSource.getMessage("reproduction.error.noHoldings", null, "",
                     LocaleContextHolder.getLocale());
             result.addError(new ObjectError(result.getObjectName(), null, null, msg));
@@ -1248,7 +1265,6 @@ public class ReproductionController extends AbstractRequestController {
      *
      * @param req The HTTP request object.
      * @param res The HTTP response object.
-     * @return The name of the view to use.
      */
     @RequestMapping(value = "/excel", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ROLE_REPRODUCTION_VIEW')")

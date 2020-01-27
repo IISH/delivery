@@ -62,6 +62,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Add a Reservation to the database.
+     *
      * @param obj Reservation to add.
      */
     public void addReservation(Reservation obj) {
@@ -74,14 +75,14 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Remove a Reservation from the database.
+     *
      * @param obj Reservation to remove.
      */
     public void removeReservation(Reservation obj) {
         // Set all holdings linked  to this reservation back to AVAILABLE if
         // this is a PENDING/ACTIVE reservation.
         // Note that we are in a transaction here, so it does not matter the
-        // records are still linked to the reservation when setting them to
-        // available.
+        // records are still linked to the reservation when setting them to available.
         if (obj.getStatus() != Reservation.Status.COMPLETED) {
             changeHoldingStatus(obj, Holding.Status.AVAILABLE);
         }
@@ -90,6 +91,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Change the status of all holdings in a reservation.
+     *
      * @param res    Reservation to change status for.
      * @param status Status to change holdings to.
      */
@@ -101,6 +103,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Save changes to a Reservation in the database.
+     *
      * @param obj Reservation to save.
      */
     public void saveReservation(Reservation obj) {
@@ -109,6 +112,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Retrieve the Reservation matching the given Id.
+     *
      * @param id Id of the Reservation to retrieve.
      * @return The Reservation matching the Id.
      */
@@ -118,6 +122,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Get a criteria builder for querying Reservations.
+     *
      * @return the CriteriaBuilder.
      */
     public CriteriaBuilder getReservationCriteriaBuilder() {
@@ -126,6 +131,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Get a criteria builder for querying HoldingReservations.
+     *
      * @return the CriteriaBuilder.
      */
     public CriteriaBuilder getHoldingReservationCriteriaBuilder() {
@@ -134,6 +140,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * List all Reservations matching a built query.
+     *
      * @param q The criteria query to execute
      * @return A list of matching Reservations.
      */
@@ -143,6 +150,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * List all Tuples matching a built query.
+     *
      * @param q The criteria query to execute
      * @return A list of matching Tuples.
      */
@@ -152,6 +160,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * List all HoldingReservations matching a built query.
+     *
      * @param q The criteria query to execute
      * @return A list of matching HoldingReservations.
      */
@@ -161,6 +170,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * List all HoldingReservations matching a built query.
+     *
      * @param q           The criteria query to execute
      * @param firstResult The first result to obtain
      * @param maxResults  The max number of results to obtain
@@ -173,6 +183,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Count all HoldingReservations matching a built query.
+     *
      * @param q The criteria query to execute
      * @return A count of matching HoldingReservations.
      */
@@ -182,6 +193,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Get a single Reservation matching a built query.
+     *
      * @param query The query to match by.
      * @return The matching Reservation.
      */
@@ -191,6 +203,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Mark a specific item in a reservation as seen, bumping it to the next status.
+     *
      * @param res Reservation to change status for.
      * @param h   Holding to bump.
      */
@@ -207,6 +220,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Mark a reservation, bumping it to the next status.
+     *
      * @param res Reservation to change status for.
      */
     private void markReservation(Reservation res) {
@@ -242,6 +256,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Merge the other reservation's fields into this reservation.
+     *
      * @param reservation The reservation.
      * @param other       The other reservation to merge with.
      */
@@ -265,11 +280,13 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
             // Add/update provided.
             addOrUpdateHoldingsProvidedByRequest(reservation, other);
         }
+
         updateStatusAndAssociatedHoldingStatus(reservation, other.getStatus());
     }
 
     /**
      * Set the reservation status and update the associated holdings status accordingly. Only updates status forward.
+     *
      * @param reservation The reservation.
      * @param status      The reservation which changed status.
      */
@@ -307,6 +324,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Update the holding status for pending reservations.
+     *
      * @param reservation The reservation to check.
      */
     private void updateHoldingStatusForPendingReservations(Reservation reservation) {
@@ -328,6 +346,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Adds a HoldingRequest to the HoldingRequests assoicated with this request.
+     *
      * @param holdingRequest The HoldingRequests to add.
      */
     protected void addToHoldingRequests(Request request, HoldingRequest holdingRequest) {
@@ -340,9 +359,9 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Prints holding reservations by using the default printer.
+     *
      * @param hrs         The holding reservations to print.
-     * @param alwaysPrint If set to true, already printed holdings will
-     *                    also be printed.
+     * @param alwaysPrint If set to true, already printed holdings will also be printed.
      * @throws PrinterException Thrown when delivering the print job to the
      *                          printer failed. Does not say anything if the printer actually printed
      *                          (or ran out of paper for example).
@@ -381,6 +400,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Print a reservation if it was not printed yet.
+     *
      * @param res The reservation to print.
      * @throws PrinterException Thrown when delivering the print job to the
      *                          printer failed. Does not say anything if the printer actually printed
@@ -392,6 +412,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Edit reservations.
+     *
      * @param newRes The new reservation to put in the database.
      * @param oldRes The old reservation in the database (if present).
      * @param result The binding result object to put the validation errors in.
@@ -412,7 +433,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
                 Calendar resCalendar = Calendar.getInstance();
                 resCalendar.setTime(resDate);
 
-                String msg = "";
+                String msg;
                 if (dateExceptionService.getExceptionDates().contains(resCalendar)) {
                     msg = messageSource.getMessage("reservationDateException.dateIsException",
                             new Object[]{}, LocaleContextHolder.getLocale()) +
@@ -428,8 +449,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
             }
         }
 
-        // If the return date is provided, it should be >= to the date of
-        // visit.
+        // If the return date is provided, it should be >= to the date of visit.
         Date d = newRes.getDate();
         Date rd = newRes.getReturnDate();
         if (d != null && rd != null && rd.before(d)) {
@@ -459,6 +479,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Get the first valid reservation date after or equal to from.
+     *
      * @param from The date to start from.
      * @return The first valid date, or null when maxDaysInAdvance was exceeded.
      */
@@ -530,6 +551,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     /**
      * Returns the active reservation with which this holding is associated.
+     *
      * @param holding The Holding to get the active reservation of.
      * @return The active reservation, or null if no active reservation exists.
      */

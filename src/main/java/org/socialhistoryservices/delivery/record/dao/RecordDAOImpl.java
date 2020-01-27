@@ -20,6 +20,7 @@ public class RecordDAOImpl implements RecordDAO {
 
     /**
      * Set the entity manager to use in this DAO, internal.
+     *
      * @param entityManager The manager.
      */
     @PersistenceContext
@@ -29,6 +30,7 @@ public class RecordDAOImpl implements RecordDAO {
 
     /**
      * Add a Record to the database.
+     *
      * @param obj Record to add.
      */
     public void add(Record obj) {
@@ -37,29 +39,36 @@ public class RecordDAOImpl implements RecordDAO {
 
     /**
      * Remove a Record from the database.
+     *
      * @param obj Record to remove.
      */
     public void remove(Record obj) {
         try {
             obj = entityManager.getReference(Record.class, obj.getId());
             entityManager.remove(obj);
-        } catch (EntityNotFoundException ignored) {}
+        }
+        catch (EntityNotFoundException ignored) {
+        }
     }
 
-	/**
-	 * Remove the ExternalRecordInfo of a Record from the database.
-	 * @param obj Record of which to remove the ExternalRecordInfo.
-	 */
-	public void removeExternalInfo(Record obj) {
-		try {
-			ExternalRecordInfo eriObj = obj.getExternalInfo();
-			eriObj = entityManager.getReference(ExternalRecordInfo.class, eriObj.getId());
-			entityManager.remove(eriObj);
-		} catch (EntityNotFoundException ignored) {}
-	}
+    /**
+     * Remove the ExternalRecordInfo of a Record from the database.
+     *
+     * @param obj Record of which to remove the ExternalRecordInfo.
+     */
+    public void removeExternalInfo(Record obj) {
+        try {
+            ExternalRecordInfo eriObj = obj.getExternalInfo();
+            eriObj = entityManager.getReference(ExternalRecordInfo.class, eriObj.getId());
+            entityManager.remove(eriObj);
+        }
+        catch (EntityNotFoundException ignored) {
+        }
+    }
 
     /**
      * Save changes to a Record in the database.
+     *
      * @param obj Record to save.
      */
     public void save(Record obj) {
@@ -68,6 +77,7 @@ public class RecordDAOImpl implements RecordDAO {
 
     /**
      * Retrieve the Record matching the given Id.
+     *
      * @param id Id of the Record to retrieve.
      * @return The Record matching the Id.
      */
@@ -77,6 +87,7 @@ public class RecordDAOImpl implements RecordDAO {
 
     /**
      * Get a criteria builder for querying Records.
+     *
      * @return the CriteriaBuilder.
      */
     public CriteriaBuilder getCriteriaBuilder() {
@@ -85,6 +96,7 @@ public class RecordDAOImpl implements RecordDAO {
 
     /**
      * List all Records matching a built query.
+     *
      * @param query The query to match by.
      * @return A list of matching Records.
      */
@@ -94,7 +106,8 @@ public class RecordDAOImpl implements RecordDAO {
 
     /**
      * List all Records.
-     * @param offset The offset.
+     *
+     * @param offset     The offset.
      * @param maxResults The max number of records to fetch.
      * @return A list of Records.
      */
@@ -115,15 +128,17 @@ public class RecordDAOImpl implements RecordDAO {
 
     /**
      * Get a single Record matching a built query.
+     *
      * @param query The query to match by.
      * @return The matching Record.
      */
     public Record get(CriteriaQuery<Record> query) {
         try {
-            TypedQuery q = entityManager.createQuery(query);
+            TypedQuery<Record> q = entityManager.createQuery(query);
             q.setMaxResults(1);
-            return (Record)q.getSingleResult();
-        } catch (NoResultException ex) {
+            return q.getSingleResult();
+        }
+        catch (NoResultException ex) {
             return null;
         }
     }

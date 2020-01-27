@@ -24,7 +24,7 @@ public class IISHNamespaceContext implements NamespaceContext {
         return null;
     }
 
-    public Iterator getPrefixes(String val) {
+    public Iterator<String> getPrefixes(String val) {
         return null;
     }
 

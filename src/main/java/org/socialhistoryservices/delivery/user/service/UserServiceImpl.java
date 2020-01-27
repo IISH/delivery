@@ -24,14 +24,19 @@ import java.util.List;
 @Transactional
 public class UserServiceImpl implements UserService, UserDetailsService {
 
-    /** user DAO, do not autowire unless userServiceDetails bean removed */
+    /**
+     * user DAO, do not autowire unless userServiceDetails bean removed
+     */
     private UserDAO userDAO;
 
-    /** group DAO, do not autowire unless userServiceDetails bean removed */
+    /**
+     * group DAO, do not autowire unless userServiceDetails bean removed
+     */
     private GroupDAO groupDAO;
 
     /**
      * Add a User to the database.
+     *
      * @param obj User to add.
      */
     public void addUser(User obj) {
@@ -40,6 +45,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     /**
      * Remove a User from the database.
+     *
      * @param obj User to remove.
      */
     public void removeUser(User obj) {
@@ -48,6 +54,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     /**
      * Save changes to a User in the database.
+     *
      * @param obj User to save.
      */
     public void saveUser(User obj) {
@@ -56,6 +63,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     /**
      * Retrieve the User matching the given Id.
+     *
      * @param id Id of the User to retrieve.
      * @return The User matching the Id.
      */
@@ -65,6 +73,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     /**
      * Retrieve the User matching the given username.
+     *
      * @param name Username of the User to retrieve.
      * @return The User matching the username.
      */
@@ -82,14 +91,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     /**
      * Load a user by its user name.
+     *
      * @param name The name/e-mail of the user.
      * @return The UserDetails of this user (User object) if successful.
-     * @throws org.springframework.security.core.userdetails.UsernameNotFoundException Thrown when the user was not found.
-     * @throws org.springframework.dao.DataAccessException Thrown when there was a problem accessing
-     * the database.
+     * @throws UsernameNotFoundException Thrown when the user was not found.
+     * @throws DataAccessException       Thrown when there was a problem accessing the database.
      */
-    public UserDetails loadUserByUsername(String name) throws
-            UsernameNotFoundException, DataAccessException {
+    public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException, DataAccessException {
         User u = getUserByName(name);
         if (u == null) {
             throw new UsernameNotFoundException(name + " is no valid user");
@@ -97,9 +105,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return u;
     }
 
-
     /**
      * Get a criteria builder for querying Users.
+     *
      * @return the CriteriaBuilder.
      */
     public CriteriaBuilder getUserCriteriaBuilder() {
@@ -108,6 +116,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     /**
      * List all Users matching a built query.
+     *
      * @param query The query to match by.
      * @return A list of matching Users.
      */
@@ -117,6 +126,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     /**
      * List all Users.
+     *
      * @return A list of Users.
      */
     public List<User> listUsers() {
@@ -131,6 +141,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     /**
      * Get a single User matching a built query.
+     *
      * @param query The query to match by.
      * @return The matching User.
      */
@@ -138,11 +149,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userDAO.get(query);
     }
 
-
-
-
     /**
      * Add a Group to the database.
+     *
      * @param obj Group to add.
      */
     public void addGroup(Group obj) {
@@ -151,6 +160,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     /**
      * Remove a Group from the database.
+     *
      * @param obj Group to remove.
      */
     public void removeGroup(Group obj) {
@@ -159,6 +169,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     /**
      * Save changes to a Group in the database.
+     *
      * @param obj Group to save.
      */
     public void saveGroup(Group obj) {
@@ -167,6 +178,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     /**
      * Retrieve the Group matching the given Id.
+     *
      * @param id Id of the Group to retrieve.
      * @return The Group matching the Id.
      */
@@ -176,6 +188,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     /**
      * Get a criteria builder for querying Groups.
+     *
      * @return the CriteriaBuilder.
      */
     public CriteriaBuilder getGroupCriteriaBuilder() {
@@ -184,6 +197,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     /**
      * List all Groups matching a built query.
+     *
      * @param query The query to match by.
      * @return A list of matching Groups.
      */
@@ -193,6 +207,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     /**
      * List all Groups matching a built query.
+     *
      * @return A list of matching Groups.
      */
     public List<Group> listGroups() {
@@ -207,6 +222,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     /**
      * Get a single Group matching a built query.
+     *
      * @param query The query to match by.
      * @return The matching Group.
      */
@@ -217,6 +233,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     /**
      * Set user dao (autowiring does not work because UserService bean is
      * defined in xml).
+     *
      * @param ud The user DAO to set.
      */
     public void setUserDAO(UserDAO ud) {
@@ -226,6 +243,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     /**
      * Set group dao (autowiring does not work because UserService bean is
      * defined in xml).
+     *
      * @param groupDAO The group DAO to set.
      */
     public void setGroupDAO(GroupDAO groupDAO) {

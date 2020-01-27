@@ -96,7 +96,7 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
     /**
      * Translates the path of a URI to a list of holdings.
      *
-     * @param path            The path containing the holdings.
+     * @param path The path containing the holdings.
      * @return A list of holdings.
      */
     protected List<Holding> uriPathToHoldings(String path) {
@@ -111,7 +111,8 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
                 try {
                     r = records.createRecordByPid(elements[0]);
                     records.addRecord(r);
-                } catch (NoSuchPidException e) {
+                }
+                catch (NoSuchPidException e) {
                     return null;
                 }
             }
@@ -191,7 +192,8 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
         if (p.containsKey("date")) {
             try {
                 date = API_DATE_FORMAT.parse(p.get("date")[0]);
-            } catch (ParseException ex) {
+            }
+            catch (ParseException ex) {
                 throw new InvalidRequestException("Invalid date: " + p.get("date")[0]);
             }
         }
@@ -210,7 +212,8 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
         if (containsFrom) {
             try {
                 date = API_DATE_FORMAT.parse(p.get("from_date")[0]);
-            } catch (ParseException ex) {
+            }
+            catch (ParseException ex) {
                 throw new InvalidRequestException("Invalid from_date: " + p.get("from_date")[0]);
             }
         }
@@ -229,7 +232,8 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
         if (containsTo) {
             try {
                 date = API_DATE_FORMAT.parse(p.get("to_date")[0]);
-            } catch (ParseException ex) {
+            }
+            catch (ParseException ex) {
                 throw new InvalidRequestException("Invalid to_date: " + p.get("to_date")[0]);
             }
         }
@@ -248,7 +252,8 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
         if (p.containsKey("page")) {
             try {
                 page = Math.max(0, Integer.parseInt(p.get("page")[0]) - 1);
-            } catch (NumberFormatException ex) {
+            }
+            catch (NumberFormatException ex) {
                 throw new InvalidRequestException("Invalid page number: " + p.get("page")[0]);
             }
         }
@@ -268,7 +273,8 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
             try {
                 maxResults = Math.max(0, Math.min(Integer.parseInt(p.get("page_len")[0]),
                         deliveryProperties.getRequestMaxPageLen()));
-            } catch (NumberFormatException ex) {
+            }
+            catch (NumberFormatException ex) {
                 throw new InvalidRequestException("Invalid page length: " + p.get("page_len")[0]);
             }
         }
@@ -316,7 +322,7 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
             sigWhere = sigWhere == null ? sigSearch : cb.and(sigWhere, sigSearch);
         }
 
-        Expression<Boolean> where = null;
+        Expression<Boolean> where;
         if (sigWhere == null) {
             where = titleWhere;
         }
@@ -335,7 +341,6 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
         }
 
         cq.where(where);
-        // cq.orderBy(cb.asc(eRoot.get(ExternalRecordInfo_.title)));
         cq.distinct(true);
 
         List<Holding> holdings = records.listHoldings(cq);

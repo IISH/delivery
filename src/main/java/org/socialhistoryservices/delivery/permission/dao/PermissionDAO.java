@@ -15,30 +15,35 @@ import java.util.List;
 public interface PermissionDAO {
     /**
      * Add a Permission to the database.
+     *
      * @param obj Permission to add.
      */
     void add(Permission obj);
 
     /**
      * Remove a Permission from the database.
+     *
      * @param obj Permission to remove.
      */
     void remove(Permission obj);
 
     /**
      * Remove a RecordPermission from the database.
+     *
      * @param obj RecordPermission to remove.
      */
     void remove(RecordPermission obj);
 
     /**
      * Save changes to a Permission in the database.
+     *
      * @param obj Permission to save.
      */
     void save(Permission obj);
 
     /**
      * Retrieve the Permission matching the given Id.
+     *
      * @param id Id of the Permission to retrieve.
      * @return The Permission matching the Id.
      */
@@ -46,12 +51,14 @@ public interface PermissionDAO {
 
     /**
      * Get a criteria builder for querying Permissions.
+     *
      * @return the CriteriaBuilder.
      */
     CriteriaBuilder getCriteriaBuilder();
 
     /**
      * List all RecordPermissions matching a built query.
+     *
      * @param query The query to match by.
      * @return A list of matching RecordPermissions.
      */
@@ -59,15 +66,17 @@ public interface PermissionDAO {
 
     /**
      * List all RecordPermissions matching a built query.
-     * @param query The query to match by.
+     *
+     * @param query       The query to match by.
      * @param firstResult The first result to obtain
-     * @param maxResults The max number of results to obtain
+     * @param maxResults  The max number of results to obtain
      * @return A list of matching RecordPermissions.
      */
     List<RecordPermission> list(CriteriaQuery<RecordPermission> query, int firstResult, int maxResults);
 
     /**
      * Count all RecordPermissions matching a built query.
+     *
      * @param query The criteria query to execute
      * @return The number of counted results.
      */
@@ -75,6 +84,7 @@ public interface PermissionDAO {
 
     /**
      * Get a single Permission matching a built query.
+     *
      * @param query The query to match by.
      * @return The matching Permission.
      */
@@ -82,6 +92,7 @@ public interface PermissionDAO {
 
     /**
      * Check whether there are any permission requests made on the record.
+     *
      * @param record Record to check for permission requests for.
      * @return Whether any permission requests have been made including this record.
      */

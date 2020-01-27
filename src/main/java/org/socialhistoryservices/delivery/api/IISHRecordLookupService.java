@@ -90,7 +90,7 @@ public class IISHRecordLookupService implements RecordLookupService {
                 title, resultCountPerChunk, resultStart));
         Node out = doSearch(query, pc.getResultCountPerChunk(), pc.getResultStart());
 
-        NodeList search = null;
+        NodeList search;
         try {
             search = (NodeList) xpSearch.evaluate(out, XPathConstants.NODESET);
             pc.setTotalResultCount(((Double) xpNumberOfRecords.evaluate(out, XPathConstants.NUMBER)).intValue());
@@ -232,8 +232,8 @@ public class IISHRecordLookupService implements RecordLookupService {
                 : getQuery("marc.852$j=+\"" + encodedPid + "\"", false);
 
         Node all = doSearch(query, 1, 1);
-        NodeList search = null;
-        int resultCount = 0;
+        NodeList search;
+        int resultCount;
 
         try {
             resultCount = ((Double) xpNumberOfRecords.evaluate(all, XPathConstants.NUMBER)).intValue();

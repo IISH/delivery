@@ -17,6 +17,7 @@ public class AuthorityDAOImpl implements AuthorityDAO {
 
     /**
      * Set the entity manager to use in this DAO, internal.
+     *
      * @param entityManager The manager.
      */
     @PersistenceContext
@@ -26,6 +27,7 @@ public class AuthorityDAOImpl implements AuthorityDAO {
 
     /**
      * Add a Authority to the database.
+     *
      * @param obj Authority to add.
      */
     public void add(Authority obj) {
@@ -34,18 +36,22 @@ public class AuthorityDAOImpl implements AuthorityDAO {
 
     /**
      * Remove a Authority from the database.
+     *
      * @param obj Authority to remove.
      */
     public void remove(Authority obj) {
         try {
             obj = entityManager.getReference(Authority.class, obj.getId());
             entityManager.remove(obj);
-        } catch (EntityNotFoundException ignored) {}
+        }
+        catch (EntityNotFoundException ignored) {
+        }
         entityManager.remove(obj);
     }
 
     /**
      * Save changes to a Authority in the database.
+     *
      * @param obj Authority to save.
      */
     public void save(Authority obj) {
@@ -54,6 +60,7 @@ public class AuthorityDAOImpl implements AuthorityDAO {
 
     /**
      * Retrieve the Authority matching the given Id.
+     *
      * @param id Id of the Authority to retrieve.
      * @return The Authority matching the Id.
      */
@@ -63,6 +70,7 @@ public class AuthorityDAOImpl implements AuthorityDAO {
 
     /**
      * Get a criteria builder for querying Authorities.
+     *
      * @return the CriteriaBuilder.
      */
     public CriteriaBuilder getCriteriaBuilder() {
@@ -71,6 +79,7 @@ public class AuthorityDAOImpl implements AuthorityDAO {
 
     /**
      * List all Authorities matching a built query.
+     *
      * @param query The query to match by.
      * @return A list of matching authorities.
      */
@@ -80,15 +89,17 @@ public class AuthorityDAOImpl implements AuthorityDAO {
 
     /**
      * Get a single Authority matching a built query.
+     *
      * @param query The query to match by.
      * @return The matching Authority.
      */
     public Authority get(CriteriaQuery<Authority> query) {
         try {
-            TypedQuery q = entityManager.createQuery(query);
+            TypedQuery<Authority> q = entityManager.createQuery(query);
             q.setMaxResults(1);
-            return (Authority)q.getSingleResult();
-        } catch (NoResultException ex) {
+            return q.getSingleResult();
+        }
+        catch (NoResultException ex) {
             return null;
         }
     }

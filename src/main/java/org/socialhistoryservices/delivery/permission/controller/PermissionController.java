@@ -3,7 +3,6 @@ package org.socialhistoryservices.delivery.permission.controller;
 import org.apache.log4j.Logger;
 import org.socialhistoryservices.delivery.util.InvalidRequestException;
 import org.socialhistoryservices.delivery.util.ResourceNotFoundException;
-import org.socialhistoryservices.delivery.api.RecordLookupService;
 import org.socialhistoryservices.delivery.permission.entity.Permission;
 import org.socialhistoryservices.delivery.permission.entity.RecordPermission;
 import org.socialhistoryservices.delivery.permission.service.PermissionMailer;
@@ -46,9 +45,6 @@ public class PermissionController extends AbstractRequestController {
     private RecordService records;
 
     @Autowired
-    private RecordLookupService lookup;
-
-    @Autowired
     private PermissionMailer pmMailer;
 
     @Autowired
@@ -56,21 +52,20 @@ public class PermissionController extends AbstractRequestController {
 
     private Logger log = Logger.getLogger(getClass());
 
-    // {{{ Get API
     /**
      * Fetches one specific permission.
-     * @param id ID of the permission to fetch.
+     *
+     * @param id    ID of the permission to fetch.
      * @param model Passed view model.
-     * @param req The request.
+     * @param req   The request.
      * @return The name of the view to use.
      */
-    @RequestMapping(value = "/{id}",
-                    method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ROLE_PERMISSION_VIEW')")
     public String getSingle(@PathVariable int id, Model model, HttpServletRequest req) {
         Permission pm = permissions.getPermissionById(id);
         if (pm == null) {
-           throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException();
         }
         model.addAttribute("permission", pm);
         return "permission_get";
@@ -78,7 +73,8 @@ public class PermissionController extends AbstractRequestController {
 
     /**
      * Get a list of permissions.
-     * @param req The HTTP request object.
+     *
+     * @param req   The HTTP request object.
      * @param model Passed view model.
      * @return The name of the view to use.
      */
@@ -93,8 +89,8 @@ public class PermissionController extends AbstractRequestController {
         CriteriaQuery<Long> cqCount = search.count();
 
         // Fetch result set
-        List<RecordPermission> recordPermissions = permissions.listRecordPermissions(
-            cq, getFirstResult(p), getMaxResults(p));
+        List<RecordPermission> recordPermissions = permissions
+                .listRecordPermissions(cq, getFirstResult(p), getMaxResults(p));
         model.addAttribute("recordPermissions", recordPermissions);
 
         long recordPermissionsSize = permissions.countRecordPermissions(cqCount);
@@ -105,11 +101,9 @@ public class PermissionController extends AbstractRequestController {
         return "permission_get_list";
     }
 
-    // }}}
-    // {{{ Create API
-
     /**
      * Guarantee a unique code to be generated for a new permission.
+     *
      * @param obj The permission to generate the code for.
      */
     private void guaranteeUniqueCode(Permission obj) {
@@ -121,11 +115,11 @@ public class PermissionController extends AbstractRequestController {
 
     /**
      * Updates a list of record permissions (rp.id -> true/false)
+     *
      * @param pm The permission to update.
-     * @param p The parameter map in which (recordpermission.id,
-     * granted) tuples are stored.
+     * @param p  The parameter map in which (recordpermission.id, granted) tuples are stored.
      */
-     private void updateRecordPermissions(Permission pm, Map<String,String[]> p) {
+    private void updateRecordPermissions(Permission pm, Map<String, String[]> p) {
         Map<Record, RecordPermission> parents = new HashMap<>();
 
         // Update all granted statuses, if found.
@@ -162,7 +156,7 @@ public class PermissionController extends AbstractRequestController {
             if ((parent != null) && parents.containsKey(parent)) {
                 RecordPermission parentRp = parents.get(parent);
                 parentRp.setOriginalRequestPids(
-                    parentRp.getOriginalRequestPids() + deliveryProperties.getPidSeparator() + record.getPid());
+                        parentRp.getOriginalRequestPids() + deliveryProperties.getPidSeparator() + record.getPid());
 
                 toRemove.add(rp);
                 permissions.removeRecordPermission(rp);
@@ -176,18 +170,17 @@ public class PermissionController extends AbstractRequestController {
 
     /**
      * Save a permission with the save button in the /permission/[id] form.
-     * @param id The id of the permission to save.
+     *
+     * @param id  The id of the permission to save.
      * @param req The request.
      * @return The view to resolve.
      */
-    @RequestMapping(value = "/process",
-                    method = RequestMethod.POST,
-                    params = "save")
+    @RequestMapping(value = "/process", method = RequestMethod.POST, params = "save")
     @PreAuthorize("hasRole('ROLE_PERMISSION_MODIFY')")
     public String formSave(@RequestParam int id, HttpServletRequest req) {
         Permission pm = permissions.getPermissionById(id);
         if (pm == null) {
-           throw new InvalidRequestException("No such permission");
+            throw new InvalidRequestException("No such permission");
         }
         updateRecordPermissions(pm, req.getParameterMap());
         return "redirect:/permission/";
@@ -195,19 +188,18 @@ public class PermissionController extends AbstractRequestController {
 
     /**
      * Save a permission and send a message to the requester.
-     * @param id The id of the permission to save.
+     *
+     * @param id  The id of the permission to save.
      * @param req The request.
      * @return The view to resolve.
      */
-    @RequestMapping(value = "/process",
-                    method = RequestMethod.POST,
-                    params = "saveandemail")
+    @RequestMapping(value = "/process", method = RequestMethod.POST, params = "saveandemail")
     @PreAuthorize("hasRole('ROLE_PERMISSION_MODIFY')")
     public String formSaveAndFinish(@RequestParam int id,
-                                 HttpServletRequest req) {
+                                    HttpServletRequest req) {
         Permission pm = permissions.getPermissionById(id);
         if (pm == null) {
-           throw new InvalidRequestException("No such permission.");
+            throw new InvalidRequestException("No such permission.");
         }
         updateRecordPermissions(pm, req.getParameterMap());
 
@@ -223,14 +215,13 @@ public class PermissionController extends AbstractRequestController {
         return "redirect:/permission/";
     }
 
-    // }}}
-    // {{{ Create Form
     /**
      * Handle permission request form.
-     * @param req The HTTP request.
-     * @param pids The records to request.
-     * @param model The page's model.
-     * @param form (Optional) form that was filled in.
+     *
+     * @param req    The HTTP request.
+     * @param pids   The records to request.
+     * @param model  The page's model.
+     * @param form   (Optional) form that was filled in.
      * @param result (Optional) result of form validation.
      * @return View name to render.
      */
@@ -289,6 +280,7 @@ public class PermissionController extends AbstractRequestController {
 
     /**
      * Add restricted records to a list.
+     *
      * @param pids The list of restricted record PIDs.
      * @return The list of restricted records or null when the list of PIDs
      * contains a record which is not restricted or a non-existing record.
@@ -315,7 +307,8 @@ public class PermissionController extends AbstractRequestController {
 
     /**
      * Add new records to a permission, granted set to false.
-     * @param obj The permission to add the records to.
+     *
+     * @param obj  The permission to add the records to.
      * @param recs The records to add.
      */
     private void addRecordsToPermission(Permission obj, List<Record> recs) {
@@ -324,18 +317,17 @@ public class PermissionController extends AbstractRequestController {
             p.setRecord(rec);
             p.setPermission(obj);
             obj.addRecordPermission(p);
-
         }
     }
 
     /**
      * Form to request permission for a set of records.
-     * @param pids The PIDs to create a permission for.
+     *
+     * @param pids  The PIDs to create a permission for.
      * @param model The model to use.
      * @return The view to resolve.
      */
-    @RequestMapping(value = "/createform/{pids:.*}",
-                    method = RequestMethod.GET)
+    @RequestMapping(value = "/createform/{pids:.*}", method = RequestMethod.GET)
     public String createForm(HttpServletRequest req, @PathVariable String pids,
                              Model model) {
         return create(req, getPidsFromURL(pids), model, null, null);
@@ -343,24 +335,23 @@ public class PermissionController extends AbstractRequestController {
 
     /**
      * Submitted form to request permission.
-     * @param pids The PIDs to create a permission for.
+     *
+     * @param pids       The PIDs to create a permission for.
      * @param permission The permission form submitted.
-     * @param result The result of validating the form.
-     * @param model The model to add attributes to.
+     * @param result     The result of validating the form.
+     * @param model      The model to add attributes to.
      * @return The view to resolve.
      */
-    @RequestMapping(value = "/createform/{pids:.*}",
-                    method = RequestMethod.POST)
+    @RequestMapping(value = "/createform/{pids:.*}", method = RequestMethod.POST)
     public String createForm(HttpServletRequest req, @PathVariable String pids,
-             @ModelAttribute("permission") @Valid PermissionForm permission,
-             BindingResult result,
-             Model model) {
+                             @ModelAttribute("permission") @Valid PermissionForm permission,
+                             BindingResult result, Model model) {
         return create(req, getPidsFromURL(pids), model, permission, result);
     }
-    // }}}
-    // {{{ Delete API
+
     /**
      * Delete permissions.
+     *
      * @param id The id of the permission to remove.
      */
     private void remove(int id) {
@@ -372,12 +363,12 @@ public class PermissionController extends AbstractRequestController {
 
     /**
      * Remove a permission (DELETE method).
-     * @param id The id of the permission to remove.
+     *
+     * @param id  The id of the permission to remove.
      * @param req The request.
      * @return The view to resolve.
      */
-    @RequestMapping(value = "/{id}",
-                    method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseBody
     @PreAuthorize("hasRole('ROLE_PERMISSION_DELETE')")
     public String apiDelete(@PathVariable int id, HttpServletRequest req) {
@@ -387,13 +378,12 @@ public class PermissionController extends AbstractRequestController {
 
     /**
      * Remove a permission with the delete button in the /permission/[id] form.
-     * @param id The id of the permission to remove.
+     *
+     * @param id  The id of the permission to remove.
      * @param req The request.
      * @return The view to resolve.
      */
-    @RequestMapping(value = "/process",
-                    method = RequestMethod.POST,
-                    params = "delete")
+    @RequestMapping(value = "/process", method = RequestMethod.POST, params = "delete")
     @PreAuthorize("hasRole('ROLE_PERMISSION_DELETE')")
     public String formDelete(@RequestParam int id, HttpServletRequest req) {
         remove(id);
@@ -402,17 +392,16 @@ public class PermissionController extends AbstractRequestController {
 
     /**
      * Remove a permission (POST method, !DELETE in path).
-     * @param id The id of the permission to remove.
+     *
+     * @param id  The id of the permission to remove.
      * @param req The request.
      * @return The view to resolve.
      */
-    @RequestMapping(value = "/{id}!DELETE",
-                    method = RequestMethod.POST)
+    @RequestMapping(value = "/{id}!DELETE", method = RequestMethod.POST)
     @ResponseBody
     @PreAuthorize("hasRole('ROLE_PERMISSION_DELETE')")
     public String apiFakeDelete(@PathVariable int id, HttpServletRequest req) {
         remove(id);
         return "";
     }
-    // }}}
 }

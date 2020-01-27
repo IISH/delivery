@@ -28,7 +28,8 @@ public class DateUtils {
         try {
             open = format.parse(properties.getRequestAutoPrintStartTime());
             close = format.parse(properties.getRequestLatestTime());
-        } catch (ParseException e) {
+        }
+        catch (ParseException e) {
             throw new RuntimeException("Failed parsing necessary open and " +
                     "closing dates for auto printing. Are they in the " +
                     "correct HH:mm format in your properties file?");

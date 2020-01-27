@@ -22,9 +22,9 @@ public class PermissionMailer extends Mailer {
      * refused. If all the records were denied access, the requester will
      * receive a mail without an access code. Else a mail with an access code
      * will be sent.
+     *
      * @param pm The permission to use for composing the mail.
-     * @throws org.springframework.mail.MailException Thrown when sending
-     * mail somehow failed.
+     * @throws MailException Thrown when sending mail somehow failed.
      */
     public void mailCode(Permission pm) throws MailException {
         // Do not mail when mail is disabled.
@@ -49,17 +49,13 @@ public class PermissionMailer extends Mailer {
         // Set content and title based on which template to send.
         if (isCodeEligible(pm)) {
             msg.setSubject(getMessage("permissionMail.approvedSubject",
-                                 "Delivery: Permission Request Approved",
-                                 rl));
-            msg.setText(templateToString("mail/permission_approved.mail.ftl",
-                        model, rl));
-
+                    "Delivery: Permission Request Approved", rl));
+            msg.setText(templateToString("mail/permission_approved.mail.ftl", model, rl));
         }
         else {
             msg.setSubject(getMessage("permissionMail.refusedSubject",
                     "Delivery: Permission Request Refused", rl));
-            msg.setText(templateToString("mail/permission_refused.mail.ftl",
-                        model, rl));
+            msg.setText(templateToString("mail/permission_refused.mail.ftl", model, rl));
         }
         mailSender.send(msg);
     }
@@ -67,6 +63,7 @@ public class PermissionMailer extends Mailer {
     /**
      * Check whether to send a permission code or not. Only send one if there
      * is at least one record granted permission.
+     *
      * @param pm The permission to check.
      * @return Whether to send a permission code (true) or not (false).
      */
@@ -82,9 +79,9 @@ public class PermissionMailer extends Mailer {
     /**
      * Mails a confirmation to the requester to tell the permission request
      * was successfully received.
+     *
      * @param pm The permission to use for composing the mail.
-     * @throws org.springframework.mail.MailException Thrown when sending
-     * mail somehow failed.
+     * @throws MailException Thrown when sending mail somehow failed.
      */
     public void mailConfirmation(Permission pm) throws MailException {
         // Do not mail when mail is disabled.
@@ -101,17 +98,17 @@ public class PermissionMailer extends Mailer {
         msg.setReplyTo(getMessage("iisg.email", ""));
 
         msg.setSubject(getMessage("permissionMail.confirmationSubject",
-                             "Delivery: Permission Request Confirmation"));
-        msg.setText(templateToString("mail/permission_confirmation.mail.ftl",
-                    model));
+                "Delivery: Permission Request Confirmation"));
+        msg.setText(templateToString("mail/permission_confirmation.mail.ftl", model));
 
         mailSender.send(msg);
     }
 
     /**
      * Mails the reading room to inform them of a new permission request.
+     *
      * @param pm The permission to use for composing the mail.
-     * @throws org.springframework.mail.MailException Thrown when sending mail somehow failed.
+     * @throws MailException Thrown when sending mail somehow failed.
      */
     public void mailReadingRoom(Permission pm) throws MailException {
         // Do not mail when mail is disabled.

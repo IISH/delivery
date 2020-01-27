@@ -34,7 +34,8 @@ public abstract class RequestPDF extends TemplatePreparation {
     static {
         try {
             FOP_FACTORY = FopFactory.newInstance(RequestPDF.class.getResource("/").toURI());
-        } catch (URISyntaxException e) {
+        }
+        catch (URISyntaxException e) {
             throw new RuntimeException(e); // Should not fail, if so, throw a runtime exception
         }
     }
@@ -73,14 +74,16 @@ public abstract class RequestPDF extends TemplatePreparation {
             Source source = new StreamSource(new StringReader(view));
 
             transformer.transform(source, result);
-        } catch (FOPException | TransformerException e) {
+        }
+        catch (FOPException | TransformerException e) {
             throw new TemplatePreparationException(e);
         }
         finally {
             try {
                 bufOut.flush();
                 bufOut.close();
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 throw new TemplatePreparationException(e);
             }
         }

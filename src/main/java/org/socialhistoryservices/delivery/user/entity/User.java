@@ -12,16 +12,19 @@ import java.util.Set;
  * A user of the system.
  */
 @Entity
-@Table(name="users")
+@Table(name = "users")
 public class User implements UserDetails {
-    /** The User's id. */
+    /**
+     * The User's id.
+     */
     @Id
     @GeneratedValue
-    @Column(name="id")
+    @Column(name = "id")
     private int id;
 
     /**
      * Get the User's id.
+     *
      * @return the User's id.
      */
     public int getId() {
@@ -30,18 +33,22 @@ public class User implements UserDetails {
 
     /**
      * Set the User's id.
+     *
      * @param id the User's id.
      */
     public void setId(int id) {
         this.id = id;
     }
 
-    /** The User's username. */
-    @Column(name="username", nullable=false)
+    /**
+     * The User's username.
+     */
+    @Column(name = "username", nullable = false)
     private String username;
 
     /**
      * Get the User's username.
+     *
      * @return the User's username.
      */
     public String getUsername() {
@@ -50,21 +57,25 @@ public class User implements UserDetails {
 
     /**
      * Set the User's username.
+     *
      * @param username the User's username.
      */
     public void setUsername(String username) {
         this.username = username;
     }
 
-    /** The group this user is in. */
+    /**
+     * The group this user is in.
+     */
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name="user_groups",
-      joinColumns=@JoinColumn(name="user_id"),
-      inverseJoinColumns=@JoinColumn(name="group_id"))
+    @JoinTable(name = "user_groups",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_id"))
     private Set<Group> groups;
 
     /**
      * Get the User's groups.
+     *
      * @return The groups.
      */
     public Set<Group> getGroups() {
@@ -73,6 +84,7 @@ public class User implements UserDetails {
 
     /**
      * Get the authorities this user has.
+     *
      * @return A collection of authorities (can be empty).
      */
     public Collection<GrantedAuthority> getAuthorities() {
@@ -85,26 +97,27 @@ public class User implements UserDetails {
 
     /**
      * Returns 'noPassWithCas' since CAS implementation does not use this.
+     *
      * @return The password.
      */
     public String getPassword() {
-       return "noPassWithCas";
+        return "noPassWithCas";
     }
 
     public boolean isAccountNonExpired() {
-       return true;
+        return true;
     }
 
     public boolean isAccountNonLocked() {
-       return true;
+        return true;
     }
 
     public boolean isCredentialsNonExpired() {
-       return true;
+        return true;
     }
 
     public boolean isEnabled() {
-       return true;
+        return true;
     }
 
     /**

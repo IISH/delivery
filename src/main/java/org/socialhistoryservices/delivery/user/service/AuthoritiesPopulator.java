@@ -16,8 +16,7 @@ public class AuthoritiesPopulator extends DefaultLdapAuthoritiesPopulator {
     private UserService userService;
 
     /**
-     * Constructor for group search scenarios. <tt>userRoleAttributes</tt> may still be
-     * set as a property.
+     * Constructor for group search scenarios. <tt>userRoleAttributes</tt> may still be set as a property.
      *
      * @param contextSource   supplies the contexts used to search for user roles.
      * @param groupSearchBase if this is an empty string the search will be performed from the root DN of the

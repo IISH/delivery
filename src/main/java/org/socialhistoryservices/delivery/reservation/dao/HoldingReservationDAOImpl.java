@@ -18,6 +18,7 @@ public class HoldingReservationDAOImpl implements HoldingReservationDAO {
 
     /**
      * Set the entity manager to use in this DAO, internal.
+     *
      * @param entityManager The manager.
      */
     @PersistenceContext
@@ -27,6 +28,7 @@ public class HoldingReservationDAOImpl implements HoldingReservationDAO {
 
     /**
      * Get a criteria builder for querying HoldingReservations.
+     *
      * @return the CriteriaBuilder.
      */
     public CriteriaBuilder getCriteriaBuilder() {
@@ -35,6 +37,7 @@ public class HoldingReservationDAOImpl implements HoldingReservationDAO {
 
     /**
      * List all HoldingReservations matching a built query.
+     *
      * @param q The criteria query to execute
      * @return A list of matching HoldingReservations.
      */
@@ -44,21 +47,23 @@ public class HoldingReservationDAOImpl implements HoldingReservationDAO {
 
     /**
      * List all HoldingReservations matching a built query.
-     * @param q The criteria query to execute
+     *
+     * @param q           The criteria query to execute
      * @param firstResult The first result to obtain
-     * @param maxResults The max number of results to obtain
+     * @param maxResults  The max number of results to obtain
      * @return A list of matching HoldingReservations.
      */
     public List<HoldingReservation> list(CriteriaQuery<HoldingReservation> q, int firstResult, int maxResults) {
         return entityManager
-            .createQuery(q)
-            .setFirstResult(firstResult)
-            .setMaxResults(maxResults)
-            .getResultList();
+                .createQuery(q)
+                .setFirstResult(firstResult)
+                .setMaxResults(maxResults)
+                .getResultList();
     }
 
     /**
      * Count all HoldingReservations matching a built query.
+     *
      * @param q The criteria query to execute
      * @return The number of counted results.
      */
@@ -68,10 +73,11 @@ public class HoldingReservationDAOImpl implements HoldingReservationDAO {
 
     /**
      * Retrieve the HoldingReservation matching the given ID.
+     *
      * @param id ID of the HoldingReservation to retrieve.
      * @return The HoldingReservation matching the ID.
      */
-    public HoldingReservation getById(int id){
+    public HoldingReservation getById(int id) {
         return entityManager.find(HoldingReservation.class, id);
     }
 }

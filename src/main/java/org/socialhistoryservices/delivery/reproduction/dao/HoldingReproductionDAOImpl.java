@@ -55,14 +55,15 @@ public class HoldingReproductionDAOImpl implements HoldingReproductionDAO {
      */
     public List<HoldingReproduction> list(CriteriaQuery<HoldingReproduction> q, int firstResult, int maxResults) {
         return entityManager
-            .createQuery(q)
-            .setFirstResult(firstResult)
-            .setMaxResults(maxResults)
-            .getResultList();
+                .createQuery(q)
+                .setFirstResult(firstResult)
+                .setMaxResults(maxResults)
+                .getResultList();
     }
 
     /**
      * Count all HoldingReproductions matching a built query.
+     *
      * @param q The criteria query to execute
      * @return The number of counted results.
      */
@@ -72,10 +73,11 @@ public class HoldingReproductionDAOImpl implements HoldingReproductionDAO {
 
     /**
      * Retrieve the HoldingReproduction matching the given ID.
+     *
      * @param id ID of the HoldingReproduction to retrieve.
      * @return The HoldingReproduction matching the ID.
      */
-    public HoldingReproduction getById(int id){
+    public HoldingReproduction getById(int id) {
         return entityManager.find(HoldingReproduction.class, id);
     }
 }

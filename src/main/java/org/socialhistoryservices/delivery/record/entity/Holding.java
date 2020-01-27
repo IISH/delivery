@@ -13,15 +13,20 @@ import java.util.List;
  * Holding information associated with a Record.
  */
 @Entity
-@Table(name = "holdings", indexes = {@Index(columnList = "record_id", name = "holdings_record_fk"),@Index(columnList = "external_info_id", name = "holdings_external_info_fk")})
+@Table(name = "holdings", indexes = {@Index(columnList = "record_id", name = "holdings_record_fk"),
+        @Index(columnList = "external_info_id", name = "holdings_external_info_fk")})
 public class Holding {
-    /** The usage restriction of the holding. */
+    /**
+     * The usage restriction of the holding.
+     */
     public enum UsageRestriction {
         OPEN,
         CLOSED
     }
 
-     /** Status of the holding. */
+    /**
+     * Status of the holding.
+     */
     public enum Status {
         AVAILABLE,
         RESERVED,
@@ -29,27 +34,33 @@ public class Holding {
         RETURNED,
     }
 
-    /** The Holding's id. */
+    /**
+     * The Holding's id.
+     */
     @Id
     @GeneratedValue
-    @Column(name="id")
+    @Column(name = "id")
     private int id;
 
     /**
      * Get the Holding's id.
+     *
      * @return the Holding's id.
      */
     public int getId() {
         return id;
     }
 
-    /** The Holding's type. */
+    /**
+     * The Holding's type.
+     */
     @NotBlank
-    @Column(name="signature", nullable=false)
+    @Column(name = "signature", nullable = false)
     private String signature;
 
     /**
      * Get the Holding's type.
+     *
      * @return the Holding's type.
      */
     public String getSignature() {
@@ -58,6 +69,7 @@ public class Holding {
 
     /**
      * Set the Holding's type.
+     *
      * @param sig the Holding's type.
      */
     public void setSignature(String sig) {
@@ -66,20 +78,23 @@ public class Holding {
         // Determine the usage restriction by checking the signature for patterns
         String checkSignature = signature.trim().toLowerCase();
         if (checkSignature.endsWith(".x") || checkSignature.endsWith("(missing)") ||
-            checkSignature.startsWith("no circulation") || checkSignature.startsWith("niet ter inzage") ||
-            checkSignature.endsWith("(not available)")) {
+                checkSignature.startsWith("no circulation") || checkSignature.startsWith("niet ter inzage") ||
+                checkSignature.endsWith("(not available)")) {
             this.setUsageRestriction(UsageRestriction.CLOSED);
         }
     }
 
-    /** The Holding's record. */
+    /**
+     * The Holding's record.
+     */
     @NotNull
     @ManyToOne
-    @JoinColumn(name="record_id")
+    @JoinColumn(name = "record_id")
     private Record record;
 
     /**
      * Get the Holding's record.
+     *
      * @return the Holding's record.
      */
     public Record getRecord() {
@@ -88,6 +103,7 @@ public class Holding {
 
     /**
      * Set the Holding's record.
+     *
      * @param record the Holding's record.
      */
     public void setRecord(Record record) {
@@ -96,11 +112,12 @@ public class Holding {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name="usage_restriction", nullable=false)
+    @Column(name = "usage_restriction", nullable = false)
     private UsageRestriction usageRestriction;
 
     /**
      * Get the usage restriction.
+     *
      * @return The value of the user restriction.
      */
     public UsageRestriction getUsageRestriction() {
@@ -109,20 +126,24 @@ public class Holding {
 
     /**
      * Set the Holding's usage restriction.
+     *
      * @param u The value to set the usage to.
      */
     public void setUsageRestriction(UsageRestriction u) {
         usageRestriction = u;
     }
 
-    /** The Holding's status. */
+    /**
+     * The Holding's status.
+     */
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name="status", nullable=false)
+    @Column(name = "status", nullable = false)
     private Status status;
 
     /**
      * Get the Holding's status.
+     *
      * @return the Record's status.
      */
     public Status getStatus() {
@@ -131,18 +152,20 @@ public class Holding {
 
     /**
      * Set the Holding's status.
+     *
      * @param status the Record's status.
      */
     public void setStatus(Status status) {
         this.status = status;
     }
 
-    @OneToOne(cascade=CascadeType.ALL, orphanRemoval=true)
-    @JoinColumn(name="external_info_id")
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "external_info_id")
     private ExternalHoldingInfo externalInfo;
 
     /**
      * Get the external holding info.
+     *
      * @return The info object.
      */
     public ExternalHoldingInfo getExternalInfo() {
@@ -151,24 +174,25 @@ public class Holding {
 
     /**
      * Set the external info (preferably from IISHRecordLookupService).
+     *
      * @param info The info.
      */
     public void setExternalInfo(ExternalHoldingInfo info) {
         this.externalInfo = info;
     }
 
-	@OneToMany(mappedBy="holding", cascade=CascadeType.ALL, orphanRemoval=true)
-	private List<HoldingReservation> holdingReservations;
+    @OneToMany(mappedBy = "holding", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<HoldingReservation> holdingReservations;
 
     public void setHoldingReservations(List<HoldingReservation> hrs) {
-            holdingReservations = hrs;
+        holdingReservations = hrs;
     }
 
     public List<HoldingReservation> getHoldingReservations() {
-		return holdingReservations;
-	}
+        return holdingReservations;
+    }
 
-    @OneToMany(mappedBy="holding", cascade=CascadeType.ALL, orphanRemoval=true)
+    @OneToMany(mappedBy = "holding", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HoldingReproduction> holdingReproductions;
 
     public List<HoldingReproduction> getHoldingReproductions() {
@@ -182,6 +206,7 @@ public class Holding {
     /**
      * Merge other's fields with this holding. All fields except ID,
      * signature and status are merged.
+     *
      * @param other The other holding.
      */
     public void mergeWith(Holding other) {
@@ -200,6 +225,7 @@ public class Holding {
 
     /**
      * Determines the PID for the holding, based on the barcode.
+     *
      * @return The PID for this holding
      */
     public String determinePid() {
@@ -208,6 +234,7 @@ public class Holding {
 
     /**
      * Returns either the container or the signature of this holding.
+     *
      * @return The container or signature.
      */
     public String getIdentity() {
@@ -217,6 +244,7 @@ public class Holding {
 
     /**
      * Returns whether customers requesting a reproduction of this holding should choose a custom reproduction.
+     *
      * @return Whether this holding only allows a custom reproduction.
      */
     public boolean allowOnlyCustomReproduction() {
@@ -225,6 +253,7 @@ public class Holding {
 
     /**
      * Returns whether the holding accepts the given standard reproduction option.
+     *
      * @param standardOption The standard reproduction option.
      * @return Whether the holding accepts the given standard reproduction option.
      */

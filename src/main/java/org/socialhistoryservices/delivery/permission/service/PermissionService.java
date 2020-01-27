@@ -14,30 +14,35 @@ import java.util.List;
 public interface PermissionService {
     /**
      * Add a Permission to the database.
+     *
      * @param obj Permission to add.
      */
     void addPermission(Permission obj);
 
     /**
      * Remove a Permission from the database.
+     *
      * @param obj Permission to remove.
      */
     void removePermission(Permission obj);
 
     /**
      * Remove a RecordPermission from the database.
+     *
      * @param obj RecordPermission to remove.
      */
     void removeRecordPermission(RecordPermission obj);
 
     /**
      * Save changes to a Permission in the database.
+     *
      * @param obj Permission to save.
      */
     void savePermission(Permission obj);
 
     /**
      * Retrieve the Permission matching the given Id.
+     *
      * @param id Id of the Permission to retrieve.
      * @return The Permission matching the Id.
      */
@@ -45,12 +50,14 @@ public interface PermissionService {
 
     /**
      * Get a criteria builder for querying Permissions.
+     *
      * @return the CriteriaBuilder.
      */
     CriteriaBuilder getPermissionCriteriaBuilder();
 
     /**
      * List all RecordPermissions matching a built query.
+     *
      * @param query The query to match by.
      * @return A list of matching RecordPermissions.
      */
@@ -58,9 +65,10 @@ public interface PermissionService {
 
     /**
      * List all RecordPermissions matching a built query.
-     * @param query The query to match by.
+     *
+     * @param query       The query to match by.
      * @param firstResult The first result to obtain
-     * @param maxResults The max number of results to obtain
+     * @param maxResults  The max number of results to obtain
      * @return A list of matching RecordPermissions.
      */
     List<RecordPermission> listRecordPermissions(CriteriaQuery<RecordPermission> query,
@@ -68,6 +76,7 @@ public interface PermissionService {
 
     /**
      * Count all RecordPermissions matching a built query.
+     *
      * @param query The criteria query to execute
      * @return A count of matching RecordPermissions.
      */
@@ -75,6 +84,7 @@ public interface PermissionService {
 
     /**
      * Get a single Permission matching a built query.
+     *
      * @param query The query to match by.
      * @return The matching Permission.
      */
@@ -82,6 +92,7 @@ public interface PermissionService {
 
     /**
      * Fetch a permission by its code.
+     *
      * @param code The code of a permission.
      * @return The permission, or null if not found.
      */
@@ -89,6 +100,7 @@ public interface PermissionService {
 
     /**
      * Check whether there are any permission requests made on the record.
+     *
      * @param record Record to check for permission requests for.
      * @return Whether any permission requests have been made including this record.
      */

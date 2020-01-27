@@ -11,16 +11,19 @@ import java.util.Date;
  * to records, specifying for each record whether permission is granted or not).
  */
 @Entity
-@Table(name="recordpermissions")
+@Table(name = "recordpermissions")
 public class RecordPermission {
-    /** The RecordPermission's id. */
+    /**
+     * The RecordPermission's id.
+     */
     @Id
     @GeneratedValue
-    @Column(name="id")
+    @Column(name = "id")
     private int id;
 
     /**
      * Get the RecordPermission's id.
+     *
      * @return the RecordPermission's id.
      */
     public int getId() {
@@ -29,18 +32,22 @@ public class RecordPermission {
 
     /**
      * Set the RecordPermission's id.
+     *
      * @param id the RecordPermission's id.
      */
     public void setId(int id) {
         this.id = id;
     }
 
-    /** The RecordPermission's granted. */
-    @Column(name="granted", nullable=false)
+    /**
+     * The RecordPermission's granted.
+     */
+    @Column(name = "granted", nullable = false)
     private boolean granted;
 
     /**
      * Get the RecordPermission's granted.
+     *
      * @return the RecordPermission's granted.
      */
     public boolean getGranted() {
@@ -49,17 +56,19 @@ public class RecordPermission {
 
     /**
      * Set the RecordPermission's granted.
+     *
      * @param granted the RecordPermission's granted.
      */
     public void setGranted(boolean granted) {
         this.granted = granted;
     }
 
-    @Column(name="motivation", columnDefinition = "TEXT")
+    @Column(name = "motivation", columnDefinition = "TEXT")
     private String motivation;
 
     /**
      * Set the RecordPermission's motivation.
+     *
      * @param mot The motivation string.
      */
     public void setMotivation(String mot) {
@@ -68,6 +77,7 @@ public class RecordPermission {
 
     /**
      * Get the motivation.
+     *
      * @return The motivation string.
      */
     public String getMotivation() {
@@ -75,11 +85,12 @@ public class RecordPermission {
     }
 
     @Temporal(TemporalType.DATE)
-    @Column(name="date_granted")
+    @Column(name = "date_granted")
     private Date dateGranted;
 
     /**
      * Get the date granted.
+     *
      * @return The date granted.
      */
     public Date getDateGranted() {
@@ -88,18 +99,20 @@ public class RecordPermission {
 
     /**
      * Set the date granted.
+     *
      * @param dateGranted The date granted.
      */
     public void setDateGranted(Date dateGranted) {
         this.dateGranted = dateGranted;
     }
 
-    @Size(max=500)
-    @Column(name="org_request_pids")
+    @Size(max = 500)
+    @Column(name = "org_request_pids")
     private String originalRequestPids;
 
     /**
      * Get the originally requested PIDs, when this has changed to a collection level allow/deny.
+     *
      * @return the originally requested PIDs.
      */
     public String getOriginalRequestPids() {
@@ -108,19 +121,23 @@ public class RecordPermission {
 
     /**
      * Set the originally requested PIDs, when this has changed to a collection level allow/deny.
+     *
      * @param originalRequestPids the originally requested PIDs.
      */
     public void setOriginalRequestPids(String originalRequestPids) {
         this.originalRequestPids = originalRequestPids;
     }
 
-    /** The RecordPermission's permission. */
+    /**
+     * The RecordPermission's permission.
+     */
     @ManyToOne
-    @JoinColumn(name="permission_id")
+    @JoinColumn(name = "permission_id")
     private Permission permission;
 
     /**
      * Get the RecordPermission's permission.
+     *
      * @return the RecordPermission's permission.
      */
     public Permission getPermission() {
@@ -129,19 +146,23 @@ public class RecordPermission {
 
     /**
      * Set the RecordPermission's permission.
+     *
      * @param permission the RecordPermission's permission.
      */
     public void setPermission(Permission permission) {
         this.permission = permission;
     }
 
-    /** The RecordPermission's record. */
+    /**
+     * The RecordPermission's record.
+     */
     @ManyToOne
-    @JoinColumn(name="record_id")
+    @JoinColumn(name = "record_id")
     private Record record;
 
     /**
      * Get the RecordPermission's record.
+     *
      * @return the RecordPermission's record.
      */
     public Record getRecord() {
@@ -150,6 +171,7 @@ public class RecordPermission {
 
     /**
      * Set the RecordPermission's record.
+     *
      * @param record the RecordPermission's record.
      */
     public void setRecord(Record record) {

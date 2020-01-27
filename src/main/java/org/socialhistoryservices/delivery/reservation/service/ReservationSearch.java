@@ -73,7 +73,8 @@ public class ReservationSearch extends ListRequestSearch<HoldingReservation> {
                                   From<?, Holding> hRoot) {
         boolean containsSort = p.containsKey("sort");
         boolean containsSortDir = p.containsKey("sort_dir");
-        Expression e = resRoot.get(Reservation_.date);
+
+        Expression<?> e = resRoot.get(Reservation_.date);
         if (containsSort) {
             String sort = p.get("sort")[0];
             switch (sort) {
@@ -94,9 +95,11 @@ public class ReservationSearch extends ListRequestSearch<HoldingReservation> {
                     break;
             }
         }
+
         if (containsSortDir && p.get("sort_dir")[0].toLowerCase().equals("asc")) {
             return cb.asc(e);
         }
+
         return cb.desc(e);
     }
 
@@ -126,7 +129,7 @@ public class ReservationSearch extends ListRequestSearch<HoldingReservation> {
                     cb.like(cb.lower(resRoot.get(Reservation_
                             .visitorEmail)), "%" + search + "%"),
                     cb.like(cb.lower(hRoot.get(Holding_.signature)), "%" + search + "%"),
-                    cb.like(cb.lower(phRoot.<String>get(Holding_.signature)), "%" + search + "%")
+                    cb.like(cb.lower(phRoot.get(Holding_.signature)), "%" + search + "%")
             );
             where = where != null ? cb.and(where, exSearch) : exSearch;
         }
@@ -146,11 +149,15 @@ public class ReservationSearch extends ListRequestSearch<HoldingReservation> {
             if (printed.isEmpty()) {
                 return where;
             }
+
             Expression<Boolean> exPrinted = cb.equal(
                     hrRoot.get(HoldingReservation_.printed),
-                    Boolean.parseBoolean(p.get("printed")[0]));
+                    Boolean.parseBoolean(p.get("printed")[0])
+            );
+
             where = where != null ? cb.and(where, exPrinted) : exPrinted;
         }
+
         return where;
     }
 
@@ -172,9 +179,9 @@ public class ReservationSearch extends ListRequestSearch<HoldingReservation> {
                     Expression<Boolean> exStatus = cb.equal(
                             resRoot.get(Reservation_.status), Reservation.Status.valueOf(status));
                     where = where != null ? cb.and(where, exStatus) : exStatus;
-                } catch (IllegalArgumentException ex) {
-                    throw new InvalidRequestException("No such status: " +
-                            status);
+                }
+                catch (IllegalArgumentException ex) {
+                    throw new InvalidRequestException("No such status: " + status);
                 }
             }
         }
@@ -191,9 +198,8 @@ public class ReservationSearch extends ListRequestSearch<HoldingReservation> {
     private Expression<Boolean> addEmailFilter(Join<HoldingReservation, Reservation> resRoot,
                                                Expression<Boolean> where) {
         if (p.containsKey("visitorEmail")) {
-            Expression<Boolean> exEmail = cb.like(
-                    resRoot.get(Reservation_.visitorEmail),
-                    "%" + p.get("visitorEmail")[0].trim() + "%");
+            Expression<Boolean> exEmail =
+                    cb.like(resRoot.get(Reservation_.visitorEmail), "%" + p.get("visitorEmail")[0].trim() + "%");
             where = where != null ? cb.and(where, exEmail) : exEmail;
         }
         return where;

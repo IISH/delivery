@@ -24,7 +24,7 @@ import org.springframework.security.web.firewall.DefaultHttpFirewall;
 @EnableWebSecurity
 @EnableConfigurationProperties(DeliveryProperties.class)
 @EnableGlobalMethodSecurity(prePostEnabled = true) // @PreAuthorize
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired private GroupDAO groupDAO;
     @Autowired private UserDAO userDAO;
     @Autowired private CaptchaEngine captchaEngine;
@@ -32,7 +32,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
     @Autowired private DeliveryProperties deliveryProperties;
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         DefaultHttpFirewall firewall = new DefaultHttpFirewall();
         firewall.setAllowUrlEncodedSlash(true);
         web.httpFirewall(firewall);

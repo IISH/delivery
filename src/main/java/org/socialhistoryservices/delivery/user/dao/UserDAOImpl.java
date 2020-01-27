@@ -17,6 +17,7 @@ public class UserDAOImpl implements UserDAO {
 
     /**
      * Set the entity manager to use in this DAO, internal.
+     *
      * @param entityManager The manager.
      */
     @PersistenceContext
@@ -26,6 +27,7 @@ public class UserDAOImpl implements UserDAO {
 
     /**
      * Add a User to the database.
+     *
      * @param obj User to add.
      */
     public void add(User obj) {
@@ -34,18 +36,22 @@ public class UserDAOImpl implements UserDAO {
 
     /**
      * Remove a User from the database.
+     *
      * @param obj User to remove.
      */
     public void remove(User obj) {
         try {
             obj = entityManager.getReference(User.class, obj.getId());
             entityManager.remove(obj);
-        } catch (EntityNotFoundException ignored) {}
+        }
+        catch (EntityNotFoundException ignored) {
+        }
         entityManager.remove(obj);
     }
 
     /**
      * Save changes to a User in the database.
+     *
      * @param obj User to save.
      */
     public void save(User obj) {
@@ -54,6 +60,7 @@ public class UserDAOImpl implements UserDAO {
 
     /**
      * Retrieve the User matching the given Id.
+     *
      * @param id Id of the User to retrieve.
      * @return The User matching the Id.
      */
@@ -63,6 +70,7 @@ public class UserDAOImpl implements UserDAO {
 
     /**
      * Get a criteria builder for querying Users.
+     *
      * @return the CriteriaBuilder.
      */
     public CriteriaBuilder getCriteriaBuilder() {
@@ -71,6 +79,7 @@ public class UserDAOImpl implements UserDAO {
 
     /**
      * List all Users matching a built query.
+     *
      * @param query The query to match by.
      * @return A list of matching Users.
      */
@@ -80,15 +89,17 @@ public class UserDAOImpl implements UserDAO {
 
     /**
      * Get a single User matching a built query.
+     *
      * @param query The query to match by.
      * @return The matching User.
      */
     public User get(CriteriaQuery<User> query) {
         try {
-            TypedQuery q = entityManager.createQuery(query);
+            TypedQuery<User> q = entityManager.createQuery(query);
             q.setMaxResults(1);
-            return (User)q.getSingleResult();
-        } catch (NoResultException ex) {
+            return q.getSingleResult();
+        }
+        catch (NoResultException ex) {
             return null;
         }
     }

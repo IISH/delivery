@@ -36,14 +36,14 @@ public abstract class Request {
     public abstract void setCreationDate(Date creationDate);
 
     /**
-     * Returns all holdings assoicated with this request.
+     * Returns all holdings associated with this request.
      *
      * @return A list of holdings.
      */
     public abstract List<Holding> getHoldings();
 
     /**
-     * Returns all HoldingRequests assoicated with this request.
+     * Returns all HoldingRequests associated with this request.
      *
      * @return A list of HoldingRequests.
      */

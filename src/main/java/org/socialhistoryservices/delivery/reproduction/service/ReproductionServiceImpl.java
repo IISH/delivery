@@ -6,7 +6,6 @@ import org.socialhistoryservices.delivery.config.DeliveryProperties;
 import org.socialhistoryservices.delivery.config.PrinterConfiguration;
 import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
 import org.socialhistoryservices.delivery.record.entity.Holding;
-import org.socialhistoryservices.delivery.record.service.RecordService;
 import org.socialhistoryservices.delivery.reproduction.dao.*;
 import org.socialhistoryservices.delivery.reproduction.entity.*;
 import org.socialhistoryservices.delivery.reproduction.util.BigDecimalUtils;
@@ -242,6 +241,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
 
     /**
      * Count all HoldingReproductions matching a built query.
+     *
      * @param q The criteria query to execute
      * @return A count of matching HoldingReproductions.
      */
@@ -425,9 +425,9 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
     @Async
     public void autoPrintReproduction(final Reproduction reproduction) {
         try {
-            // TODO (Disabled for now) if (DateUtils.isBetweenOpeningAndClosingTime(properties, new Date()))
-                printReproduction(reproduction);
-        } catch (PrinterException e) {
+            printReproduction(reproduction);
+        }
+        catch (PrinterException e) {
             // Do nothing, let an employee print it later on
             log.warn("Printing reproduction failed", e);
         }
@@ -441,7 +441,8 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
     private void mailPayedAndActive(Reproduction reproduction) {
         try {
             reproductionMailer.mailPayedAndActive(reproduction);
-        } catch (MailException me) {
+        }
+        catch (MailException me) {
             // Do nothing
         }
     }
@@ -454,7 +455,8 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
     private void mailCancelled(Reproduction reproduction) {
         try {
             reproductionMailer.mailCancelled(reproduction);
-        } catch (MailException me) {
+        }
+        catch (MailException me) {
             // Do nothing
         }
     }
@@ -503,7 +505,8 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
             for (Reproduction r : reproductions) {
                 saveReproduction(r);
             }
-        } catch (PrinterException e) {
+        }
+        catch (PrinterException e) {
             log.warn("Printing reproduction failed", e);
             throw e;
         }
@@ -524,10 +527,10 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
     /**
      * Edit reproductions.
      *
-     * @param newReproduction     The new reproduction to put in the database.
-     * @param oldReproduction     The old reproduction in the database (if present).
-     * @param result     The binding result object to put the validation errors in.
-     * @param isCustomer Whether the customer is creating the reproduction.
+     * @param newReproduction The new reproduction to put in the database.
+     * @param oldReproduction The old reproduction in the database (if present).
+     * @param result          The binding result object to put the validation errors in.
+     * @param isCustomer      Whether the customer is creating the reproduction.
      * @throws ClosedException                Thrown when a holding is provided which
      *                                        references a record which is restrictionType=CLOSED.
      * @throws NoHoldingsException            Thrown when no holdings are provided.
@@ -764,8 +767,8 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
             case BOOK:
                 boolean isPdf = ((contentType != null) && contentType.equals("application/pdf"));
                 boolean isPdfMets = (sorMetadata.isMETS() &&
-                    (sorMetadata.getFilePids().containsKey("archive pdf")
-                        || sorMetadata.getFilePids().containsKey("archive image")));
+                        (sorMetadata.getFilePids().containsKey("archive pdf")
+                                || sorMetadata.getFilePids().containsKey("archive image")));
                 return (isPdf || isPdfMets);
             case SOUND:
                 String metsAudio = (level == ReproductionStandardOption.Level.MASTER) ? "archive audio" : "reference audio";
@@ -787,7 +790,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
                 else {
                     boolean isJpeg = ((contentType != null) && contentType.equals("image/jpeg"));
                     boolean isJpegMets = (sorMetadata.isMETS() &&
-                        sorMetadata.getFilePids().containsKey("hires reference image"));
+                            sorMetadata.getFilePids().containsKey("hires reference image"));
                     return (isJpeg || isJpegMets);
                 }
         }
@@ -803,7 +806,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
         log.info("Start run: cancel old unpayed reproductions");
 
         // Determine the number of days
-        Integer nrOfDays = deliveryProperties.getReproductionMaxDaysPayment();
+        int nrOfDays = deliveryProperties.getReproductionMaxDaysPayment();
 
         // Determine the date that many days ago
         Calendar calendar = GregorianCalendar.getInstance();
@@ -842,11 +845,11 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
      * Scheduled task to send a reminder for all reproductions not paid within the time frame after the offer was ready.
      */
     @Scheduled(cron = "0 0 0 * * MON-FRI")
-    public void checkReminderReproductions(){
+    public void checkReminderReproductions() {
         log.info("Start run: mail reminder old unpayed reproductions");
 
         // Determine the number of days
-        Integer nrOfDays = deliveryProperties.getReproductionMaxDaysReminder();
+        int nrOfDays = deliveryProperties.getReproductionMaxDaysReminder();
 
         // Determine the date that many days ago
         Calendar calendar = GregorianCalendar.getInstance();
@@ -860,14 +863,14 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
 
         // Only reproductions outside the given time frame
         Predicate dateCriteria = builder.lessThan(
-            reproductionRoot.get(Reproduction_.dateHasOrderDetails),
-            calendar.getTime()
+                reproductionRoot.get(Reproduction_.dateHasOrderDetails),
+                calendar.getTime()
         );
 
         // Only reproductions that have an offer, but are not yet paid
         Predicate statusCriteria = builder.in(reproductionRoot.get(Reproduction_.status))
-            .value(Reproduction.Status.HAS_ORDER_DETAILS)
-            .value(Reproduction.Status.CONFIRMED);
+                .value(Reproduction.Status.HAS_ORDER_DETAILS)
+                .value(Reproduction.Status.CONFIRMED);
 
         // Only reproductions that have a reminder mail not sent
         Predicate reminderCriteria = builder.equal(reproductionRoot.get(Reproduction_.offerMailReminderSent), false);
@@ -945,7 +948,8 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
 
             // Refresh the actual order details asynchronously
             refreshOrder(order);
-        } catch (InvalidPayWayMessageException ipwme) {
+        }
+        catch (InvalidPayWayMessageException ipwme) {
             log.error("Invalid or no PayWay message received when registering a new order.", ipwme);
             throw new OrderRegistrationFailureException(ipwme);
         }
@@ -971,7 +975,8 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
             orderDAO.save(order);
 
             return new AsyncResult<>(order);
-        } catch (InvalidPayWayMessageException ivwme) {
+        }
+        catch (InvalidPayWayMessageException ivwme) {
             log.error(String.format("refreshOrder() : Failed to refresh the order with id %d", order.getId()));
             return new AsyncResult<>(null);
         }
@@ -996,7 +1001,8 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
             }
 
             return new AsyncResult<>(order);
-        } catch (InvalidPayWayMessageException ivwme) {
+        }
+        catch (InvalidPayWayMessageException ivwme) {
             log.error(String.format("refundOrder() : Failed to refund the order with id %d", order.getId()));
             return new AsyncResult<>(null);
         }
@@ -1091,7 +1097,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
         );
         reproduction.setAdminstrationCostsBtwPercentage(btwPercentage);
         reproduction.setAdminstrationCostsBtwPrice(
-            BigDecimalUtils.getBtwAmount(reproduction.getAdminstrationCostsWithDiscount(), btwPercentage));
+                BigDecimalUtils.getBtwAmount(reproduction.getAdminstrationCostsWithDiscount(), btwPercentage));
 
         // Set the price and delivery time for each item
         for (HoldingReproduction hr : reproduction.getHoldingReproductions()) {
