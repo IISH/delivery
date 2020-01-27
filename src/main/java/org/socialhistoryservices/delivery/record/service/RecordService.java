@@ -142,11 +142,4 @@ public interface RecordService {
      * @return A list of all reserved child records.
      */
     List<Record> getReservedChildRecords(Record record);
-
-    /*
-     * Get all sibling records with the same container.
-     * @param record The record.
-     * @return A list of all sibling records with the same container.
-     */
-    List<Record> getSiblingsWithSameContainer(Record record);
 }

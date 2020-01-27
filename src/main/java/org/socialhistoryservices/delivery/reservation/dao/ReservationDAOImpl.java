@@ -1,7 +1,6 @@
 package org.socialhistoryservices.delivery.reservation.dao;
 
-import org.socialhistoryservices.delivery.record.entity.Holding;
-import org.socialhistoryservices.delivery.record.entity.Holding_;
+import org.socialhistoryservices.delivery.record.entity.*;
 import org.socialhistoryservices.delivery.reservation.entity.HoldingReservation;
 import org.socialhistoryservices.delivery.reservation.entity.HoldingReservation_;
 import org.socialhistoryservices.delivery.reservation.entity.Reservation;
@@ -45,7 +44,8 @@ public class ReservationDAOImpl implements ReservationDAO {
         try {
             obj = entityManager.getReference(Reservation.class, obj.getId());
             entityManager.remove(obj);
-        } catch (EntityNotFoundException ignored) {}
+        }
+        catch (EntityNotFoundException ignored) {}
     }
 
     /**
@@ -82,14 +82,14 @@ public class ReservationDAOImpl implements ReservationDAO {
         return entityManager.createQuery(q).getResultList();
     }
 
-	/**
-	 * List all Tuples matching a built query.
-	 * @param q The criteria query to execute
-	 * @return A list of matching Tuples.
-	 */
-	public List<Tuple> listForTuple(CriteriaQuery<Tuple> q) {
-		return entityManager.createQuery(q).getResultList();
-	}
+    /**
+     * List all Tuples matching a built query.
+     * @param q The criteria query to execute
+     * @return A list of matching Tuples.
+     */
+    public List<Tuple> listForTuple(CriteriaQuery<Tuple> q) {
+        return entityManager.createQuery(q).getResultList();
+    }
 
     /**
      * Get a single Reservation matching a built query.
@@ -98,10 +98,11 @@ public class ReservationDAOImpl implements ReservationDAO {
      */
     public Reservation get(CriteriaQuery<Reservation> query) {
         try {
-            TypedQuery q = entityManager.createQuery(query);
+            TypedQuery<Reservation> q = entityManager.createQuery(query);
             q.setMaxResults(1);
-            return (Reservation)q.getSingleResult();
-        } catch (NoResultException ex) {
+            return q.getSingleResult();
+        }
+        catch (NoResultException ex) {
             return null;
         }
     }
@@ -117,49 +118,54 @@ public class ReservationDAOImpl implements ReservationDAO {
         Root<Reservation> resRoot = cq.from(Reservation.class);
         cq.select(resRoot);
 
-        Join<Reservation,HoldingReservation> hrRoot = resRoot.join(
-                    Reservation_.holdingReservations);
-        Join<HoldingReservation,Holding> hRoot = hrRoot.join
-                (HoldingReservation_.holding);
-        Expression<Boolean> where = cb.equal(hRoot.get(Holding_.id),
-                h.getId());
-        where = cb.and(where, cb.equal(hrRoot.get(HoldingReservation_.completed), false));
+        Join<Reservation, HoldingReservation> hrRoot = resRoot.join(Reservation_.holdingReservations);
+        Join<HoldingReservation, Holding> hRoot = hrRoot.join(HoldingReservation_.holding);
 
-        cq.where(where);
+        cq.where(cb.and(
+                cb.equal(hRoot.get(Holding_.id), h.getId()),
+                cb.equal(hrRoot.get(HoldingReservation_.completed), false)
+        ));
         cq.orderBy(cb.asc(resRoot.get(Reservation_.creationDate)));
 
         try {
-            TypedQuery q = entityManager.createQuery(cq);
+            TypedQuery<Reservation> q = entityManager.createQuery(cq);
             q.setMaxResults(1);
-            return (Reservation)q.getSingleResult();
-        } catch (NoResultException ex) {
+            return q.getSingleResult();
+        }
+        catch (NoResultException ex) {
             return null;
         }
     }
 
     /**
-     * Check whether there are any reservations made on the holding.
-     * @param h Holding to check for reservations for.
-     * @return Whether any reservations have been made including this holding.
+     * Check whether the given record is linked to a pending reservation based on the container.
+     * @param record The record to check on.
+     * @return Whether the given record is linked to a pending reservation based on the container.
      */
-    public boolean hasReservations(Holding h) {
+    public boolean hasPendingReservation(Record record) {
         CriteriaBuilder cb = getCriteriaBuilder();
         CriteriaQuery<Reservation> cq = cb.createQuery(Reservation.class);
         Root<Reservation> resRoot = cq.from(Reservation.class);
         cq.select(resRoot);
 
-        Join<Reservation,HoldingReservation> hrRoot = resRoot.join(
-                    Reservation_.holdingReservations);
-        Join<HoldingReservation,Holding> hRoot = hrRoot.join
-                (HoldingReservation_.holding);
-        Expression<Boolean> where = cb.equal(hRoot.get(Holding_.id), h.getId());
-        cq.where(where);
+        Join<Reservation, HoldingReservation> hrRoot = resRoot.join(Reservation_.holdingReservations);
+        Join<HoldingReservation, Holding> hRoot = hrRoot.join(HoldingReservation_.holding);
+        Join<Holding, Record> rRoot = hRoot.join(Holding_.record);
+        Join<Record, ExternalRecordInfo> eriRoot = rRoot.join(Record_.externalInfo);
+
+        cq.where(cb.and(
+                cb.equal(resRoot.get(Reservation_.status), Reservation.Status.PENDING),
+                cb.equal(rRoot.get(Record_.parent), record.getParent()),
+                cb.isNotNull(eriRoot.get(ExternalRecordInfo_.container)),
+                cb.equal(eriRoot.get(ExternalRecordInfo_.container), record.getExternalInfo().getContainer())
+        ));
 
         try {
-            TypedQuery q = entityManager.createQuery(cq);
+            TypedQuery<Reservation> q = entityManager.createQuery(cq);
             q.setMaxResults(1);
             return q.getSingleResult() != null;
-        } catch (NoResultException ex) {
+        }
+        catch (NoResultException ex) {
             return false;
         }
     }

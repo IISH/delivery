@@ -9,13 +9,6 @@ import org.socialhistoryservices.delivery.request.entity.Request;
 public interface GeneralRequestService {
 
     /**
-     * Mark a request, bumping it to the next status.
-     *
-     * @param r Request to change status for.
-     */
-    void markRequest(Request r);
-
-    /**
      * Get an active request relating to a specific Holding.
      *
      * @param holding Holding to find a request for.

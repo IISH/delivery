@@ -75,22 +75,17 @@ public class RequestController extends AbstractRequestController {
         Holding h;
         try {
             int ID = Integer.parseInt(id);
-            // Obtain the scanned HoldingReservation/HoldingReproduction
             HoldingReservation holdingReservation = holdingReservationDAO.getById(ID);
             HoldingReproduction holdingReproduction = holdingReproductionDAO.getById(ID);
             Holding h2 = holdingDAO.getById(ID);
-            // Check if either the HoldingReproduction or HoldingReservation is null. If so, variable h is null
-            // If not, variable h is set to either one that is not null.
-            if(holdingReproduction != null && !holdingReproduction.isCompleted()){
+            if (holdingReproduction != null && !holdingReproduction.isCompleted())
                 h = holdingReproduction.getHolding();
-            }else if(holdingReservation != null && !holdingReservation.isCompleted()){
+            else if (holdingReservation != null && !holdingReservation.isCompleted())
                 h = holdingReservation.getHolding();
-            }else if(h2 != null){
+            else
                 h = h2;
-            }else{
-                h = null;
-            }
-        } catch (NumberFormatException ex) {
+        }
+        catch (NumberFormatException ex) {
             h = null;
         }
 

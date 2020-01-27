@@ -18,16 +18,6 @@ public class GeneralRequestServiceImpl implements GeneralRequestService {
     private Set<RequestService> requests;
 
     /**
-     * Mark a request, bumping it to the next status.
-     *
-     * @param r Request to change status for.
-     */
-    public void markRequest(Request r) {
-        for (RequestService requestService : requests)
-            requestService.markRequest(r);
-    }
-
-    /**
      * Get an active request relating to a specific Holding.
      *
      * @param holding Holding to find a request for.

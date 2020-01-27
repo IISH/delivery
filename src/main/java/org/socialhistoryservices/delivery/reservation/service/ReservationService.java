@@ -131,13 +131,6 @@ public interface ReservationService {
     void updateStatusAndAssociatedHoldingStatus(Reservation reservation, Reservation.Status status);
 
     /**
-     * Check whether there are any reservations made on the holding.
-     * @param h Holding to check for reservations for.
-     * @return Whether any reservations have been made including this holding.
-     */
-    boolean hasReservations(Holding h);
-
-    /**
      * Print a reservation if it was not printed yet.
      * @param res The reservation to print.
      * @throws PrinterException Thrown when delivering the print job to the
@@ -162,13 +155,12 @@ public interface ReservationService {
      * @param newRes The new reservation to put in the database.
      * @param oldRes The old reservation in the database (if present).
      * @param result The binding result object to put the validation errors in.
-     * @throws org.socialhistoryservices.delivery.request.service.ClosedException Thrown when a holding is provided which
-     * references a record which is restrictionType=CLOSED.
-     * @throws org.socialhistoryservices.delivery.request.service.NoHoldingsException Thrown when no holdings are provided.
+     * @throws ClosedException     Thrown when a holding is provided which
+     *                             references a record which is restrictionType=CLOSED.
+     * @throws NoHoldingsException Thrown when no holdings are provided.
      */
-    void createOrEdit(Reservation newRes, Reservation oldRes,
-                      BindingResult result) throws
-        ClosedException, NoHoldingsException;
+    void createOrEdit(Reservation newRes, Reservation oldRes, BindingResult result)
+            throws ClosedException, NoHoldingsException;
 
     /**
      * Validate provided holding part of request.

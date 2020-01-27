@@ -1,6 +1,7 @@
 package org.socialhistoryservices.delivery.reservation.dao;
 
 import org.socialhistoryservices.delivery.record.entity.Holding;
+import org.socialhistoryservices.delivery.record.entity.Record;
 import org.socialhistoryservices.delivery.reservation.entity.Reservation;
 
 import javax.persistence.Tuple;
@@ -72,9 +73,9 @@ public interface ReservationDAO {
     Reservation getActiveFor(Holding h);
 
     /**
-     * Check whether there are any reservations made on the holding.
-     * @param h Holding to check for reservations for.
-     * @return Whether any reservations have been made including this holding.
+     * Check whether the given record is linked to a pending reservation based on the container.
+     * @param record The record to check on.
+     * @return Whether the given record is linked to a pending reservation based on the container.
      */
-    boolean hasReservations(Holding h);
+    boolean hasPendingReservation(Record record);
 }

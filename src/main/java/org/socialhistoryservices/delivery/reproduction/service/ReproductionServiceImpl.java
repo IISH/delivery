@@ -1172,21 +1172,6 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
     }
 
     /**
-     * Mark a request, bumping it to the next status.
-     *
-     * @param r Request to change status for.
-     */
-    public void markRequest(Request r) {
-        // Ignore old requests
-        if (!(r instanceof Reproduction))
-            return;
-
-        Reproduction reproduction = (Reproduction) r;
-        markReproduction(reproduction);
-        saveReproduction(reproduction);
-    }
-
-    /**
      * Returns the active reproduction with which this holding is associated.
      *
      * @param h The Holding to get the active reproduction of.

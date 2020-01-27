@@ -463,7 +463,7 @@ public class RecordServiceImpl implements RecordService {
      * @param record The record.
      * @return A list of all sibling records with the same container.
      */
-    public List<Record> getSiblingsWithSameContainer(Record record) {
+    private List<Record> getSiblingsWithSameContainer(Record record) {
         CriteriaBuilder builder = getRecordCriteriaBuilder();
         CriteriaQuery<Record> query = builder.createQuery(Record.class);
         Root<Record> recRoot = query.from(Record.class);
@@ -472,6 +472,7 @@ public class RecordServiceImpl implements RecordService {
         query.select(recRoot);
         query.where(builder.and(
                 builder.equal(recRoot.get(Record_.parent), record.getParent()),
+                builder.isNotNull(eriRoot.get(ExternalRecordInfo_.container)),
                 builder.equal(eriRoot.get(ExternalRecordInfo_.container), record.getExternalInfo().getContainer()),
                 builder.notEqual(recRoot.get(Record_.id), record.getId())
         ));

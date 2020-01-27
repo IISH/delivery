@@ -9,13 +9,6 @@ import org.socialhistoryservices.delivery.request.entity.Request;
 public interface RequestService {
 
     /**
-     * Mark a request, bumping it to the next status.
-     *
-     * @param r Request to change status for.
-     */
-    void markRequest(Request r);
-
-    /**
      * Returns the active request with which this holding is associated.
      *
      * @param holding The Holding to get the active reservation of.
