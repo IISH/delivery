@@ -309,7 +309,8 @@ public class RecordServiceImpl implements RecordService {
             updateRecord(record, recordExtractor);
             createOrUpdateSiblings(record, recordExtractor.getRecordExtractorsForContainerSiblings());
 
-            updateExternalInfo(record.getParent(), hardRefresh);
+            if (record.getParent() != null)
+                updateExternalInfo(record.getParent(), hardRefresh);
 
             return true;
         }
