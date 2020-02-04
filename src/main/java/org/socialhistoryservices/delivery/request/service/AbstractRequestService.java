@@ -202,12 +202,18 @@ public abstract class AbstractRequestService implements RequestService {
                 else {
                     int id = record.getParent().getId();
                     String container = record.getExternalInfo().getContainer();
-                    Set<String> containers = containersPrinted.getOrDefault(id, new HashSet<>());
 
-                    if (!containers.contains(container)) {
+                    if (container == null) {
                         addPrintable = true;
-                        containers.add(container);
-                        containersPrinted.put(id, containers);
+                    }
+                    else {
+                        Set<String> containers = containersPrinted.getOrDefault(id, new HashSet<>());
+
+                        if (!containers.contains(container)) {
+                            addPrintable = true;
+                            containers.add(container);
+                            containersPrinted.put(id, containers);
+                        }
                     }
                 }
 
