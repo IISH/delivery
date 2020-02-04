@@ -180,7 +180,7 @@ public class RecordServiceImpl implements RecordService {
     public void updateHoldingStatus(Holding holding, Holding.Status status) {
         holding.setStatus(status);
 
-        List<Record> siblings = getSiblingsWithSameContainer(holding.getRecord());
+        List<Record> siblings = getSiblings(holding.getRecord(), true);
         for (Record sibling : siblings) {
             for (Holding siblingHolding : sibling.getHoldings()) {
                 siblingHolding.setStatus(status);
@@ -307,10 +307,11 @@ public class RecordServiceImpl implements RecordService {
             MetadataRecordExtractor recordExtractor = lookup.getRecordExtractorByPid(pid);
 
             updateRecord(record, recordExtractor);
-            createOrUpdateSiblings(record, recordExtractor.getRecordExtractorsForContainerSiblings());
 
-            if (record.getParent() != null)
+            if (record.getParent() != null) {
+                createOrUpdateSiblings(record, recordExtractor.getRecordExtractorsForContainerSiblings());
                 updateExternalInfo(record.getParent(), hardRefresh);
+            }
 
             return true;
         }
@@ -327,7 +328,7 @@ public class RecordServiceImpl implements RecordService {
      * @param siblingExtractors The metadata extractors for the sibling records.
      */
     private void createOrUpdateSiblings(Record r, Set<MetadataRecordExtractor> siblingExtractors) {
-        List<Record> siblings = getSiblingsWithSameContainer(r);
+        List<Record> siblings = getSiblings(r, false);
         for (MetadataRecordExtractor siblingExtractor : siblingExtractors) {
             Optional<Record> record = siblings.stream()
                     .filter(sr -> sr.getPid().equals(siblingExtractor.getPid())).findFirst();
@@ -459,24 +460,33 @@ public class RecordServiceImpl implements RecordService {
     }
 
     /*
-     * Get all sibling records with the same container.
+     * Get all sibling records (with the same container).
      *
      * @param record The record.
-     * @return A list of all sibling records with the same container.
+     * @param sameContainer If the sibling records should have the same container.
+     * @return A list of all sibling records (with the same container).
      */
-    private List<Record> getSiblingsWithSameContainer(Record record) {
+    private List<Record> getSiblings(Record record, boolean sameContainer) {
         CriteriaBuilder builder = getRecordCriteriaBuilder();
         CriteriaQuery<Record> query = builder.createQuery(Record.class);
         Root<Record> recRoot = query.from(Record.class);
         Join<Record, ExternalRecordInfo> eriRoot = recRoot.join(Record_.externalInfo);
 
+        Predicate where = sameContainer ?
+                builder.and(
+                        builder.equal(recRoot.get(Record_.parent), record.getParent()),
+                        builder.isNotNull(eriRoot.get(ExternalRecordInfo_.container)),
+                        builder.equal(eriRoot.get(ExternalRecordInfo_.container),
+                                record.getExternalInfo().getContainer()),
+                        builder.notEqual(recRoot.get(Record_.id), record.getId())
+                ) :
+                builder.and(
+                        builder.equal(recRoot.get(Record_.parent), record.getParent()),
+                        builder.notEqual(recRoot.get(Record_.id), record.getId())
+                );
+
         query.select(recRoot);
-        query.where(builder.and(
-                builder.equal(recRoot.get(Record_.parent), record.getParent()),
-                builder.isNotNull(eriRoot.get(ExternalRecordInfo_.container)),
-                builder.equal(eriRoot.get(ExternalRecordInfo_.container), record.getExternalInfo().getContainer()),
-                builder.notEqual(recRoot.get(Record_.id), record.getId())
-        ));
+        query.where(where);
 
         return listRecords(query);
     }
