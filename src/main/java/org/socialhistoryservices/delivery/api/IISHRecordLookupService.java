@@ -146,12 +146,15 @@ public class IISHRecordLookupService implements RecordLookupService {
 
         String[] parentPidAndItem = getParentPidAndItem(pid);
         Node node = searchByPid(parentPidAndItem[0], true);
-        Node archivalNode = (parentPidAndItem[1] == null) ? searchByPid(parentPidAndItem[0], false) : null;
         Node eadNode = getEADNode(node);
 
-        if (eadNode != null)
+        if (eadNode != null) {
+            Node archivalNode = (parentPidAndItem[1] == null)
+                    ? searchByPid(parentPidAndItem[0], false) : null;
+
             return new EADMetadataRecordExtractor(parentPidAndItem[0], parentPidAndItem[1],
                     deliveryProperties.getItemSeparator(), eadNode, archivalNode);
+        }
 
         return new MARCMetadataRecordExtractor(pid, node);
     }
