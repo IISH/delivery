@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         Root<User> root = query.from(User.class);
         query.select(root);
 
-        query.where(builder.equal(root.get(User_.username), name));
+        query.where(builder.equal(builder.lower(root.get(User_.username)), name.toLowerCase()));
 
         return getUser(query);
     }

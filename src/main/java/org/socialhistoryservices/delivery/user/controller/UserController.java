@@ -52,13 +52,12 @@ public class UserController extends ErrorHandlingController {
     /**
      * Get the list of users to manage.
      *
-     * @param model   The model to add attributes to.
-     * @param request The HTTP request.
+     * @param model The model to add attributes to.
      * @return The view to resolve.
      */
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ROLE_USER_MODIFY')")
-    public String list(Model model, HttpServletRequest request) {
+    public String list(Model model) {
         model.addAttribute("users", users.listUsers());
         model.addAttribute("groups", users.listGroups());
         return "user_management";
@@ -77,21 +76,14 @@ public class UserController extends ErrorHandlingController {
     /**
      * Change the group a user is in.
      *
-     * @param user    The user id.
-     * @param groups  The group ids.
-     * @param model   The model to add attributes to.
-     * @param request The HTTP request.
+     * @param user   The user id.
+     * @param groups The group ids.
      * @return The view to resolve.
      */
     @RequestMapping(value = "/", method = RequestMethod.POST, params = "action=chgrp")
     @PreAuthorize("hasRole('ROLE_USER_MODIFY')")
-    public String chgrp(
-            @RequestParam int user,
-            @RequestParam(required = false) int[] groups,
-            Model model, HttpServletRequest request) {
-
+    public String chgrp(@RequestParam int user, @RequestParam(required = false) int[] groups) {
         User userObj = users.getUserById(user);
-
         if (userObj == null) {
             throw new InvalidRequestException("Invalid user id specified.");
         }
