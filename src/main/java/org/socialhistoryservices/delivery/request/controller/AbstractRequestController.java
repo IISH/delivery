@@ -399,12 +399,27 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
      */
     protected List<BulkActionIds> getIdsFromBulk(List<String> bulk) {
         List<BulkActionIds> bulkActionIds = new ArrayList<>();
-        for (String bulkIds : bulk) {
-            String[] ids = bulkIds.split(":");
-            if (ids.length == 2)
-                bulkActionIds.add(new BulkActionIds(Integer.parseInt(ids[0]), Integer.parseInt(ids[1])));
+        if (bulk != null) {
+            for (String bulkIds : bulk) {
+                String[] ids = bulkIds.split(":");
+                if (ids.length == 2)
+                    bulkActionIds.add(new BulkActionIds(Integer.parseInt(ids[0]), Integer.parseInt(ids[1])));
+            }
         }
         return bulkActionIds;
+    }
+
+    /**
+     * From a list of request id and holding id pairs, extract the request ids.
+     *
+     * @param bulk A set of request ids.
+     * @return The request ids.
+     */
+    protected Set<Integer> getRequestIdsFromBulk(List<String> bulk) {
+        Set<Integer> requestIds = new HashSet<>();
+        for (BulkActionIds bulkActionIds : getIdsFromBulk(bulk))
+            requestIds.add(bulkActionIds.getRequestId());
+        return requestIds;
     }
 
     /**

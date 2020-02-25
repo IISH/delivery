@@ -376,10 +376,8 @@ public class ReservationController extends AbstractRequestController {
     @PreAuthorize("hasRole('ROLE_RESERVATION_DELETE')")
     public String batchProcessDelete(HttpServletRequest req, @RequestParam(required = false) List<String> checked) {
         // Delete all the provided reservations
-        if (checked != null) {
-            for (BulkActionIds bulkActionIds : getIdsFromBulk(checked)) {
-                delete(bulkActionIds.getRequestId());
-            }
+        for (Integer requestId : getRequestIdsFromBulk(checked)) {
+            delete(requestId);
         }
 
         String qs = req.getQueryString() != null ? "?" + req.getQueryString() : "";
@@ -395,31 +393,17 @@ public class ReservationController extends AbstractRequestController {
      */
     @RequestMapping(value = "/batchprocess", method = RequestMethod.POST, params = "print")
     public String batchProcessPrint(HttpServletRequest req, @RequestParam(required = false) List<String> checked) {
+        List<HoldingReservation> hrs = getHoldingReservationsForBulk(checked);
+        if (!hrs.isEmpty()) {
+            try {
+                reservations.printItems(hrs, false);
+            }
+            catch (PrinterException e) {
+                return "reservation_print_failure";
+            }
+        }
+
         String qs = req.getQueryString() != null ? "?" + req.getQueryString() : "";
-
-        // Simply redirect to previous page if no reservations were selected
-        if (checked == null) {
-            return "redirect:/reservation/" + qs;
-        }
-
-        List<HoldingReservation> hrs = new ArrayList<>();
-        for (BulkActionIds bulkActionIds : getIdsFromBulk(checked)) {
-            Reservation r = reservations.getReservationById(bulkActionIds.getRequestId());
-            for (HoldingReservation hr : r.getHoldingReservations()) {
-                if (hr.getHolding().getId() == bulkActionIds.getHoldingId())
-                    hrs.add(hr);
-            }
-
-            if (!hrs.isEmpty()) {
-                try {
-                    reservations.printItems(hrs, false);
-                }
-                catch (PrinterException e) {
-                    return "reservation_print_failure";
-                }
-            }
-        }
-
         return "redirect:/reservation/" + qs;
     }
 
@@ -432,22 +416,7 @@ public class ReservationController extends AbstractRequestController {
      */
     @RequestMapping(value = "/batchprocess", method = RequestMethod.POST, params = "printForce")
     public String batchProcessPrintForce(HttpServletRequest req, @RequestParam(required = false) List<String> checked) {
-        String qs = req.getQueryString() != null ? "?" + req.getQueryString() : "";
-
-        // Simply redirect to previous page if no reservations were selected
-        if (checked == null) {
-            return "redirect:/reservation/" + qs;
-        }
-
-        List<HoldingReservation> hrs = new ArrayList<>();
-        for (BulkActionIds bulkActionIds : getIdsFromBulk(checked)) {
-            Reservation r = reservations.getReservationById(bulkActionIds.getRequestId());
-            for (HoldingReservation hr : r.getHoldingReservations()) {
-                if (hr.getHolding().getId() == bulkActionIds.getHoldingId())
-                    hrs.add(hr);
-            }
-        }
-
+        List<HoldingReservation> hrs = getHoldingReservationsForBulk(checked);
         if (!hrs.isEmpty()) {
             try {
                 reservations.printItems(hrs, true);
@@ -457,6 +426,7 @@ public class ReservationController extends AbstractRequestController {
             }
         }
 
+        String qs = req.getQueryString() != null ? "?" + req.getQueryString() : "";
         return "redirect:/reservation/" + qs;
     }
 
@@ -472,26 +442,17 @@ public class ReservationController extends AbstractRequestController {
     @PreAuthorize("hasRole('ROLE_RESERVATION_MODIFY')")
     public String batchProcessChangeStatus(HttpServletRequest req, @RequestParam(required = false) List<String> checked,
                                            @RequestParam Reservation.Status newStatus) {
-        String qs = req.getQueryString() != null ? "?" + req.getQueryString() : "";
-
-        // Simply redirect to previous page if no reservations were selected
-        if (checked == null) {
-            return "redirect:/reservation/" + qs;
-        }
-
-        for (BulkActionIds bulkActionIds : getIdsFromBulk(checked)) {
-            Reservation r = reservations.getReservationById(bulkActionIds.getRequestId());
+        for (Integer requestId : getRequestIdsFromBulk(checked)) {
+            Reservation r = reservations.getReservationById(requestId);
 
             // Only change reservations which exist.
-            if (r == null) {
-                continue;
+            if (r != null) {
+                reservations.updateStatusAndAssociatedHoldingStatus(r, newStatus);
+                reservations.saveReservation(r);
             }
-
-            // Set the new status and holding statuses.
-            reservations.updateStatusAndAssociatedHoldingStatus(r, newStatus);
-            reservations.saveReservation(r);
         }
 
+        String qs = req.getQueryString() != null ? "?" + req.getQueryString() : "";
         return "redirect:/reservation/" + qs;
     }
 
@@ -508,30 +469,42 @@ public class ReservationController extends AbstractRequestController {
     public String batchProcessChangeHoldingStatus(HttpServletRequest req,
                                                   @RequestParam(required = false) List<String> checked,
                                                   @RequestParam Holding.Status newHoldingStatus) {
-        String qs = (req.getQueryString() != null) ? "?" + req.getQueryString() : "";
-
-        // Simply redirect to previous page if no holdings were selected
-        if (checked == null) {
-            return "redirect:/reservation/" + qs;
-        }
-
         for (BulkActionIds bulkActionIds : getIdsFromBulk(checked)) {
             Holding h = records.getHoldingById(bulkActionIds.getHoldingId());
-            if (h == null) {
-                continue;
-            }
 
             // Only update the status if the holding is active for the same reservation
-            Request request = requests.getActiveFor(h);
-            if ((request instanceof Reservation) &&
-                    (((Reservation) request).getId() == bulkActionIds.getRequestId())) {
-                // Set the new status
-                records.updateHoldingStatus(h, newHoldingStatus);
-                records.saveHolding(h);
+            if (h != null) {
+                Request request = requests.getActiveFor(h);
+
+                if ((request instanceof Reservation) &&
+                        (((Reservation) request).getId() == bulkActionIds.getRequestId())) {
+                    // Set the new status
+                    records.updateHoldingStatus(h, newHoldingStatus);
+                    records.saveHolding(h);
+                }
             }
         }
 
+        String qs = (req.getQueryString() != null) ? "?" + req.getQueryString() : "";
         return "redirect:/reservation/" + qs;
+    }
+
+    /**
+     * Get marked holding reservations.
+     *
+     * @param checked A list of request id and holding id pairs.
+     * @return The holding reservations.
+     */
+    private List<HoldingReservation> getHoldingReservationsForBulk(List<String> checked) {
+        List<HoldingReservation> hrs = new ArrayList<>();
+        for (BulkActionIds bulkActionIds : getIdsFromBulk(checked)) {
+            Reservation r = reservations.getReservationById(bulkActionIds.getRequestId());
+            for (HoldingReservation hr : r.getHoldingReservations()) {
+                if (hr.getHolding().getId() == bulkActionIds.getHoldingId())
+                    hrs.add(hr);
+            }
+        }
+        return hrs;
     }
 
     /**

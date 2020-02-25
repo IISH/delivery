@@ -231,12 +231,10 @@ public class ReproductionController extends AbstractRequestController {
     @PreAuthorize("hasRole('ROLE_REPRODUCTION_DELETE')")
     public String batchProcessDelete(HttpServletRequest req, @RequestParam(required = false) List<String> checked) {
         // Delete all the provided reproductions
-        if (checked != null) {
-            for (BulkActionIds bulkActionIds : getIdsFromBulk(checked)) {
-                Reproduction r = reproductions.getReproductionById(bulkActionIds.getRequestId());
-                if (r != null) {
-                    reproductions.removeReproduction(r);
-                }
+        for (BulkActionIds bulkActionIds : getIdsFromBulk(checked)) {
+            Reproduction r = reproductions.getReproductionById(bulkActionIds.getRequestId());
+            if (r != null) {
+                reproductions.removeReproduction(r);
             }
         }
 
@@ -253,31 +251,17 @@ public class ReproductionController extends AbstractRequestController {
      */
     @RequestMapping(value = "/batchprocess", method = RequestMethod.POST, params = "print")
     public String batchProcessPrint(HttpServletRequest req, @RequestParam(required = false) List<String> checked) {
+        List<HoldingReproduction> hrs = getHoldingReproductionsForBulk(checked);
+        if (!hrs.isEmpty()) {
+            try {
+                reproductions.printItems(hrs, false);
+            }
+            catch (PrinterException e) {
+                return "reproduction_print_failure";
+            }
+        }
+
         String qs = (req.getQueryString() != null) ? "?" + req.getQueryString() : "";
-
-        // Simply redirect to previous page if no reservations were selected
-        if (checked == null) {
-            return "redirect:/reproduction/" + qs;
-        }
-
-        List<HoldingReproduction> hrs = new ArrayList<>();
-        for (BulkActionIds bulkActionIds : getIdsFromBulk(checked)) {
-            Reproduction r = reproductions.getReproductionById(bulkActionIds.getRequestId());
-            for (HoldingReproduction hr : r.getHoldingReproductions()) {
-                if (hr.getHolding().getId() == bulkActionIds.getHoldingId())
-                    hrs.add(hr);
-            }
-
-            if (!hrs.isEmpty()) {
-                try {
-                    reproductions.printItems(hrs, false);
-                }
-                catch (PrinterException e) {
-                    return "reproduction_print_failure";
-                }
-            }
-        }
-
         return "redirect:/reproduction/" + qs;
     }
 
@@ -290,31 +274,17 @@ public class ReproductionController extends AbstractRequestController {
      */
     @RequestMapping(value = "/batchprocess", method = RequestMethod.POST, params = "printForce")
     public String batchProcessPrintForce(HttpServletRequest req, @RequestParam(required = false) List<String> checked) {
-        String qs = (req.getQueryString() != null) ? "?" + req.getQueryString() : "";
-
-        // Simply redirect to previous page if no reservations were selected
-        if (checked == null)
-            return "redirect:/reproduction/" + qs;
-
-        List<HoldingReproduction> hrs = new ArrayList<>();
-        for (BulkActionIds bulkActionIds : getIdsFromBulk(checked)) {
-            Reproduction r = reproductions.getReproductionById(bulkActionIds.getRequestId());
-            for (HoldingReproduction hr : r.getHoldingReproductions()) {
-                if (hr.getHolding().getId() == bulkActionIds.getHoldingId())
-                    hrs.add(hr);
-            }
-        }
-
+        List<HoldingReproduction> hrs = getHoldingReproductionsForBulk(checked);
         if (!hrs.isEmpty()) {
             try {
                 reproductions.printItems(hrs, true);
             }
             catch (PrinterException e) {
-                // TODO find out what this does?
                 return "reproduction_print_failure";
             }
         }
 
+        String qs = (req.getQueryString() != null) ? "?" + req.getQueryString() : "";
         return "redirect:/reproduction/" + qs;
     }
 
@@ -330,15 +300,8 @@ public class ReproductionController extends AbstractRequestController {
     @PreAuthorize("hasRole('ROLE_REPRODUCTION_MODIFY')")
     public String batchProcessChangeStatus(HttpServletRequest req, @RequestParam(required = false) List<String> checked,
                                            @RequestParam Reproduction.Status newStatus) {
-        String qs = (req.getQueryString() != null) ? "?" + req.getQueryString() : "";
-
-        // Simply redirect to previous page if no reservations were selected
-        if (checked == null) {
-            return "redirect:/reproduction/" + qs;
-        }
-
-        for (BulkActionIds bulkActionIds : getIdsFromBulk(checked)) {
-            Reproduction r = reproductions.getReproductionById(bulkActionIds.getRequestId());
+        for (Integer requestId : getRequestIdsFromBulk(checked)) {
+            Reproduction r = reproductions.getReproductionById(requestId);
 
             // Only change reproductions which exist
             if (r != null) {
@@ -347,6 +310,7 @@ public class ReproductionController extends AbstractRequestController {
             }
         }
 
+        String qs = (req.getQueryString() != null) ? "?" + req.getQueryString() : "";
         return "redirect:/reproduction/" + qs;
     }
 
@@ -363,13 +327,6 @@ public class ReproductionController extends AbstractRequestController {
     public String batchProcessChangeHoldingStatus(HttpServletRequest req,
                                                   @RequestParam(required = false) List<String> checked,
                                                   @RequestParam Holding.Status newHoldingStatus) {
-        String qs = (req.getQueryString() != null) ? "?" + req.getQueryString() : "";
-
-        // Simply redirect to previous page if no holdings were selected
-        if (checked == null) {
-            return "redirect:/reproduction/" + qs;
-        }
-
         for (BulkActionIds bulkActionIds : getIdsFromBulk(checked)) {
             Holding h = records.getHoldingById(bulkActionIds.getHoldingId());
             if (h != null) {
@@ -384,7 +341,26 @@ public class ReproductionController extends AbstractRequestController {
             }
         }
 
+        String qs = (req.getQueryString() != null) ? "?" + req.getQueryString() : "";
         return "redirect:/reproduction/" + qs;
+    }
+
+    /**
+     * Get marked holding reproductions.
+     *
+     * @param checked A list of request id and holding id pairs.
+     * @return The holding reproductions.
+     */
+    private List<HoldingReproduction> getHoldingReproductionsForBulk(List<String> checked) {
+        List<HoldingReproduction> hrs = new ArrayList<>();
+        for (BulkActionIds bulkActionIds : getIdsFromBulk(checked)) {
+            Reproduction r = reproductions.getReproductionById(bulkActionIds.getRequestId());
+            for (HoldingReproduction hr : r.getHoldingReproductions()) {
+                if (hr.getHolding().getId() == bulkActionIds.getHoldingId())
+                    hrs.add(hr);
+            }
+        }
+        return hrs;
     }
 
     /**
