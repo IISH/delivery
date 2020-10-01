@@ -8,6 +8,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Represents external info for a record (title from evergreen,
@@ -17,6 +19,7 @@ import java.util.Set;
 @Entity
 @Table(name = "external_record_info")
 public class ExternalRecordInfo {
+    private static final Pattern PATTERN_YEAR = Pattern.compile("[^\\d]*([12]\\d{3})*[^\\d]*");
 
     public enum MaterialType {
         SERIAL,
@@ -229,6 +232,19 @@ public class ExternalRecordInfo {
      */
     public void setDisplayYear(String year) {
         displayYear = year;
+    }
+
+    /**
+     * Get the year, if available.
+     *
+     * @return The year
+     */
+    public Integer getYear() {
+        Matcher yearMatcher = PATTERN_YEAR.matcher(displayYear);
+        if (yearMatcher.matches())
+            return Integer.parseInt(yearMatcher.group(1));
+
+        return null;
     }
 
     @Size(max = 255)

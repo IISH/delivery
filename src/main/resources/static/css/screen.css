@@ -59,6 +59,13 @@ label.field {
     width: 15em;
 }
 
+span.help-field {
+    padding-top: 7px;
+    clear: right;
+    float: left;
+    display: block;
+}
+
 form {
     margin: 0;
     padding: 0;

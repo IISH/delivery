@@ -2,7 +2,6 @@ package org.socialhistoryservices.delivery.record.entity;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.socialhistoryservices.delivery.reproduction.entity.HoldingReproduction;
-import org.socialhistoryservices.delivery.reproduction.entity.ReproductionStandardOption;
 import org.socialhistoryservices.delivery.reservation.entity.HoldingReservation;
 
 import javax.persistence.*;
@@ -249,30 +248,6 @@ public class Holding {
      */
     public boolean allowOnlyCustomReproduction() {
         return "KNAW".equals(externalInfo.getShelvingLocation());
-    }
-
-    /**
-     * Returns whether the holding accepts the given standard reproduction option.
-     *
-     * @param standardOption The standard reproduction option.
-     * @return Whether the holding accepts the given standard reproduction option.
-     */
-    public boolean acceptsReproductionOption(ReproductionStandardOption standardOption) {
-        // Material types have to match
-        if (record.getExternalInfo().getMaterialType() != standardOption.getMaterialType())
-            return false;
-
-        // In case of books, the reproduction option is based on the number of pages
-        if (record.getExternalInfo().getMaterialType() == ExternalRecordInfo.MaterialType.BOOK)
-            return record.getPages().containsNumberOfPages();
-
-        // In case of visuals, it matters whether it is a poster or not
-        if (record.getExternalInfo().getMaterialType() == ExternalRecordInfo.MaterialType.VISUAL) {
-            boolean genresContainsPoster = record.getExternalInfo().getGenresSet().contains("poster");
-            return standardOption.isPoster() == genresContainsPoster;
-        }
-
-        return true;
     }
 
     public String toString() {

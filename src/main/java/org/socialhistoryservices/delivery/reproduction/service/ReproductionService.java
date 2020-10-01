@@ -1,6 +1,7 @@
 package org.socialhistoryservices.delivery.reproduction.service;
 
 import org.socialhistoryservices.delivery.record.entity.Holding;
+import org.socialhistoryservices.delivery.record.entity.Record;
 import org.socialhistoryservices.delivery.reproduction.entity.*;
 import org.socialhistoryservices.delivery.reproduction.util.ReproductionStandardOptions;
 import org.socialhistoryservices.delivery.request.service.ClosedException;
@@ -243,6 +244,15 @@ public interface ReproductionService {
      * @return A Future object that will return the order when succesful.
      */
     Future<Order> refundOrder(Order order);
+
+    /**
+     * Returns whether the record accepts the standard reproduction option.
+     *
+     * @param record         The record to check.
+     * @param standardOption The standard reproduction option.
+     * @return Whether the record accepts the given standard reproduction option.
+     */
+    boolean recordAcceptsReproductionOption(Record record, ReproductionStandardOption standardOption);
 
     /**
      * Validates and saves the standard reproduction options.

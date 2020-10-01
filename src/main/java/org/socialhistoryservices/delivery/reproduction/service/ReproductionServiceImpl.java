@@ -6,6 +6,7 @@ import org.socialhistoryservices.delivery.config.DeliveryProperties;
 import org.socialhistoryservices.delivery.config.PrinterConfiguration;
 import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
 import org.socialhistoryservices.delivery.record.entity.Holding;
+import org.socialhistoryservices.delivery.record.entity.Record;
 import org.socialhistoryservices.delivery.reproduction.dao.*;
 import org.socialhistoryservices.delivery.reproduction.entity.*;
 import org.socialhistoryservices.delivery.reproduction.util.BigDecimalUtils;
@@ -570,7 +571,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
                 validateReproductionNotCustomer(newReproduction, result);
 
             // Initialize reproduction and its holdings
-            initReproduction(newReproduction);
+            initReproduction(newReproduction, isCustomer && oldReproduction == null);
 
             // Add or save the record when no errors are present
             if (!result.hasErrors()) {
@@ -1009,6 +1010,44 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
     }
 
     /**
+     * Returns whether the record accepts the standard reproduction option.
+     *
+     * @param record         The record to check.
+     * @param standardOption The standard reproduction option.
+     * @return Whether the record accepts the given standard reproduction option.
+     */
+    public boolean recordAcceptsReproductionOption(Record record, ReproductionStandardOption standardOption) {
+        // Material types have to match
+        if (record.getExternalInfo().getMaterialType() != standardOption.getMaterialType())
+            return false;
+
+        // In case of books, the reproduction option is based on the number of pages and the year
+        if (record.getExternalInfo().getMaterialType() == ExternalRecordInfo.MaterialType.BOOK) {
+            if (!record.getPages().containsNumberOfPages())
+                return false;
+
+            Integer year = record.getExternalInfo().getYear();
+            if (year != null) {
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.YEAR, -deliveryProperties.getCopyrightYear());
+                int acceptedYear = cal.get(Calendar.YEAR);
+
+                return year < acceptedYear;
+            }
+
+            return false;
+        }
+
+        // In case of visuals, it matters whether it is a poster or not
+        if (record.getExternalInfo().getMaterialType() == ExternalRecordInfo.MaterialType.VISUAL) {
+            boolean genresContainsPoster = record.getExternalInfo().getGenresSet().contains("poster");
+            return standardOption.isPoster() == genresContainsPoster;
+        }
+
+        return true;
+    }
+
+    /**
      * Validate a request using the provided binding result to store errors.
      *
      * @param request The request.
@@ -1042,7 +1081,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
 
             // Determine whether the customer may actually choose the currently chosen standard reproduction option
             if ((standardOption != null) && (!standardOption.isEnabled() || h.allowOnlyCustomReproduction() ||
-                    !h.acceptsReproductionOption(standardOption))) {
+                    !recordAcceptsReproductionOption(h.getRecord(), standardOption))) {
                 result.addError(new FieldError(result.getObjectName(),
                         "holdingReproductions[" + i + "].standardOption", "", false,
                         new String[]{"validator.standardOption"}, null, "Required"));
@@ -1084,16 +1123,19 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
      *
      * @param reproduction The reproduction.
      */
-    private void initReproduction(Reproduction reproduction) {
+    private void initReproduction(Reproduction reproduction, boolean isCreateInit) {
         // Already obtain the BTW percentage and the discount percentage, may we need it
         int btwPercentage = deliveryProperties.getReproductionBtwPercentage();
         int discountPercentage = reproduction.getDiscountPercentage();
 
-        // First set the administration costs
-        BigDecimal adminstrationCosts = new BigDecimal(deliveryProperties.getReproductionAdministrationCosts());
-        reproduction.setAdminstrationCosts(adminstrationCosts);
+        // First set the administration costs if initial create
+        if (isCreateInit) {
+            BigDecimal adminstrationCosts = new BigDecimal(deliveryProperties.getReproductionAdministrationCosts());
+            reproduction.setAdminstrationCosts(adminstrationCosts);
+        }
+
         reproduction.setAdminstrationCostsDiscount(
-                BigDecimalUtils.getPercentageOfAmount(adminstrationCosts, discountPercentage)
+                BigDecimalUtils.getPercentageOfAmount(reproduction.getAdminstrationCosts(), discountPercentage)
         );
         reproduction.setAdminstrationCostsBtwPercentage(btwPercentage);
         reproduction.setAdminstrationCostsBtwPrice(

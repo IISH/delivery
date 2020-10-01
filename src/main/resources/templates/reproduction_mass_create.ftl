@@ -154,6 +154,15 @@
     <li><@input "reproduction.discountPercentage" "" true "" "percentage"/></li>
 
     <li>
+      <label for="adminstrationCosts" class="field">
+          <@_ "reproduction.adminstrationCosts" "Administration costs"/>
+          <span class="red">*</span>
+      </label>
+      <@input_nolabel "reproduction.adminstrationCosts" "field price"/>
+      <span class="help-field">EUR</span>
+    </li>
+
+    <li>
       <label for="mail" class="field"><@_ "reproductionMassCreate.mail" "Mail"/></label>
       <input type="checkbox" name="mail" id="mail" class="field" checked="checked"/>
     </li>

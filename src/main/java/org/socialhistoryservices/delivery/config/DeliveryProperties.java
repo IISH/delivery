@@ -31,6 +31,7 @@ public class DeliveryProperties {
     private int permissionPageLen = 20;
     private int permissionPageStepSize = 10;
     private String pidSeparator = ",";
+    private int copyrightYear = 70;
     private int reproductionAdministrationCosts = 6;
     private int reproductionMaxDaysPayment = 21;
     private int reproductionMaxDaysReminder = 14;
@@ -242,6 +243,14 @@ public class DeliveryProperties {
 
     public void setPidSeparator(String pidSeparator) {
         this.pidSeparator = pidSeparator;
+    }
+
+    public int getCopyrightYear() {
+        return copyrightYear;
+    }
+
+    public void setCopyrightYear(int copyrightYear) {
+        this.copyrightYear = copyrightYear;
     }
 
     public int getReproductionAdministrationCosts() {

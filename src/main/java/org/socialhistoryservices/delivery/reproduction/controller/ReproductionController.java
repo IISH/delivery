@@ -492,7 +492,8 @@ public class ReproductionController extends AbstractRequestController {
             List<ReproductionStandardOption> standardOptionsForHolding = new ArrayList<>();
             if (!holding.allowOnlyCustomReproduction()) {
                 for (ReproductionStandardOption standardOption : standardOptions) {
-                    if (standardOption.isEnabled() && holding.acceptsReproductionOption(standardOption))
+                    if (standardOption.isEnabled() &&
+                            reproductions.recordAcceptsReproductionOption(holding.getRecord(), standardOption))
                         standardOptionsForHolding.add(standardOption);
                 }
 
@@ -994,9 +995,7 @@ public class ReproductionController extends AbstractRequestController {
                 boolean mailSuccess = true;
                 if (mail) {
                     try {
-                        // Determine which one was updated
-                        Reproduction r = (originalReproduction == null) ? reproduction : originalReproduction;
-                        reproductionMailer.mailOfferReady(r);
+                        reproductionMailer.mailOfferReady(originalReproduction);
                     }
                     catch (MailException me) {
                         mailSuccess = false;
