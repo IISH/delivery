@@ -33,6 +33,7 @@ public class DeliveryProperties {
     private String pidSeparator = ",";
     private int copyrightYear = 70;
     private int reproductionAdministrationCosts = 6;
+    private int reproductionAdministrationCostsMinPages = 50;
     private int reproductionMaxDaysPayment = 21;
     private int reproductionMaxDaysReminder = 14;
     private int reproductionBtwPercentage = 21;
@@ -259,6 +260,14 @@ public class DeliveryProperties {
 
     public void setReproductionAdministrationCosts(int reproductionAdministrationCosts) {
         this.reproductionAdministrationCosts = reproductionAdministrationCosts;
+    }
+
+    public int getReproductionAdministrationCostsMinPages() {
+        return reproductionAdministrationCostsMinPages;
+    }
+
+    public void setReproductionAdministrationCostsMinPages(int reproductionAdministrationCostsMinimumPages) {
+        this.reproductionAdministrationCostsMinPages = reproductionAdministrationCostsMinimumPages;
     }
 
     public int getReproductionMaxDaysPayment() {

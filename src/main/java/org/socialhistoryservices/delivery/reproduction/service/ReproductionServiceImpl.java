@@ -1128,20 +1128,8 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
         int btwPercentage = deliveryProperties.getReproductionBtwPercentage();
         int discountPercentage = reproduction.getDiscountPercentage();
 
-        // First set the administration costs if initial create
-        if (isCreateInit) {
-            BigDecimal adminstrationCosts = new BigDecimal(deliveryProperties.getReproductionAdministrationCosts());
-            reproduction.setAdminstrationCosts(adminstrationCosts);
-        }
-
-        reproduction.setAdminstrationCostsDiscount(
-                BigDecimalUtils.getPercentageOfAmount(reproduction.getAdminstrationCosts(), discountPercentage)
-        );
-        reproduction.setAdminstrationCostsBtwPercentage(btwPercentage);
-        reproduction.setAdminstrationCostsBtwPrice(
-                BigDecimalUtils.getBtwAmount(reproduction.getAdminstrationCostsWithDiscount(), btwPercentage));
-
         // Set the price and delivery time for each item
+        int totalNoOfPages = 0;
         for (HoldingReproduction hr : reproduction.getHoldingReproductions()) {
             ReproductionStandardOption standardOption = hr.getStandardOption();
 
@@ -1177,7 +1165,31 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
                     hr.setBtwPrice(BigDecimal.ZERO);
                 }
             }
+
+            // Count the number of pages in this request, but only if there are only books in this request
+            ExternalRecordInfo.MaterialType materialType
+                    = hr.getHolding().getRecord().getExternalInfo().getMaterialType();
+            if (totalNoOfPages >= 0 && standardOption != null && materialType == ExternalRecordInfo.MaterialType.BOOK)
+                totalNoOfPages += hr.getNumberOfPages();
+            else
+                totalNoOfPages = -1;
         }
+
+        // Set the administration costs if initial create
+        if (isCreateInit) {
+            BigDecimal administrationCosts = new BigDecimal(deliveryProperties.getReproductionAdministrationCosts());
+            if (totalNoOfPages > 0 && totalNoOfPages < deliveryProperties.getReproductionAdministrationCostsMinPages())
+                administrationCosts = BigDecimal.ZERO;
+
+            reproduction.setAdminstrationCosts(administrationCosts);
+        }
+
+        reproduction.setAdminstrationCostsDiscount(
+                BigDecimalUtils.getPercentageOfAmount(reproduction.getAdminstrationCosts(), discountPercentage)
+        );
+        reproduction.setAdminstrationCostsBtwPercentage(btwPercentage);
+        reproduction.setAdminstrationCostsBtwPrice(
+                BigDecimalUtils.getBtwAmount(reproduction.getAdminstrationCostsWithDiscount(), btwPercentage));
     }
 
     /**

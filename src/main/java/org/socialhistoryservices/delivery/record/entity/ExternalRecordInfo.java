@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @Entity
 @Table(name = "external_record_info")
 public class ExternalRecordInfo {
-    private static final Pattern PATTERN_YEAR = Pattern.compile("[^\\d]*([12]\\d{3})*[^\\d]*");
+    private static final Pattern PATTERN_YEAR = Pattern.compile("[^\\d]*([12]\\d{3})[^\\d]*");
 
     public enum MaterialType {
         SERIAL,
