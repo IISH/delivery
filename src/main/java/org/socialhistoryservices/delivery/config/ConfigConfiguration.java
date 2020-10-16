@@ -21,7 +21,6 @@ import java.text.SimpleDateFormat;
 @Configuration
 @EnableConfigurationProperties(DeliveryProperties.class)
 public class ConfigConfiguration {
-
     @Autowired
     private DeliveryProperties deliveryProperties;
 
@@ -34,8 +33,8 @@ public class ConfigConfiguration {
 
     @Bean
     @Profile("development")
-    public ServletRegistrationBean h2ConsoleServletRegistration() {
-        ServletRegistrationBean registrationBean = new ServletRegistrationBean(new WebServlet());
+    public ServletRegistrationBean<WebServlet> h2ConsoleServletRegistration() {
+        ServletRegistrationBean<WebServlet> registrationBean = new ServletRegistrationBean<>(new WebServlet());
         registrationBean.addUrlMappings("/console/*");
         return registrationBean;
     }

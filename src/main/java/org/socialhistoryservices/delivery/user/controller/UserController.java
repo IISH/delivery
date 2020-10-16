@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * Controller which handles all /user/* requests
  */
@@ -27,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 @Transactional
 @RequestMapping(value = "/user")
 public class UserController extends ErrorHandlingController {
-
     @Autowired
     @Qualifier("userDetailsService")
     private UserService users;

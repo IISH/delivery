@@ -15,7 +15,6 @@ import java.util.Map;
  * Reservation material statistics helper class.
  */
 public class ReservationMaterialStatistics extends TupleRequestSearch<HoldingReservation> {
-
     /**
      * Creates a new reservation search helper.
      *

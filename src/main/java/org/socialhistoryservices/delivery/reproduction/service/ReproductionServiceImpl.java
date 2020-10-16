@@ -1,6 +1,8 @@
 package org.socialhistoryservices.delivery.reproduction.service;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.socialhistoryservices.delivery.api.*;
 import org.socialhistoryservices.delivery.config.DeliveryProperties;
 import org.socialhistoryservices.delivery.config.PrinterConfiguration;
@@ -48,6 +50,8 @@ import java.util.concurrent.Future;
 @Service
 @Transactional
 public class ReproductionServiceImpl extends AbstractRequestService implements ReproductionService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReproductionServiceImpl.class);
+
     @Autowired
     private ReproductionDAO reproductionDAO;
 
@@ -80,8 +84,6 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
 
     @Autowired
     private PrinterConfiguration printerConfiguration;
-
-    private Logger log = Logger.getLogger(getClass());
 
     /**
      * Add a Reproduction to the database.
@@ -430,7 +432,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
         }
         catch (PrinterException e) {
             // Do nothing, let an employee print it later on
-            log.warn("Printing reproduction failed", e);
+            LOGGER.warn("Printing reproduction failed", e);
         }
     }
 
@@ -508,7 +510,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
             }
         }
         catch (PrinterException e) {
-            log.warn("Printing reproduction failed", e);
+            LOGGER.warn("Printing reproduction failed", e);
             throw e;
         }
     }
@@ -804,7 +806,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
      */
     @Scheduled(cron = "0 0 0 * * MON-FRI")
     public void checkPayedReproductions() {
-        log.info("Start run: cancel old unpayed reproductions");
+        LOGGER.info("Start run: cancel old unpayed reproductions");
 
         // Determine the number of days
         int nrOfDays = deliveryProperties.getReproductionMaxDaysPayment();
@@ -836,10 +838,10 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
         for (Reproduction reproduction : listReproductions(query)) {
             updateStatusAndAssociatedHoldingStatus(reproduction, Reproduction.Status.CANCELLED);
             saveReproduction(reproduction);
-            log.info("Cancelled unpayed reproduction with id " + reproduction.getId());
+            LOGGER.info("Cancelled unpayed reproduction with id " + reproduction.getId());
         }
 
-        log.info("Finish run: cancel old unpayed reproductions");
+        LOGGER.info("Finish run: cancel old unpayed reproductions");
     }
 
     /**
@@ -847,7 +849,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
      */
     @Scheduled(cron = "0 0 0 * * MON-FRI")
     public void checkReminderReproductions() {
-        log.info("Start run: mail reminder old unpayed reproductions");
+        LOGGER.info("Start run: mail reminder old unpayed reproductions");
 
         // Determine the number of days
         int nrOfDays = deliveryProperties.getReproductionMaxDaysReminder();
@@ -884,15 +886,15 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
                 reproductionMailer.mailReminder(reproduction);
                 reproduction.setOfferMailReminderSent(true);
                 saveReproduction(reproduction);
-                log.info("Mailed reminder unpayed reproduction with id " + reproduction.getId());
+                LOGGER.info("Mailed reminder unpayed reproduction with id " + reproduction.getId());
             }
             catch (MailException me) {
                 // Don't do anything... we'll try again tomorrow
-                log.warn("Failed to mail reminder unpayed reproduction with id " + reproduction.getId(), me);
+                LOGGER.warn("Failed to mail reminder unpayed reproduction with id " + reproduction.getId(), me);
             }
         }
 
-        log.info("Finish run: mail reminder old unpayed reproductions");
+        LOGGER.info("Finish run: mail reminder old unpayed reproductions");
     }
 
     /**
@@ -951,7 +953,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
             refreshOrder(order);
         }
         catch (InvalidPayWayMessageException ipwme) {
-            log.error("Invalid or no PayWay message received when registering a new order.", ipwme);
+            LOGGER.error("Invalid or no PayWay message received when registering a new order.", ipwme);
             throw new OrderRegistrationFailureException(ipwme);
         }
 
@@ -978,7 +980,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
             return new AsyncResult<>(order);
         }
         catch (InvalidPayWayMessageException ivwme) {
-            log.error(String.format("refreshOrder() : Failed to refresh the order with id %d", order.getId()));
+            LOGGER.error(String.format("refreshOrder() : Failed to refresh the order with id %d", order.getId()));
             return new AsyncResult<>(null);
         }
     }
@@ -1004,7 +1006,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
             return new AsyncResult<>(order);
         }
         catch (InvalidPayWayMessageException ivwme) {
-            log.error(String.format("refundOrder() : Failed to refund the order with id %d", order.getId()));
+            LOGGER.error(String.format("refundOrder() : Failed to refund the order with id %d", order.getId()));
             return new AsyncResult<>(null);
         }
     }

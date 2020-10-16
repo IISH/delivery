@@ -13,7 +13,6 @@ import org.springframework.ui.Model;
  */
 @Service
 public class ReservationMailer extends RequestMailer {
-
     /**
      * Mail a confirmation message to a visitor who has just created a reservation.
      *

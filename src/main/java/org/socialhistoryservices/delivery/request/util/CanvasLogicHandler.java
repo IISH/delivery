@@ -10,7 +10,6 @@ import org.krysalis.barcode4j.output.Canvas;
  * with the vertical text position when applying a vertical quiet zone.
  */
 public class CanvasLogicHandler extends DefaultCanvasLogicHandler {
-
     /**
      * Main constructor.
      *

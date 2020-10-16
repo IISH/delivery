@@ -15,7 +15,6 @@ import java.util.Map;
  * Reproduction search helper class, with support for paging.
  */
 public class ReproductionSearch extends ListRequestSearch<HoldingReproduction> {
-
     /**
      * Creates a new reproduction search helper.
      *

@@ -1,12 +1,13 @@
 package org.socialhistoryservices.delivery.user.controller;
 
+import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,23 +15,23 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Intercepts traffic before it is passed to a view, then adding the current user details.
  */
-public class SecurityToViewInterceptor extends HandlerInterceptorAdapter {
+public class SecurityToViewInterceptor implements AsyncHandlerInterceptor {
 
     /**
      * Expose the current user to the views.
      */
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-                           ModelAndView model) {
+                           @Nullable ModelAndView model) {
         if (model != null) {
             model.addObject("_sec", new UserExposer());
         }
     }
 
     /**
-     * Replacement for JspTaglibs , which is not working in unit tests.
+     * Replacement for JspTaglibs, which is not working in unit tests.
      */
     public static class UserExposer {
-        private Authentication auth;
+        private final Authentication auth;
 
         /**
          * Constructor.

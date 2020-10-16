@@ -16,8 +16,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
 import javax.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -32,42 +32,11 @@ import java.util.Map;
 @Transactional
 @RequestMapping(value = "/record")
 public class RecordController extends ErrorHandlingController {
-
     @Autowired
     private RecordService records;
 
     @Autowired
     private RecordLookupService lookup;
-
-    /**
-     * Try to URL encode a string using utf-8 charset.
-     *
-     * @param s The string to encode
-     * @return The url encoded string.
-     */
-    protected String urlEncode(String s) {
-        try {
-            return URLEncoder.encode(s, "utf-8");
-        }
-        catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Try to URL decode a string using utf-8 charset.
-     *
-     * @param s The string to decode
-     * @return The url decoded string.
-     */
-    protected String urlDecode(String s) {
-        try {
-            return URLDecoder.decode(s, "utf-8");
-        }
-        catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     /**
      * Get information about records.
@@ -219,7 +188,7 @@ public class RecordController extends ErrorHandlingController {
             try {
                 // First search locally, if that fails search remote.
                 if (records.getRecordByPid(pid) != null || lookup.getRecordExtractorByPid(pid) != null)
-                    return "redirect:/record/editform/" + urlEncode(pid);
+                    return "redirect:/record/editform/" + URLEncoder.encode(pid, StandardCharsets.UTF_8);
             }
             catch (NoSuchPidException ignored) {
             }
@@ -243,7 +212,7 @@ public class RecordController extends ErrorHandlingController {
         if (title == null)
             return "record_home";
 
-        title = urlDecode(title);
+        title = URLDecoder.decode(title, StandardCharsets.UTF_8);
         RecordLookupService.PageChunk pc =
                 lookup.getRecordsByTitle(title, deliveryProperties.getRecordPageLen(), resultStart);
 
@@ -264,7 +233,7 @@ public class RecordController extends ErrorHandlingController {
     @PreAuthorize("hasRole('ROLE_RECORD_MODIFY')")
     public String showEditForm(@PathVariable String encPid, Model model) {
         // Check if the record already exists, lookup to check if valid otherwise.
-        String pid = urlDecode(encPid);
+        String pid = URLDecoder.decode(encPid, StandardCharsets.UTF_8);
         Record r = records.getRecordByPid(pid);
         if (r == null) {
             try {
@@ -298,7 +267,7 @@ public class RecordController extends ErrorHandlingController {
     @PreAuthorize("hasRole('ROLE_RECORD_MODIFY')")
     public String processEditForm(@ModelAttribute("record") Record newRecord, BindingResult result,
                                   @PathVariable String encPid, Model model) {
-        String pid = urlDecode(encPid);
+        String pid = URLDecoder.decode(encPid, StandardCharsets.UTF_8);
         Record oldRecord = records.getRecordByPid(pid);
         newRecord.setPid(pid);
         if (oldRecord != null) {
@@ -348,8 +317,8 @@ public class RecordController extends ErrorHandlingController {
     @RequestMapping(value = "/editform/{encPids:.*}", method = RequestMethod.POST, params = "action=edititem")
     @PreAuthorize("hasRole('ROLE_RECORD_MODIFY')")
     public String editChildRedirect(@RequestParam String edit, @RequestParam String item) {
-        edit = urlEncode(edit);
-        item = urlEncode(item);
+        edit = URLEncoder.encode(edit, StandardCharsets.UTF_8);
+        item = URLEncoder.encode(item, StandardCharsets.UTF_8);
         String itemSeparator = deliveryProperties.getItemSeparator();
         return "redirect:/record/editform/" + edit + itemSeparator + item;
     }

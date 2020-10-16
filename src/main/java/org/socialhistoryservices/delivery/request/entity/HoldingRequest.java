@@ -5,7 +5,6 @@ import org.socialhistoryservices.delivery.record.entity.Holding;
 import org.socialhistoryservices.delivery.record.entity.Record;
 
 public abstract class HoldingRequest {
-
     /**
      * Get the HoldingRequest's id.
      *

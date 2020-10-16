@@ -6,15 +6,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import javax.xml.xpath.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.socialhistoryservices.delivery.config.DeliveryProperties;
 
@@ -22,12 +23,12 @@ import org.socialhistoryservices.delivery.config.DeliveryProperties;
  * Represents the api.socialhistoryservices.org lookup service.
  */
 public class IISHRecordLookupService implements RecordLookupService {
-    private static final Log LOGGER = LogFactory.getLog(IISHRecordLookupService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IISHRecordLookupService.class);
     private static final String SRW_SEARCH_PATH = "ns1:recordData/marc:record/";
 
-    private static XPathExpression xpSearch, xpAll, xpOAI, xpSearch245aTitle, xpSearch500aTitle, xpSearch600aTitle,
-            xpSearch610aTitle, xpSearch650aTitle, xpSearch651aTitle, xpSearch245kTitle, xpSearch245bSubTitle,
-            xp856uUrl, xpSearchIdent, xpSearchMeta, xpNumberOfRecords;
+    private static final XPathExpression xpSearch, xpAll, xpOAI, xpSearch245aTitle, xpSearch500aTitle,
+            xpSearch600aTitle, xpSearch610aTitle, xpSearch650aTitle, xpSearch651aTitle, xpSearch245kTitle,
+            xpSearch245bSubTitle, xp856uUrl, xpSearchIdent, xpSearchMeta, xpNumberOfRecords;
 
     private DeliveryProperties deliveryProperties;
 
@@ -78,12 +79,7 @@ public class IISHRecordLookupService implements RecordLookupService {
         PageChunk pc = new PageChunk(resultCountPerChunk, resultStart);
         if (title == null) return pc;
 
-        try {
-            title = URLEncoder.encode(title, "utf-8");
-        }
-        catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        title = URLEncoder.encode(title, StandardCharsets.UTF_8);
 
         String query = getQuery("marc.245+all+\"" + title + "\"", true);
         LOGGER.debug(String.format("getRecordsByTitle(title: %s, resultcountPerChunk: %d, resultStart: %d)",
@@ -223,12 +219,7 @@ public class IISHRecordLookupService implements RecordLookupService {
         }
 
         String encodedPid;
-        try {
-            encodedPid = URLEncoder.encode(pid, "utf-8");
-        }
-        catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        encodedPid = URLEncoder.encode(pid, StandardCharsets.UTF_8);
 
         String query = metadata
                 ? getQuery("dc.identifier+=+\"" + encodedPid + "\"", true)

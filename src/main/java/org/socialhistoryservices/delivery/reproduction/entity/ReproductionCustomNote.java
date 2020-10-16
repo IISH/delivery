@@ -15,7 +15,6 @@ import javax.validation.constraints.Size;
 @Table(name = "reproduction_custom_notes")
 @Configurable
 public class ReproductionCustomNote {
-
     /**
      * The ReproductionCustomNote's id.
      */

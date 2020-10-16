@@ -3,28 +3,28 @@ package org.socialhistoryservices.delivery.api;
 import java.util.*;
 import javax.xml.xpath.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.springframework.util.StringUtils;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.socialhistoryservices.delivery.record.entity.ExternalHoldingInfo;
 import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
 import org.socialhistoryservices.delivery.record.entity.ArchiveHoldingInfo;
 
 public class MARCMetadataRecordExtractor implements MetadataRecordExtractor {
-    private static final Log LOGGER = LogFactory.getLog(MARCMetadataRecordExtractor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MARCMetadataRecordExtractor.class);
 
-    private static XPathExpression xpAuthor, xpAltAuthor, xpAlt2Author, xpAlt3Author, xp245aTitle,
+    private static final XPathExpression xpAuthor, xpAltAuthor, xpAlt2Author, xpAlt3Author, xp245aTitle,
             xp500aTitle, xp600aTitle, xp610aTitle, xp650aTitle, xp651aTitle, xp245kTitle, xp245bSubTitle, xpYear,
             xpPhysicalDescription, xpGenres, xpShelvingLocations, xpSerialNumbers, xpSignatures, xpBarcodes,
             xpLeader, xp540bCopyright, xp542mAccess;
 
-    private String pid;
-    private Node marc;
+    private final String pid;
+    private final Node marc;
 
     static {
         XPathFactory factory = XPathFactory.newInstance();
@@ -231,23 +231,11 @@ public class MARCMetadataRecordExtractor implements MetadataRecordExtractor {
         if (format.equals("ac") && coll.contains("serial collection"))
             return ExternalRecordInfo.MaterialType.SERIAL;
 
-        if (format.equals("pc") && coll.contains("archief"))
-            return ExternalRecordInfo.MaterialType.ARCHIVE;
-
-        if (format.equals("pc") && coll.contains("archive"))
-            return ExternalRecordInfo.MaterialType.ARCHIVE;
-
-        if (format.equals("pc") && coll.contains("collection"))
-            return ExternalRecordInfo.MaterialType.DOCUMENTATION;
-
         if (format.equals("gm") && coll.contains("moving image document"))
             return ExternalRecordInfo.MaterialType.MOVING_VISUAL;
 
         if (format.equals("gc") && coll.contains("moving image collection"))
             return ExternalRecordInfo.MaterialType.MOVING_VISUAL;
-
-        if (format.equals("kc") && coll.contains("poster collection"))
-            return ExternalRecordInfo.MaterialType.VISUAL;
 
         if (format.equals("rc") && coll.contains("object collection"))
             return ExternalRecordInfo.MaterialType.VISUAL;

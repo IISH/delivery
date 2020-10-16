@@ -17,7 +17,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Constraint(validatedBy = ReservationDateValidator.class)
 @Documented
 public @interface ValidReservationDate {
-
     /**
      * The message to display when invalidated.
      */

@@ -15,7 +15,6 @@ import java.util.Map;
  * Reservation search helper class, with support for paging.
  */
 public class ReservationSearch extends ListRequestSearch<HoldingReservation> {
-
     /**
      * Creates a new reservation search helper.
      *
@@ -173,7 +172,7 @@ public class ReservationSearch extends ListRequestSearch<HoldingReservation> {
         if (p.containsKey("status")) {
             String status = p.get("status")[0].trim().toUpperCase();
             // Tolerant to empty status to ensure the filter in
-            // reservation_get_list.html.ftl works
+            // reservation_get_list.html.ftlh works
             if (!status.equals("")) {
                 try {
                     Expression<Boolean> exStatus = cb.equal(

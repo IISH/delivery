@@ -1,8 +1,10 @@
 package org.socialhistoryservices.delivery.reservation.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.socialhistoryservices.delivery.config.PrinterConfiguration;
 import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
-import org.apache.log4j.Logger;
 import org.socialhistoryservices.delivery.config.DeliveryProperties;
 import org.socialhistoryservices.delivery.record.entity.Holding;
 import org.socialhistoryservices.delivery.record.entity.Record;
@@ -13,6 +15,7 @@ import org.socialhistoryservices.delivery.reservation.dao.HoldingReservationDAO;
 import org.socialhistoryservices.delivery.reservation.dao.ReservationDAO;
 import org.socialhistoryservices.delivery.reservation.entity.HoldingReservation;
 import org.socialhistoryservices.delivery.reservation.entity.Reservation;
+
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -37,6 +40,8 @@ import java.util.*;
 @Service
 @Transactional
 public class ReservationServiceImpl extends AbstractRequestService implements ReservationService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReservationServiceImpl.class);
+
     @Autowired
     private ReservationDAO reservationDAO;
 
@@ -57,8 +62,6 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
     @Autowired
     private PrinterConfiguration printerConfiguration;
-
-    private Logger log = Logger.getLogger(getClass());
 
     /**
      * Add a Reservation to the database.
@@ -393,7 +396,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
             }
         }
         catch (PrinterException e) {
-            log.warn("Printing reservation failed", e);
+            LOGGER.warn("Printing reservation failed", e);
             throw e;
         }
     }

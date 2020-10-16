@@ -12,7 +12,6 @@ import java.util.GregorianCalendar;
  * Various date utility functions.
  */
 public class DateUtils {
-
     /**
      * Determine if the given time is between today->open and today->close of the readingroom.
      *

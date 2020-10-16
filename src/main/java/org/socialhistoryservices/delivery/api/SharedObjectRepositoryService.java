@@ -1,7 +1,8 @@
 package org.socialhistoryservices.delivery.api;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -19,10 +20,10 @@ import java.util.regex.Pattern;
  * Represents the Shared Object Repository (SOR) service.
  */
 public class SharedObjectRepositoryService {
-    private static final Log LOGGER = LogFactory.getLog(SharedObjectRepositoryService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SharedObjectRepositoryService.class);
     private static final Pattern HANDLE_PID_PATTERN = Pattern.compile("^http://hdl.handle.net/10622/(.*?)\\?locatt=.*$");
 
-    private static DocumentBuilder documentBuilder;
+    private static final DocumentBuilder documentBuilder;
 
     static {
         try {
@@ -35,7 +36,7 @@ public class SharedObjectRepositoryService {
         }
     }
 
-    private String url;
+    private final String url;
 
     public SharedObjectRepositoryService(String url) {
         this.url = url;

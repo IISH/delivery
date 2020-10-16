@@ -7,7 +7,6 @@ import org.socialhistoryservices.delivery.request.entity.Request;
  * Represents the service of the request package to be used by the implementing services.
  */
 public interface RequestService {
-
     /**
      * Returns the active request with which this holding is associated.
      *

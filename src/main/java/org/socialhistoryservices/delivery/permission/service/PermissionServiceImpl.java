@@ -20,7 +20,6 @@ import java.util.List;
 @Service
 @Transactional
 public class PermissionServiceImpl implements PermissionService {
-
     @Autowired
     private PermissionDAO permissionDAO;
 

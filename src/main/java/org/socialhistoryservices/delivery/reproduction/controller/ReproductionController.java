@@ -1,7 +1,8 @@
 package org.socialhistoryservices.delivery.reproduction.controller;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.socialhistoryservices.delivery.util.InvalidRequestException;
 import org.socialhistoryservices.delivery.util.ResourceNotFoundException;
 import org.socialhistoryservices.delivery.util.TemplatePreparationException;
@@ -18,6 +19,7 @@ import org.socialhistoryservices.delivery.request.entity.Request;
 import org.socialhistoryservices.delivery.request.service.ClosedException;
 import org.socialhistoryservices.delivery.request.service.NoHoldingsException;
 import org.socialhistoryservices.delivery.request.util.BulkActionIds;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
@@ -39,6 +41,7 @@ import javax.persistence.Tuple;
 import javax.persistence.criteria.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.awt.print.PrinterException;
 import java.beans.PropertyEditorSupport;
 import java.io.IOException;
@@ -51,7 +54,7 @@ import java.util.*;
 @Transactional
 @RequestMapping(value = "/reproduction")
 public class ReproductionController extends AbstractRequestController {
-    private static final Log LOGGER = LogFactory.getLog(ReproductionController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReproductionController.class);
 
     @Autowired
     private ReproductionService reproductions;

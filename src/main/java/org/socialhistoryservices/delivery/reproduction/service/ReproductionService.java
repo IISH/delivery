@@ -20,7 +20,6 @@ import java.util.concurrent.Future;
  * Interface representing the service of the Reproduction package.
  */
 public interface ReproductionService {
-
     /**
      * Remove a Reproduction from the database.
      *

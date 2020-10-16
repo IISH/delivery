@@ -1,11 +1,11 @@
 package org.socialhistoryservices.delivery.record.entity;
 
-import org.hibernate.validator.constraints.NotBlank;
 import org.socialhistoryservices.delivery.reproduction.entity.HoldingReproduction;
 import org.socialhistoryservices.delivery.reservation.entity.HoldingReservation;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**

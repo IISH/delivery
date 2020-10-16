@@ -20,7 +20,6 @@ import java.util.Locale;
  * Mailer to send information/confirmation mails dealing with requests.
  */
 public abstract class RequestMailer extends Mailer {
-
     /**
      * Send information/confirmation mails to the reading room.
      *

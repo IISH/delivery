@@ -11,8 +11,8 @@ public class Copies {
 
     private static final Pattern PATTERN_CONTAINS_COPIES = Pattern.compile("(([0-9]+) ex)");
 
-    private Record record;
-    private int numberOfCopies;
+    private final Record record;
+    private final int numberOfCopies;
 
     public Copies(Record record) {
         this.record = record;

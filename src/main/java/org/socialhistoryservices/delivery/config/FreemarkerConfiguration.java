@@ -1,7 +1,8 @@
 package org.socialhistoryservices.delivery.config;
 
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
@@ -14,19 +15,18 @@ import java.util.Map;
  */
 @Configuration
 @EnableConfigurationProperties(DeliveryProperties.class)
-public class FreemarkerConfiguration extends FreeMarkerAutoConfiguration.FreeMarkerWebConfiguration {
-
+public class FreemarkerConfiguration implements BeanPostProcessor {
     @Autowired
-    DeliveryProperties deliveryProperties;
+    private DeliveryProperties deliveryProperties;
 
     @Override
-    public FreeMarkerConfigurer freeMarkerConfigurer() {
-        FreeMarkerConfigurer configurer = super.freeMarkerConfigurer();
-
-        Map<String, Object> sharedVariables = new HashMap<>();
-        sharedVariables.put("delivery", deliveryProperties);
-        configurer.setFreemarkerVariables(sharedVariables);
-
-        return configurer;
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        if (bean instanceof FreeMarkerConfigurer) {
+            FreeMarkerConfigurer configurer = (FreeMarkerConfigurer) bean;
+            Map<String, Object> sharedVariables = new HashMap<>();
+            sharedVariables.put("delivery", deliveryProperties);
+            configurer.setFreemarkerVariables(sharedVariables);
+        }
+        return bean;
     }
 }

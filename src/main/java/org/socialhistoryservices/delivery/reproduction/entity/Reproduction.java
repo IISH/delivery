@@ -1,7 +1,5 @@
 package org.socialhistoryservices.delivery.reproduction.entity;
 
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotBlank;
 import org.socialhistoryservices.delivery.record.entity.Holding;
 import org.socialhistoryservices.delivery.request.entity.HoldingRequest;
 import org.socialhistoryservices.delivery.request.entity.Request;
@@ -11,6 +9,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 /**
@@ -331,7 +330,7 @@ public class Reproduction extends Request {
         if (adminstrationCosts.compareTo(BigDecimal.ZERO) < 0)
             adminstrationCosts = BigDecimal.ZERO;
 
-        return adminstrationCosts.setScale(2);
+        return adminstrationCosts.setScale(2, RoundingMode.HALF_UP);
     }
 
     /**
@@ -340,7 +339,7 @@ public class Reproduction extends Request {
      * @param adminstrationCosts The adminstration costs specified.
      */
     public void setAdminstrationCosts(BigDecimal adminstrationCosts) {
-        this.adminstrationCosts = adminstrationCosts.setScale(2);
+        this.adminstrationCosts = adminstrationCosts.setScale(2, RoundingMode.HALF_UP);
     }
 
     @NotNull
@@ -364,7 +363,7 @@ public class Reproduction extends Request {
      * @param discount the computated discount for the adminstration costs.
      */
     public void setAdminstrationCostsDiscount(BigDecimal discount) {
-        this.adminstrationCostsDiscount = discount.setScale(2);
+        this.adminstrationCostsDiscount = discount.setScale(2, RoundingMode.HALF_UP);
     }
 
     @Min(0)
@@ -410,7 +409,7 @@ public class Reproduction extends Request {
      */
     public void setAdminstrationCostsBtwPrice(BigDecimal adminstrationCostsBtwPrice) {
         if (adminstrationCostsBtwPrice != null)
-            adminstrationCostsBtwPrice = adminstrationCostsBtwPrice.setScale(2);
+            adminstrationCostsBtwPrice = adminstrationCostsBtwPrice.setScale(2, RoundingMode.HALF_UP);
         this.adminstrationCostsBtwPrice = adminstrationCostsBtwPrice;
     }
 
@@ -423,7 +422,7 @@ public class Reproduction extends Request {
         double percentage = (double) this.adminstrationCostsBtwPercentage / 100 + 1;
         BigDecimal percentageDecimal = new BigDecimal(percentage);
         BigDecimal costsWithoutTax = this.adminstrationCosts.subtract(adminstrationCostsDiscount);
-        costsWithoutTax = costsWithoutTax.divide(percentageDecimal, 2, BigDecimal.ROUND_HALF_UP);
+        costsWithoutTax = costsWithoutTax.divide(percentageDecimal, 2, RoundingMode.HALF_UP);
         return costsWithoutTax;
     }
 
@@ -592,7 +591,7 @@ public class Reproduction extends Request {
         if (price.compareTo(BigDecimal.ZERO) < 0)
             price = BigDecimal.ZERO;
 
-        return price.setScale(2);
+        return price.setScale(2, RoundingMode.HALF_UP);
     }
 
     /**
@@ -611,7 +610,7 @@ public class Reproduction extends Request {
         if (price.compareTo(BigDecimal.ZERO) < 0)
             price = BigDecimal.ZERO;
 
-        return price.setScale(2);
+        return price.setScale(2, RoundingMode.HALF_UP);
     }
 
     /**
@@ -626,7 +625,7 @@ public class Reproduction extends Request {
         if (price.compareTo(BigDecimal.ZERO) < 0)
             price = BigDecimal.ZERO;
 
-        return price.setScale(2);
+        return price.setScale(2, RoundingMode.HALF_UP);
     }
 
     /**
@@ -641,7 +640,7 @@ public class Reproduction extends Request {
         if (price.compareTo(BigDecimal.ZERO) < 0)
             price = BigDecimal.ZERO;
 
-        return price.setScale(2);
+        return price.setScale(2, RoundingMode.HALF_UP);
     }
 
     /**
@@ -657,7 +656,7 @@ public class Reproduction extends Request {
                 totalBtwPrice = btwTotals.get(hr.getBtwPercentage().toString());
 
             totalBtwPrice = totalBtwPrice.add(hr.getBtwPrice());
-            btwTotals.put(hr.getBtwPercentage().toString(), totalBtwPrice.setScale(2));
+            btwTotals.put(hr.getBtwPercentage().toString(), totalBtwPrice.setScale(2, RoundingMode.HALF_UP));
         }
 
         // Administration costs includes BTW as well
@@ -666,7 +665,7 @@ public class Reproduction extends Request {
             totalBtwPrice = btwTotals.get(getAdminstrationCostsBtwPercentage().toString());
 
         totalBtwPrice = totalBtwPrice.add(getAdminstrationCostsBtwPrice());
-        btwTotals.put(getAdminstrationCostsBtwPercentage().toString(), totalBtwPrice.setScale(2));
+        btwTotals.put(getAdminstrationCostsBtwPercentage().toString(), totalBtwPrice.setScale(2, RoundingMode.HALF_UP));
 
         return btwTotals;
     }
@@ -682,7 +681,7 @@ public class Reproduction extends Request {
             totalBtwPrice = totalBtwPrice.add(btwPrice);
         }
 
-        return totalBtwPrice.setScale(2);
+        return totalBtwPrice.setScale(2, RoundingMode.HALF_UP);
     }
 
     /**

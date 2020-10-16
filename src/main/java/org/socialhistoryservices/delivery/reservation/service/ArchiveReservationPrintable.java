@@ -14,7 +14,6 @@ import java.util.List;
  * Represents a printable archive reservation.
  */
 public class ArchiveReservationPrintable extends ReservationPrintable {
-
     /**
      * Construct the printable.
      *

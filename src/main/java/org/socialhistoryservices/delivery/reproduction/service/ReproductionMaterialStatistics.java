@@ -15,7 +15,6 @@ import java.util.Map;
  * Reproduction statistics helper class.
  */
 public class ReproductionMaterialStatistics extends TupleRequestSearch<HoldingReproduction> {
-
     /**
      * Creates a new reproduction search helper.
      *

@@ -1,6 +1,8 @@
 package org.socialhistoryservices.delivery.permission.controller;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.socialhistoryservices.delivery.util.InvalidRequestException;
 import org.socialhistoryservices.delivery.util.ResourceNotFoundException;
 import org.socialhistoryservices.delivery.permission.entity.Permission;
@@ -34,6 +36,7 @@ import java.util.*;
 @Transactional
 @RequestMapping("/permission")
 public class PermissionController extends AbstractRequestController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PermissionController.class);
 
     @Autowired
     protected Validator mvcValidator;
@@ -49,8 +52,6 @@ public class PermissionController extends AbstractRequestController {
 
     @Autowired
     private SimpleDateFormat df;
-
-    private Logger log = Logger.getLogger(getClass());
 
     /**
      * Fetches one specific permission.
@@ -208,7 +209,7 @@ public class PermissionController extends AbstractRequestController {
             pmMailer.mailCode(pm);
         }
         catch (MailException e) {
-            log.error("Failed to send email", e);
+            LOGGER.error("Failed to send email", e);
             throw e;
         }
 
@@ -262,7 +263,7 @@ public class PermissionController extends AbstractRequestController {
                     pmMailer.mailReadingRoom(obj);
                 }
                 catch (MailException e) {
-                    log.error("Failed to send email", e);
+                    LOGGER.error("Failed to send email", e);
                     model.addAttribute("error", "mail");
                 }
 

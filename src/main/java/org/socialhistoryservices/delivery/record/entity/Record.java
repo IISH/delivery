@@ -2,11 +2,11 @@ package org.socialhistoryservices.delivery.record.entity;
 
 import org.apache.commons.collections.functors.InstantiateFactory;
 import org.apache.commons.collections.list.LazyList;
-import org.hibernate.validator.constraints.NotBlank;
 import org.socialhistoryservices.delivery.reproduction.util.Copies;
 import org.socialhistoryservices.delivery.reproduction.util.Pages;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;

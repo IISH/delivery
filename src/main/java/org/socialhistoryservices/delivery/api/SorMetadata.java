@@ -9,14 +9,14 @@ import java.util.Map;
 public class SorMetadata {
     private static final int TIFF_MASTER_DPI = 300;
 
-    private String contentTypeMaster;
-    private String contentTypeLevel1;
+    private final String contentTypeMaster;
+    private final String contentTypeLevel1;
 
-    private Map<String, String> contentMaster;
-    private Map<String, String> contentLevel1;
+    private final Map<String, String> contentMaster;
+    private final Map<String, String> contentLevel1;
 
-    private boolean isMETS;
-    private Map<String, List<String>> filePids;
+    private final boolean isMETS;
+    private final Map<String, List<String>> filePids;
 
     public SorMetadata(String contentTypeMaster, String contentTypeLevel1, Map<String, String> contentMaster,
                        Map<String, String> contentLevel1, boolean isMETS, Map<String, List<String>> filePids) {

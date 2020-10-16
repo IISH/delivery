@@ -20,11 +20,11 @@ import java.util.Map;
  * Builds an Excel export of payed reproductions.
  */
 public class ReproductionExcel {
-    private List<Reproduction> reproductions;
-    private MessageSource messageSource;
+    private final List<Reproduction> reproductions;
+    private final MessageSource messageSource;
 
-    private HSSFWorkbook workbook;
-    private HSSFSheet sheet;
+    private final HSSFWorkbook workbook;
+    private final HSSFSheet sheet;
 
     private CellStyle headerStyle;
     private CellStyle defaultStyle;
@@ -140,7 +140,7 @@ public class ReproductionExcel {
         cell.setCellStyle(defaultStyle);
 
         cell = row.createCell(1);
-        cell.setCellValue(reproduction.getOrderId());
+        cell.setCellValue(reproduction.getOrderId() != null ? reproduction.getOrderId() : 0);
         cell.setCellStyle(defaultStyle);
 
         cell = row.createCell(2);

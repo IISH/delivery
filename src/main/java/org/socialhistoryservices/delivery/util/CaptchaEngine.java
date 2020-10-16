@@ -15,8 +15,9 @@ import com.octo.captcha.component.image.wordtoimage.WordToImage;
 import com.octo.captcha.component.word.FileDictionary;
 import com.octo.captcha.component.word.wordgenerator.DictionaryWordGenerator;
 import com.octo.captcha.component.word.wordgenerator.WordGenerator;
-import com.octo.captcha.engine.image.ListImageCaptchaEngine;
-import com.octo.captcha.image.gimpy.GimpyFactory;
+
+import org.socialhistoryservices.delivery.util.gimpy.GimpyFactory;
+import org.socialhistoryservices.delivery.util.gimpy.ListImageCaptchaEngine;
 
 import java.awt.*;
 import java.awt.image.ImageFilter;
@@ -27,7 +28,6 @@ import java.awt.image.ImageFilter;
  * @see com.octo.captcha.engine.image.gimpy.DefaultGimpyEngine
  */
 public class CaptchaEngine extends ListImageCaptchaEngine {
-
     /**
      * The code is mostly based on the DefaultGimpyEngine with some small changes
      */

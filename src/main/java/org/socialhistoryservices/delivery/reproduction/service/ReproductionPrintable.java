@@ -14,7 +14,6 @@ import java.text.DateFormat;
  * Represents a printable reproduction.
  */
 public class ReproductionPrintable extends RequestPrintable {
-
     /**
      * Construct the printable.
      *

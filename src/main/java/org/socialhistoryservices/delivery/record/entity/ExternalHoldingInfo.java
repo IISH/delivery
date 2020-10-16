@@ -9,7 +9,6 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "external_holding_info")
 public class ExternalHoldingInfo {
-
     /**
      * The id.
      */

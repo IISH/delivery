@@ -16,7 +16,6 @@ import javax.validation.constraints.Size;
         @Index(columnList = "holding_id", name = "holding_reservations_holding_fk"),
         @Index(columnList = "reservation_id", name = "holding_reservations_reservation_fk")})
 public class HoldingReservation extends HoldingRequest {
-
     /**
      * The Reservation's id.
      */

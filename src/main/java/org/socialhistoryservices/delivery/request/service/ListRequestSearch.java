@@ -11,7 +11,6 @@ import java.util.Map;
  * @param <R> The request entity.
  */
 public abstract class ListRequestSearch<R> extends RequestSearch<R> {
-
     /**
      * Creates a new search helper.
      *

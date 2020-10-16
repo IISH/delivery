@@ -1,6 +1,8 @@
 package org.socialhistoryservices.delivery.reservation.controller;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.socialhistoryservices.delivery.reservation.service.*;
 import org.socialhistoryservices.delivery.util.ResourceNotFoundException;
 import org.socialhistoryservices.delivery.permission.entity.Permission;
@@ -42,6 +44,7 @@ import java.util.stream.Collectors;
 @Transactional
 @RequestMapping(value = "/reservation")
 public class ReservationController extends AbstractRequestController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReservationController.class);
 
     @Autowired
     private ReservationService reservations;
@@ -54,8 +57,6 @@ public class ReservationController extends AbstractRequestController {
 
     @Autowired
     private RecordService records;
-
-    private Logger log = Logger.getLogger(getClass());
 
     /**
      * Fetches one specific reservation.
@@ -194,7 +195,7 @@ public class ReservationController extends AbstractRequestController {
                         resMailer.mailConfirmation(newRes);
                     }
                     catch (MailException e) {
-                        log.error("Failed to send email", e);
+                        LOGGER.error("Failed to send email", e);
                         model.addAttribute("error", "mail");
                     }
                     // Automatically print the reservation.
@@ -360,7 +361,7 @@ public class ReservationController extends AbstractRequestController {
                 reservations.printReservation(res);
         }
         catch (PrinterException e) {
-            log.warn("Printing reservation failed", e);
+            LOGGER.warn("Printing reservation failed", e);
             // Do nothing, let an employee print it later on.
         }
     }
@@ -651,7 +652,7 @@ public class ReservationController extends AbstractRequestController {
         catch (PrinterException e) {
             // Do nothing if printing fails.
             // You will see the printed flag being false in the overview.
-            log.warn("Printing reservation failed", e);
+            LOGGER.warn("Printing reservation failed", e);
         }
 
         model.addAttribute("reservation", newRes);
@@ -685,7 +686,7 @@ public class ReservationController extends AbstractRequestController {
                 t -> (t.get("parentSignature") != null) ? t.get("parentSignature").toString() : t.get("signature").toString(),
                 t -> new RecordCount(
                         (t.get("parentTitle") != null) ? t.get("parentTitle").toString() : t.get("title").toString(),
-                        new Long(t.get("numberOfRequests").toString())
+                        Long.valueOf(t.get("numberOfRequests").toString())
                 ),
                 (num1, num2) -> new RecordCount(num1.title, num1.count + num2.count)
         )).entrySet().stream().sorted((c1, c2) -> {

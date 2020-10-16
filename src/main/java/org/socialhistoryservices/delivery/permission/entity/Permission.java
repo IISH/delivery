@@ -1,12 +1,12 @@
 package org.socialhistoryservices.delivery.permission.entity;
 
 import org.apache.commons.lang.RandomStringUtils;
-import org.hibernate.validator.constraints.NotBlank;
 import org.socialhistoryservices.delivery.record.entity.Record;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import javax.validation.constraints.NotBlank;
 import java.util.*;
 
 /**

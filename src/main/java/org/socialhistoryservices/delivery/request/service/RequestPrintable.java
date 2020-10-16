@@ -43,8 +43,8 @@ public abstract class RequestPrintable implements Printable {
     protected DeliveryProperties deliveryProperties;
     protected final HoldingRequest holdingRequest;
 
-    private Locale l;
-    private MessageSource msgSource;
+    private final Locale l;
+    private final MessageSource msgSource;
 
     protected static class DrawInfo {
         public int offsetX;

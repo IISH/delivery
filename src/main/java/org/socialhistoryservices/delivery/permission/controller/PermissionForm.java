@@ -1,9 +1,9 @@
 package org.socialhistoryservices.delivery.permission.controller;
 
-import org.hibernate.validator.constraints.Email;
 import org.socialhistoryservices.delivery.permission.entity.Permission;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 import java.text.SimpleDateFormat;
 
@@ -11,7 +11,6 @@ import java.text.SimpleDateFormat;
  * Form to handle modifying permissions.
  */
 public class PermissionForm {
-
     /**
      * The name of the visitor to view the record.
      */

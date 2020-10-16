@@ -9,7 +9,6 @@ import java.util.Calendar;
 import java.util.List;
 
 public interface ReservationDateExceptionService {
-
     /**
      * Add a ReservationDateException to the database.
      *

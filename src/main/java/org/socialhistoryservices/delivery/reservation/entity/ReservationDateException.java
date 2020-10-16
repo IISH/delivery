@@ -1,9 +1,9 @@
 package org.socialhistoryservices.delivery.reservation.entity;
 
-import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
@@ -15,7 +15,6 @@ import java.util.List;
 @Table(name = "reservation_date_exceptions")
 @Configurable
 public class ReservationDateException {
-
     /**
      * The ReservationDateException's id.
      */

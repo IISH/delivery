@@ -7,6 +7,7 @@ import org.socialhistoryservices.delivery.request.entity.Request;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * Reproduction object representing a reproduction that can be made on a set of records.
@@ -17,7 +18,6 @@ import java.math.BigDecimal;
         @Index(columnList = "reproduction_id", name = "holding_reproductions_reproduction_fk"),
         @Index(columnList = "holding_id", name = "holding_reproductions_holding_fk")})
 public class HoldingReproduction extends HoldingRequest {
-
     /**
      * The HoldingReproduction's id.
      */
@@ -82,7 +82,7 @@ public class HoldingReproduction extends HoldingRequest {
     public BigDecimal getCompletePriceWithoutTax() {
         double percentage = (double) this.btwPercentage / 100 + 1;
         BigDecimal percentageDecimal = new BigDecimal(percentage);
-        return this.getCompletePriceWithDiscount().divide(percentageDecimal, 2, BigDecimal.ROUND_HALF_UP);
+        return this.getCompletePriceWithDiscount().divide(percentageDecimal, 2, RoundingMode.HALF_UP);
     }
 
     /**
@@ -92,7 +92,7 @@ public class HoldingReproduction extends HoldingRequest {
      */
     public void setPrice(BigDecimal price) {
         if (price != null)
-            price = price.setScale(2);
+            price = price.setScale(2, RoundingMode.HALF_UP);
         this.price = price;
     }
 
@@ -161,7 +161,7 @@ public class HoldingReproduction extends HoldingRequest {
      */
     public void setDiscount(BigDecimal discount) {
         if (discount != null)
-            discount = discount.setScale(2);
+            discount = discount.setScale(2, RoundingMode.HALF_UP);
         this.discount = discount;
     }
 
@@ -185,7 +185,7 @@ public class HoldingReproduction extends HoldingRequest {
      */
     public void setBtwPrice(BigDecimal btwPrice) {
         if (btwPrice != null)
-            btwPrice = btwPrice.setScale(2);
+            btwPrice = btwPrice.setScale(2, RoundingMode.HALF_UP);
         this.btwPrice = btwPrice;
     }
 

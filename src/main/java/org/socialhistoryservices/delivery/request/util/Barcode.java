@@ -10,7 +10,6 @@ import org.krysalis.barcode4j.output.CanvasProvider;
  * Override to use an overridden CanvasLogicHandler.
  */
 public class Barcode extends Code128Bean {
-
     /**
      * Generates a barcode using the given Canvas to render the barcode to its output format.
      * Override to use an overridden CanvasLogicHandler.

@@ -3,8 +3,8 @@ package org.socialhistoryservices.delivery.api;
 import java.util.*;
 import javax.xml.xpath.*;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -15,19 +15,19 @@ import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
 import org.socialhistoryservices.delivery.record.entity.ArchiveHoldingInfo;
 
 public class EADMetadataRecordExtractor implements MetadataRecordExtractor {
-    private static final Log LOGGER = LogFactory.getLog(EADMetadataRecordExtractor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EADMetadataRecordExtractor.class);
 
-    private static XPath xpath;
-    private static XPathExpression xpTitle, xpAuthor, xpPhysicalDescription, xpUnitId,
+    private static final XPath xpath;
+    private static final XPathExpression xpTitle, xpAuthor, xpPhysicalDescription, xpUnitId,
             xpContainer, xpAccessAndUse, xpAccessRestrict, xpP, xpParent,
             xpArchive931, xpArchiveLocation, xpArchiveMeter, xpArchiveNumbers, xpArchiveFormat, xpArchiveNote;
 
-    private String parentPid;
-    private String item;
-    private String itemSep;
+    private final String parentPid;
+    private final String item;
+    private final String itemSep;
 
-    private Node ead;
-    private Node archival;
+    private final Node ead;
+    private final Node archival;
 
     static {
         try {

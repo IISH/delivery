@@ -1,7 +1,5 @@
 package org.socialhistoryservices.delivery.reservation.entity;
 
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotBlank;
 import org.socialhistoryservices.delivery.permission.entity.Permission;
 import org.socialhistoryservices.delivery.record.entity.Holding;
 import org.socialhistoryservices.delivery.request.entity.HoldingRequest;
@@ -9,7 +7,9 @@ import org.socialhistoryservices.delivery.request.entity.Request;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 import java.util.*;
 
@@ -20,7 +20,6 @@ import java.util.*;
 @Table(name = "reservations")
 @Configurable
 public class Reservation extends Request {
-
     /**
      * Status of the reservation.
      */

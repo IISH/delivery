@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 public abstract class Request {
-
     /**
      * Returns the name of the person making the request.
      *

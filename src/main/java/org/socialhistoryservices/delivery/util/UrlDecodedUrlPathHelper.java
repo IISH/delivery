@@ -3,14 +3,13 @@ package org.socialhistoryservices.delivery.util;
 import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Compare the path urldecoded.
  */
 public class UrlDecodedUrlPathHelper extends UrlPathHelper {
-
     /**
      * Compares the url decoded path instead of the encoded.
      *
@@ -23,24 +22,17 @@ public class UrlDecodedUrlPathHelper extends UrlPathHelper {
         String decodedPathWithinApp;
 
         // If the URL decoded pathWithinApp is alright, return it.
-        try {
-            decodedPathWithinApp = URLDecoder.decode(pathWithinApp, "UTF-8");
+        decodedPathWithinApp = URLDecoder.decode(pathWithinApp, StandardCharsets.UTF_8);
+        if (decodedPathWithinApp.startsWith(servletPath)) {
+            // Normal case: URI contains servlet path.
+            return decodedPathWithinApp.substring(servletPath.length());
+        }
 
-            if (decodedPathWithinApp.startsWith(servletPath)) {
-                // Normal case: URI contains servlet path.
-                return decodedPathWithinApp.substring(servletPath.length());
-            }
-            else {
-                // Special case: URI is different from servlet path.
-                // Can happen e.g. with index page: URI="/", servletPath="/index.html"
-                // Use path info if available, as it indicates an index page within
-                // a servlet mapping. Otherwise, use the full servlet path.
-                String pathInfo = request.getPathInfo();
-                return (pathInfo != null ? pathInfo : servletPath);
-            }
-        }
-        catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        // Special case: URI is different from servlet path.
+        // Can happen e.g. with index page: URI="/", servletPath="/index.html"
+        // Use path info if available, as it indicates an index page within
+        // a servlet mapping. Otherwise, use the full servlet path.
+        String pathInfo = request.getPathInfo();
+        return (pathInfo != null ? pathInfo : servletPath);
     }
 }

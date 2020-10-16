@@ -14,7 +14,6 @@ import java.util.Locale;
  */
 @Service
 public class ReproductionPDF extends RequestPDF {
-
     /**
      * Create an invoice of the given reproduction.
      *

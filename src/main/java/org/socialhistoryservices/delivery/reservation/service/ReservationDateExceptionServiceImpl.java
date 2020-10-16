@@ -1,6 +1,5 @@
 package org.socialhistoryservices.delivery.reservation.service;
 
-import org.apache.log4j.Logger;
 import org.socialhistoryservices.delivery.reservation.dao.ReservationDateExceptionDAO;
 import org.socialhistoryservices.delivery.reservation.entity.ReservationDateException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +26,6 @@ public class ReservationDateExceptionServiceImpl implements ReservationDateExcep
 
     @Autowired
     protected MessageSource messageSource;
-
-    private Logger log = Logger.getLogger(getClass());
 
     /**
      * Add a ReservationDateException to the database.

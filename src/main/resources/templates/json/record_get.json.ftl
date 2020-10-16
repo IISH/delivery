@@ -1,3 +1,7 @@
+<#function _ ident msg>
+  <#return msgResolver.getMessage(ident, msg)/>
+</#function>
+
 <#if callback??>
 ${callback}([
 <#else>

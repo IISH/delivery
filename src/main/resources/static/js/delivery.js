@@ -103,7 +103,7 @@ function renumberHoldings() {
 function addNewHolding() {
     var rows = $("table.holdings tr.holding");
     var curIdx = -1;
-    if (rows.size() > 0) {
+    if (rows.length > 0) {
         curIdx = parseInt(rows.last().attr('id').substr(7));
     }
     var newPrefix = "holdings["+(curIdx+1)+"].";
@@ -122,7 +122,7 @@ function addNewHolding() {
 function addNewHoldingReservation(newHoldingReservation) {
     var rows = $("#holdingReservations .holdingReservations");
     var curIdx = -1;
-    if (rows.size() > 0) {
+    if (rows.length > 0) {
         curIdx = parseInt(rows.last().attr('id').substr(18));
     }
     var newPrefix = "holdingReservations["+(curIdx+1)+"].";
@@ -176,7 +176,7 @@ function renumberHoldingReservations() {
 function addNewHoldingReproduction(newHoldingReproduction) {
     var rows = $("#holdingReproductions .holdingReproductions");
     var curIdx = -1;
-    if (rows.size() > 0) {
+    if (rows.length > 0) {
         curIdx = parseInt(rows.last().attr('id').substr(19));
     }
     var newPrefix = "holdingReproductions["+(curIdx+1)+"].";
@@ -244,7 +244,7 @@ function renumberHoldingReproductions() {
 
 function addNewStandardOption() {
     var rows = $("table.reproduction_standard_options tr.standard_option");
-    var size = rows.size();
+    var size = rows.length;
     var newPrefix = "options["+(size)+"].";
     var newStandardOption = $("#newStandardOption").clone();
     newStandardOption.removeAttr("id");

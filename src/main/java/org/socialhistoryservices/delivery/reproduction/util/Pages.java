@@ -21,8 +21,8 @@ public class Pages {
     private static final Pattern PATTERN_SEPERATORS = Pattern.compile("[\\p{Punct}\\s]+");
     private static final Pattern PATTERN_NUMBERS = Pattern.compile("[0-9]+");
 
-    private Record record;
-    private int numberOfPages;
+    private final Record record;
+    private final int numberOfPages;
 
     public Pages(Record record) {
         this.record = record;

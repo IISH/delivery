@@ -11,7 +11,6 @@ import java.text.DateFormat;
  * Represents a printable reservation.
  */
 public class ReservationPrintable extends RequestPrintable {
-
     /**
      * Construct the printable.
      *

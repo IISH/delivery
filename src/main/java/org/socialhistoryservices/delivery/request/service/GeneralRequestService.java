@@ -7,7 +7,6 @@ import org.socialhistoryservices.delivery.request.entity.Request;
  * Interface representing the service of the RequestService package.
  */
 public interface GeneralRequestService {
-
     /**
      * Get an active request relating to a specific Holding.
      *

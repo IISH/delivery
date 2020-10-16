@@ -1,8 +1,7 @@
 package org.socialhistoryservices.delivery.api;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ResponseHandler;
@@ -12,7 +11,12 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
@@ -25,12 +29,12 @@ import java.util.Map;
  * Represents the PayWay service.
  */
 public class PayWayService {
-    private static final Log logger = LogFactory.getLog(PayWayService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PayWayService.class);
 
-    private String address;
-    private String passPhraseIn;
-    private String passPhraseOut;
-    private String projectName;
+    private final String address;
+    private final String passPhraseIn;
+    private final String passPhraseOut;
+    private final String projectName;
 
     public PayWayService(String address, String passPhraseIn, String passPhraseOut, String projectName) {
         this.address = address;
@@ -87,7 +91,7 @@ public class PayWayService {
             HttpPost httpPost = new HttpPost(this.address + "/" + apiName);
             httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
 
-            logger.debug(String.format("send(): Sending message to PayWay: %s", httpPost.getRequestLine()));
+            LOGGER.debug(String.format("send(): Sending message to PayWay: %s", httpPost.getRequestLine()));
 
             returnMessage = httpClient.execute(httpPost, new PayWayResponseHandler());
 
@@ -97,7 +101,7 @@ public class PayWayService {
             }
         }
         catch (IOException ioe) {
-            logger.debug("send(): PayWay connection failed", ioe);
+            LOGGER.debug("send(): PayWay connection failed", ioe);
             throw new InvalidPayWayMessageException(returnMessage, ioe);
         }
 

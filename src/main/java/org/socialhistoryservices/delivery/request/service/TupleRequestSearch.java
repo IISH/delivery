@@ -12,7 +12,6 @@ import java.util.Map;
  * @param <R> The request entity.
  */
 public abstract class TupleRequestSearch<R> extends RequestSearch<R> {
-
     /**
      * Creates a new search helper.
      *

@@ -22,7 +22,6 @@ import java.util.*;
 @Service
 @Transactional
 public class RecordServiceImpl implements RecordService {
-
     @Autowired
     private RecordDAO recordDAO;
 

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "delivery")
 public class DeliveryProperties {
-
     private String apiBase = "/solr/all/srw";
     private String apiDomain = "api.socialhistoryservices.org";
     private int apiPort = 80;

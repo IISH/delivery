@@ -1,7 +1,6 @@
 package org.socialhistoryservices.delivery.util;
 
 import com.octo.captcha.service.CaptchaService;
-import com.octo.captcha.service.CaptchaServiceException;
 import org.socialhistoryservices.delivery.config.DeliveryProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -18,8 +17,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -46,12 +45,7 @@ public class ErrorHandlingController {
      * @return Separate pids.
      */
     protected String[] getPidsFromURL(String pids) {
-        try {
-            return URLDecoder.decode(pids, "utf-8").split(deliveryProperties.getPidSeparator());
-        }
-        catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        return URLDecoder.decode(pids, StandardCharsets.UTF_8).split(deliveryProperties.getPidSeparator());
     }
 
     @InitBinder
@@ -87,10 +81,6 @@ public class ErrorHandlingController {
             if (responseField != null) {
                 isCaptchaCorrect = captchaService.validateResponseForID(id, responseField);
             }
-        }
-        catch (CaptchaServiceException e) {
-            // Should not happen, may be thrown if the id is not valid
-            isCaptchaCorrect = false;
         }
         finally {
             if (!isCaptchaCorrect) {

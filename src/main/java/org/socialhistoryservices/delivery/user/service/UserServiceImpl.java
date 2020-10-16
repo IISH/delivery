@@ -23,7 +23,6 @@ import java.util.List;
 @Service
 @Transactional
 public class UserServiceImpl implements UserService, UserDetailsService {
-
     /**
      * user DAO, do not autowire unless userServiceDetails bean removed
      */

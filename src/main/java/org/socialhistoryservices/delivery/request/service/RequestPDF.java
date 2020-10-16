@@ -62,9 +62,8 @@ public abstract class RequestPDF extends TemplatePreparation {
      */
     private byte[] createPDF(String view) throws TemplatePreparationException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        BufferedOutputStream bufOut = new BufferedOutputStream(out);
 
-        try {
+        try (BufferedOutputStream bufOut = new BufferedOutputStream(out)) {
             Fop fop = FOP_FACTORY.newFop(MimeConstants.MIME_PDF, bufOut);
 
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -75,17 +74,8 @@ public abstract class RequestPDF extends TemplatePreparation {
 
             transformer.transform(source, result);
         }
-        catch (FOPException | TransformerException e) {
+        catch (FOPException | TransformerException | IOException e) {
             throw new TemplatePreparationException(e);
-        }
-        finally {
-            try {
-                bufOut.flush();
-                bufOut.close();
-            }
-            catch (IOException e) {
-                throw new TemplatePreparationException(e);
-            }
         }
 
         return out.toByteArray();

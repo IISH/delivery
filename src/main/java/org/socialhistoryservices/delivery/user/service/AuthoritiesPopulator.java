@@ -13,7 +13,7 @@ import java.util.Set;
  * Obtains the authorities for the logged in LDAP user from the database.
  */
 public class AuthoritiesPopulator extends DefaultLdapAuthoritiesPopulator {
-    private UserService userService;
+    private final UserService userService;
 
     /**
      * Constructor for group search scenarios. <tt>userRoleAttributes</tt> may still be set as a property.

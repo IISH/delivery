@@ -1,16 +1,17 @@
 package org.socialhistoryservices.delivery.reproduction.entity;
 
-import org.hibernate.validator.constraints.NotBlank;
 import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * ReproductionOption object representing a ReproductionStandardOption.
@@ -234,7 +235,7 @@ public class ReproductionStandardOption {
      * @param price the price.
      */
     public void setPrice(BigDecimal price) {
-        this.price = price.setScale(2);
+        this.price = price.setScale(2, RoundingMode.HALF_UP);
     }
 
     @NotNull
