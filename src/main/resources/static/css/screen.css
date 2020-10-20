@@ -535,7 +535,7 @@ ul.messages {
     clear: both;
 }
 
-ul.holdingDetails, ul.reproductionDetails {
+ul.recordDetails, ul.holdingDetails, ul.reproductionDetails {
     list-style: none;
     padding: 0;
 }
@@ -544,16 +544,25 @@ ul.holdingDetails, ul.reproductionDetails.create {
     margin: 0 0 1em 5em;
 }
 
+ul.recordDetails {
+    display: inline-block;
+    margin: 0;
+}
+
 ul.holdingDetails ul.reproductionDetails {
     display: inline-block;
     margin-left: 0;
 }
 
-ul.holdingDetails span, ul.reproductionDetails span {
+ul.recordDetails span, ul.holdingDetails span, ul.reproductionDetails span {
    font-weight: bold;
    width: 12em;
    display: block;
    float: left;
+}
+
+ul.recordDetails li {
+    margin: 5px 0;
 }
 
 ul.holdingDetails li {
@@ -577,60 +586,30 @@ ul.holdingDetails input[type=radio] {
     vertical-align: top;
 }
 
-ul.reservationDetails {
+ul.reservationDetails, ul.permissionDetails {
     list-style: none;
     margin: 0;
     padding: 0;
 }
 
-ul.reservationDetails span {
+ul.reservationDetails span, ul.permissionDetails span {
    font-weight: bold;
    width: 13em;
    display: block;
    float: left;
-}
-
-ul.permissionDetails {
-    list-style: none;
-    margin: 0;
-    padding: 0;
 }
 
 ul.permissionDetails li.spacing {
     margin-top: 10px;
 }
 
-ul.permissionDetails span {
-   font-weight: bold;
-   width: 13em;
-   display: block;
-   float: left;
+fieldset.permissionDetails {
+    margin: 10px 0;
 }
 
-fieldset.recordPermissionDetails {
-    margin-bottom: 10px;
-}
-
-fieldset.recordPermissionDetails ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-fieldset.recordPermissionDetails ul span {
-   font-weight: bold;
-   width: 13em;
-   display: block;
-   float: left;
-}
-
-fieldset.recordPermissionDetails select {
+fieldset.permissionDetails select {
     width: 8em;
     margin-bottom: 5px;
-}
-
-fieldset.recordPermissionDetails input[type=checkbox] {
-    vertical-align: middle;
 }
 
 .user_list {
@@ -691,14 +670,6 @@ div.languageSelect ul li {
 
 label {
    font-weight: bold;
-}
-
-
-li.motivation label {
-    vertical-align: top;
-    width: 13em;
-    display: block;
-    float: left;
 }
 
 .current {

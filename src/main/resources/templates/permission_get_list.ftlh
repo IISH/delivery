@@ -27,7 +27,7 @@
 
         <li>
           <label for="permission_filter">
-            ${_("recordPermission.granted", "Permission")}
+            ${_("permission.granted", "Permission")}
           </label>
 
           <select id="permission_filter" name="permission">
@@ -38,17 +38,17 @@
 
             <#assign isSelected = (RequestParameters["permission"]?? && RequestParameters["permission"]?upper_case == 'NULL')/>
             <option value="null"<#if isSelected> selected="selected"</#if>>
-              ${_("recordPermission.granted.null", "To decide")}
+              ${_("permission.granted.null", "To decide")}
             </option>
 
             <#assign isSelected = (RequestParameters["permission"]?? && RequestParameters["permission"]?upper_case == 'TRUE')/>
             <option value="true"<#if isSelected> selected="selected"</#if>>
-              ${_("recordPermission.granted.true", "Granted")}
+              ${_("permission.granted.true", "Granted")}
             </option>
 
             <#assign isSelected = (RequestParameters["permission"]?? && RequestParameters["permission"]?upper_case == 'FALSE')/>
             <option value="false"<#if isSelected> selected="selected"</#if>>
-              ${_("recordPermission.granted.false", "Denied")}
+              ${_("permission.granted.false", "Denied")}
             </option>
           </select>
         </li>
@@ -90,7 +90,7 @@
     </form>
   </fieldset>
 
-  <#if recordPermissions?size == 0>
+  <#if permissions?size == 0>
     <span class="bignote">${_("search.notfound", "No results...")}</span>
   <#else>
     <table class="overview">
@@ -104,10 +104,7 @@
       </tr>
       </thead>
       <tbody>
-      <#list recordPermissions as recordPermission>
-        <#assign record = recordPermission.record>
-        <#assign permission = recordPermission.permission>
-
+      <#list permissions as permission>
         <tr>
           <td>
             <a href="${rc.contextPath}/permission/${permission.id?c}">
@@ -115,23 +112,23 @@
             </a>
           </td>
 
-          <td class="leftAligned">${record.toString()}</td>
+          <td class="leftAligned">${permission.record.toString()}</td>
 
           <td>${permission.name}</td>
 
           <td>
-            <#if !recordPermission.granted && !recordPermission.dateGranted??>
-              ${_("recordPermission.granted.null", "To be reviewed")}
+            <#if !permission.granted && !permission.dateGranted??>
+              ${_("permission.granted.null", "To be reviewed")}
             <#else>
-              ${recordPermission.granted?string(_("recordPermission.granted.true", "Granted"), _("recordPermission.granted.false", "Denied"))}
+              ${permission.granted?string(_("permission.granted.true", "Granted"), _("permission.granted.false", "Denied"))}
             </#if>
           </td>
 
           <td>
-            <#if recordPermission.dateGranted??>
-              ${recordPermission.dateGranted?string(delivery.dateFormat)}
+            <#if permission.dateGranted??>
+              ${permission.dateGranted?string(delivery.dateFormat)}
             <#else>
-              ${_("recordPermission.granted.null", "To decide")}
+              ${_("permission.granted.null", "To decide")}
             </#if>
           </td>
         </tr>
@@ -139,6 +136,6 @@
       </tbody>
     </table>
 
-    <@pageLinks recordPermissionsSize RequestParameters["page_len"]!delivery.requestPageLen?number RequestParameters["page"]!1/>
+    <@pageLinks permissionsSize RequestParameters["page_len"]!delivery.requestPageLen?number RequestParameters["page"]!1/>
   </#if>
 </@base>

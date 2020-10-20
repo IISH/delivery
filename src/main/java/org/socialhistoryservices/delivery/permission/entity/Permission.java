@@ -1,6 +1,9 @@
 package org.socialhistoryservices.delivery.permission.entity;
 
+import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import org.apache.commons.lang.RandomStringUtils;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import org.socialhistoryservices.delivery.record.entity.Record;
 import org.springframework.context.i18n.LocaleContextHolder;
 
@@ -14,6 +17,7 @@ import java.util.*;
  */
 @Entity
 @Table(name = "permissions")
+@TypeDef(name = "list-array", typeClass = ListArrayType.class)
 public class Permission {
     /**
      * The Permission's id.
@@ -226,6 +230,31 @@ public class Permission {
     }
 
     /**
+     * The Permission's request.
+     */
+    @Size(max = 255)
+    @Column(name = "request")
+    private String request;
+
+    /**
+     * Get the Permission's request.
+     *
+     * @return the Permission's request.
+     */
+    public String getRequest() {
+        return request;
+    }
+
+    /**
+     * Set the Permission's request.
+     *
+     * @param request the Permission's request.
+     */
+    public void setRequest(String request) {
+        this.request = request;
+    }
+
+    /**
      * The Permission's request locale.
      */
     @Column(name = "requestlocale", nullable = false)
@@ -250,41 +279,130 @@ public class Permission {
     }
 
     /**
-     * Permissions per record in this permission request.
+     * The Permission's record.
      */
-    @OneToMany(mappedBy = "permission", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RecordPermission> recordPermissions;
+    @ManyToOne
+    @JoinColumn(name = "record_id")
+    private Record record;
 
     /**
-     * Get the per record permissions.
+     * Get the Permission's record.
      *
-     * @return A list of permissions per record.
+     * @return the Permission's record.
      */
-    public List<RecordPermission> getRecordPermissions() {
-        return recordPermissions;
+    public Record getRecord() {
+        return record;
     }
 
     /**
-     * Add a record permission to a permission.
+     * Set the Permission's record.
      *
-     * @param rp The record permission to add.
+     * @param record the Permission's record.
      */
-    public void addRecordPermission(RecordPermission rp) {
-        recordPermissions.add(rp);
+    public void setRecord(Record record) {
+        this.record = record;
     }
 
     /**
-     * Remove a record permission from a permission.
-     *
-     * @param rp The record permission to remove.
+     * The Permission's granted.
      */
-    public void removeRecordPermission(RecordPermission rp) {
-        recordPermissions.remove(rp);
+    @Column(name = "granted", nullable = false)
+    private boolean granted;
+
+    /**
+     * Get the Permission's granted.
+     *
+     * @return the Permission's granted.
+     */
+    public boolean getGranted() {
+        return granted;
     }
 
     /**
-     * Check if this permission has a granted clause for
-     * the given record.
+     * Set the Permission's granted.
+     *
+     * @param granted the Permission's granted.
+     */
+    public void setGranted(boolean granted) {
+        this.granted = granted;
+    }
+
+    /**
+     * The Permission's motivation.
+     */
+    @Column(name = "motivation", columnDefinition = "TEXT")
+    private String motivation;
+
+    /**
+     * Set the Permission's motivation.
+     *
+     * @param mot The Permission's motivation string.
+     */
+    public void setMotivation(String mot) {
+        this.motivation = mot;
+    }
+
+    /**
+     * Get the Permission's motivation.
+     *
+     * @return The Permission's motivation string.
+     */
+    public String getMotivation() {
+        return motivation;
+    }
+
+    /**
+     * The Permission's date granted.
+     */
+    @Temporal(TemporalType.DATE)
+    @Column(name = "date_granted")
+    private Date dateGranted;
+
+    /**
+     * Get the Permission's date granted.
+     *
+     * @return The Permission's date granted.
+     */
+    public Date getDateGranted() {
+        return dateGranted;
+    }
+
+    /**
+     * Set the Permission's date granted.
+     *
+     * @param dateGranted The Permission's date granted.
+     */
+    public void setDateGranted(Date dateGranted) {
+        this.dateGranted = dateGranted;
+    }
+
+    /**
+     * Inventory numbers granted in this permission request.
+     */
+    @Type(type = "list-array")
+    @Column(name = "inv_nos_granted", columnDefinition = "varchar(50)[]", nullable = false)
+    private List<String> invNosGranted;
+
+    /**
+     * Get the Permission's granted inventory numbers.
+     *
+     * @return The Permission's granted inventory numbers.
+     */
+    public List<String> getInvNosGranted() {
+        return invNosGranted;
+    }
+
+    /**
+     * Set the Permission's granted inventory numbers.
+     *
+     * @param invNosGranted The Permission's granted inventory numbers.
+     */
+    public void setInvNosGranted(List<String> invNosGranted) {
+        this.invNosGranted = invNosGranted;
+    }
+
+    /**
+     * Check if this permission has a granted clause for the given record.
      *
      * @param rec Record to check for.
      * @return Whether permission has been granted for this record.
@@ -292,23 +410,17 @@ public class Permission {
     public boolean hasGranted(Record rec) {
         Calendar minDateCalender = Calendar.getInstance();
         minDateCalender.add(Calendar.YEAR, -1);
+        if (getDateGranted() == null || getDateGranted().before(minDateCalender.getTime()))
+            return false;
 
-        for (RecordPermission p : recordPermissions) {
-            boolean recordMatch = p.getRecord().equals(rec) ||
-                    ((rec.getParent() != null) && p.getRecord().equals(rec.getParent()));
-            boolean valid = (p.getDateGranted() != null) && p.getDateGranted().after(minDateCalender.getTime());
-
-            if (recordMatch && p.getGranted() && valid)
-                return true;
-        }
-        return false;
+        return invNosGranted.contains(rec.getHoldings().get(0).getSignature());
     }
 
     /**
      * Default constructor.
      */
     public Permission() {
-        recordPermissions = new ArrayList<>();
+        invNosGranted = new ArrayList<>();
         setRequestLocale(LocaleContextHolder.getLocale());
     }
 }

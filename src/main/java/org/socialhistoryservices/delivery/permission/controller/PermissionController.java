@@ -3,10 +3,10 @@ package org.socialhistoryservices.delivery.permission.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.socialhistoryservices.delivery.api.NoSuchPidException;
 import org.socialhistoryservices.delivery.util.InvalidRequestException;
 import org.socialhistoryservices.delivery.util.ResourceNotFoundException;
 import org.socialhistoryservices.delivery.permission.entity.Permission;
-import org.socialhistoryservices.delivery.permission.entity.RecordPermission;
 import org.socialhistoryservices.delivery.permission.service.PermissionMailer;
 import org.socialhistoryservices.delivery.permission.service.PermissionSearch;
 import org.socialhistoryservices.delivery.permission.service.PermissionService;
@@ -62,13 +62,15 @@ public class PermissionController extends AbstractRequestController {
      * @return The name of the view to use.
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    @PreAuthorize("hasRole('ROLE_PERMISSION_VIEW')")
+    @PreAuthorize("hasRole('ROLE_PERMISSION_MODIFY')")
     public String getSingle(@PathVariable int id, Model model, HttpServletRequest req) {
         Permission pm = permissions.getPermissionById(id);
         if (pm == null) {
             throw new ResourceNotFoundException();
         }
+
         model.addAttribute("permission", pm);
+
         return "permission_get";
     }
 
@@ -86,16 +88,15 @@ public class PermissionController extends AbstractRequestController {
         CriteriaBuilder cb = permissions.getPermissionCriteriaBuilder();
 
         PermissionSearch search = new PermissionSearch(cb, p);
-        CriteriaQuery<RecordPermission> cq = search.list();
+        CriteriaQuery<Permission> cq = search.list();
         CriteriaQuery<Long> cqCount = search.count();
 
         // Fetch result set
-        List<RecordPermission> recordPermissions = permissions
-                .listRecordPermissions(cq, getFirstResult(p), getMaxResults(p));
-        model.addAttribute("recordPermissions", recordPermissions);
+        List<Permission> matchedPermissions = permissions.listPermissions(cq, getFirstResult(p), getMaxResults(p));
+        model.addAttribute("permissions", matchedPermissions);
 
-        long recordPermissionsSize = permissions.countRecordPermissions(cqCount);
-        model.addAttribute("recordPermissionsSize", recordPermissionsSize);
+        long permissionsSize = permissions.countPermissions(cqCount);
+        model.addAttribute("permissionsSize", permissionsSize);
 
         initOverviewModel(model);
 
@@ -118,54 +119,26 @@ public class PermissionController extends AbstractRequestController {
      * Updates a list of record permissions (rp.id -> true/false)
      *
      * @param pm The permission to update.
-     * @param p  The parameter map in which (recordpermission.id, granted) tuples are stored.
+     * @param p  The parameter map in which tuples are stored.
      */
     private void updateRecordPermissions(Permission pm, Map<String, String[]> p) {
-        Map<Record, RecordPermission> parents = new HashMap<>();
-
-        // Update all granted statuses, if found.
-        for (RecordPermission rp : pm.getRecordPermissions()) {
-            String gKey = "granted_" + rp.getId();
-            String pKey = "parent_" + rp.getId();
-            String mKey = "motivation_" + rp.getId();
-            if (p.containsKey(gKey) && !p.get(gKey)[0].trim().equals("null")) {
-                rp.setGranted(p.get(gKey)[0].trim().equals("true"));
-                rp.setDateGranted(new Date());
-            }
-            if (p.containsKey(pKey)) {
-                Record record = rp.getRecord();
-                Record parent = record.getParent();
-                if (parent != null) {
-                    parents.put(parent, rp);
-                    rp.setRecord(parent);
-                    rp.setOriginalRequestPids(record.getPid());
-                }
-            }
-            if (p.containsKey(mKey)) {
-                String motivation = p.get(mKey)[0].trim();
-                if (!motivation.isEmpty()) {
-                    rp.setMotivation(motivation);
-                }
-            }
+        if (p.containsKey("granted") && !p.get("granted")[0].trim().equals("null")) {
+            pm.setGranted(p.get("granted")[0].trim().equals("true"));
+            pm.setDateGranted(new Date());
         }
 
-        // Now remove all redundant record permissions.
-        Set<RecordPermission> toRemove = new HashSet<>();
-        for (RecordPermission rp : pm.getRecordPermissions()) {
-            Record record = rp.getRecord();
-            Record parent = record.getParent();
-            if ((parent != null) && parents.containsKey(parent)) {
-                RecordPermission parentRp = parents.get(parent);
-                parentRp.setOriginalRequestPids(
-                        parentRp.getOriginalRequestPids() + deliveryProperties.getPidSeparator() + record.getPid());
-
-                toRemove.add(rp);
-                permissions.removeRecordPermission(rp);
-            }
+        pm.setMotivation(null);
+        if (p.containsKey("motivation")) {
+            String motivation = p.get("motivation")[0].trim();
+            if (!motivation.isEmpty())
+                pm.setMotivation(motivation);
         }
-        pm.getRecordPermissions().removeAll(toRemove);
 
-        // Save all changes.
+        pm.setInvNosGranted(new ArrayList<>());
+        if (p.containsKey("invNosGranted") && pm.getDateGranted() != null && pm.getGranted()) {
+            pm.setInvNosGranted(Arrays.asList(p.get("invNosGranted")[0].split("__")));
+        }
+
         permissions.savePermission(pm);
     }
 
@@ -184,6 +157,7 @@ public class PermissionController extends AbstractRequestController {
             throw new InvalidRequestException("No such permission");
         }
         updateRecordPermissions(pm, req.getParameterMap());
+
         return "redirect:/permission/";
     }
 
@@ -196,8 +170,7 @@ public class PermissionController extends AbstractRequestController {
      */
     @RequestMapping(value = "/process", method = RequestMethod.POST, params = "saveandemail")
     @PreAuthorize("hasRole('ROLE_PERMISSION_MODIFY')")
-    public String formSaveAndFinish(@RequestParam int id,
-                                    HttpServletRequest req) {
+    public String formSaveAndFinish(@RequestParam int id, HttpServletRequest req) {
         Permission pm = permissions.getPermissionById(id);
         if (pm == null) {
             throw new InvalidRequestException("No such permission.");
@@ -220,26 +193,28 @@ public class PermissionController extends AbstractRequestController {
      * Handle permission request form.
      *
      * @param req    The HTTP request.
-     * @param pids   The records to request.
+     * @param pid    The record to request.
      * @param model  The page's model.
      * @param form   (Optional) form that was filled in.
      * @param result (Optional) result of form validation.
      * @return View name to render.
      */
-    public String create(HttpServletRequest req, String[] pids, Model model, PermissionForm form, BindingResult result) {
-        // Try to fetch restricted records.
-        List<Record> recs = getRestrictedRecordsFromPids(pids);
-
-        // Check restrictions
-        if (recs == null || recs.isEmpty()) {
+    public String create(HttpServletRequest req, String pid, Model model, PermissionForm form, BindingResult result) {
+        Record record;
+        try {
+            record = records.getRecordByPidAndCreate(pid);
+            if (record == null) {
+                model.addAttribute("error", "invalid");
+                return "permission_error";
+            }
+        }
+        catch (NoSuchPidException e) {
             model.addAttribute("error", "invalid");
             return "permission_error";
         }
 
-        // Add the records to the model.
-        model.addAttribute("records", recs);
+        model.addAttribute("record", record);
 
-        // Create new form
         if (form == null) {
             form = new PermissionForm();
         }
@@ -247,15 +222,12 @@ public class PermissionController extends AbstractRequestController {
             checkCaptcha(req, result, model);
 
             if (!result.hasErrors()) {
-                // Create the permission
                 Permission obj = new Permission();
                 form.fillInto(obj, df);
 
-                // Add records
-                addRecordsToPermission(obj, recs);
-
-                // Generate a unique token
+                obj.setRecord(record);
                 guaranteeUniqueCode(obj);
+
                 permissions.addPermission(obj);
 
                 try {
@@ -271,7 +243,6 @@ public class PermissionController extends AbstractRequestController {
             }
         }
 
-        // Add to model
         if (result == null) {
             model.addAttribute("permission", form);
         }
@@ -280,74 +251,31 @@ public class PermissionController extends AbstractRequestController {
     }
 
     /**
-     * Add restricted records to a list.
-     *
-     * @param pids The list of restricted record PIDs.
-     * @return The list of restricted records or null when the list of PIDs
-     * contains a record which is not restricted or a non-existing record.
-     */
-    private List<Record> getRestrictedRecordsFromPids(String[] pids) {
-        List<Record> recs = new ArrayList<>();
-        for (String pid : pids) {
-            if (pid.length() == 0) {
-                continue;
-            }
-
-            Record rec = records.getRecordByPid(pid);
-            if (rec == null) {
-                return null;
-            }
-            recs.add(rec);
-
-            if (rec.getRestriction() != ExternalRecordInfo.Restriction.RESTRICTED) {
-                return null;
-            }
-        }
-        return recs;
-    }
-
-    /**
-     * Add new records to a permission, granted set to false.
-     *
-     * @param obj  The permission to add the records to.
-     * @param recs The records to add.
-     */
-    private void addRecordsToPermission(Permission obj, List<Record> recs) {
-        for (Record rec : recs) {
-            RecordPermission p = new RecordPermission();
-            p.setRecord(rec);
-            p.setPermission(obj);
-            obj.addRecordPermission(p);
-        }
-    }
-
-    /**
      * Form to request permission for a set of records.
      *
-     * @param pids  The PIDs to create a permission for.
+     * @param pid   The PID to create a permission for.
      * @param model The model to use.
      * @return The view to resolve.
      */
-    @RequestMapping(value = "/createform/{pids:.*}", method = RequestMethod.GET)
-    public String createForm(HttpServletRequest req, @PathVariable String pids,
-                             Model model) {
-        return create(req, getPidsFromURL(pids), model, null, null);
+    @RequestMapping(value = "/createform/{pid}", method = RequestMethod.GET)
+    public String createForm(HttpServletRequest req, @PathVariable String pid, Model model) {
+        return create(req, pid, model, null, null);
     }
 
     /**
      * Submitted form to request permission.
      *
-     * @param pids       The PIDs to create a permission for.
+     * @param pid        The PIDs to create a permission for.
      * @param permission The permission form submitted.
      * @param result     The result of validating the form.
      * @param model      The model to add attributes to.
      * @return The view to resolve.
      */
-    @RequestMapping(value = "/createform/{pids:.*}", method = RequestMethod.POST)
-    public String createForm(HttpServletRequest req, @PathVariable String pids,
+    @RequestMapping(value = "/createform/{pid}", method = RequestMethod.POST)
+    public String createForm(HttpServletRequest req, @PathVariable String pid,
                              @ModelAttribute("permission") @Valid PermissionForm permission,
                              BindingResult result, Model model) {
-        return create(req, getPidsFromURL(pids), model, permission, result);
+        return create(req, pid, model, permission, result);
     }
 
     /**

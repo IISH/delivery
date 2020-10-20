@@ -8,19 +8,18 @@
 
   ${_("reservation.permissionMsg", "The following items are restricted and require a request for permission to be filed before reserving:")}
 
-  <ul>
-    <#assign pids = ""/>
-    <#list holdingReservationsRestricted as hr>
-      <#assign h = hr.holding>
-      <#assign pids = pids + h.record.pid?url+delivery.pidSeparator>
+  <#list holdingReservationsRestricted as hrByParent>
+    <ul>
+      <#list hrByParent as hr>
+        <li>${hr.holding.record.toString()}</li>
+      </#list>
+    </ul>
 
-      <li>${h.record.toString()}</li>
-    </#list>
-  </ul>
-
-  <form action="${rc.contextPath}/permission/createform/${pids?url}" method="GET" target="_blank">
-    <input type="submit" value="${_("reservation.reqPermission", "Request Permission")}"/>
-  </form>
+    <form action="${rc.contextPath}/permission/createform/${hrByParent[0].holding.record.parent.pid?url}"
+          method="GET" target="_blank">
+      <input type="submit" value="${_("reservation.reqPermission", "Request Permission")}"/>
+    </form>
+  </#list>
 
   <#if holdingReservationsOpen?has_content>
     <h1>${_("reservation.allowed", "Open Items:")}</h1>

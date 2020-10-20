@@ -1,7 +1,6 @@
 package org.socialhistoryservices.delivery.permission.service;
 
 import org.socialhistoryservices.delivery.permission.entity.Permission;
-import org.socialhistoryservices.delivery.permission.entity.RecordPermission;
 import org.socialhistoryservices.delivery.record.entity.Record;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -27,13 +26,6 @@ public interface PermissionService {
     void removePermission(Permission obj);
 
     /**
-     * Remove a RecordPermission from the database.
-     *
-     * @param obj RecordPermission to remove.
-     */
-    void removeRecordPermission(RecordPermission obj);
-
-    /**
      * Save changes to a Permission in the database.
      *
      * @param obj Permission to save.
@@ -56,31 +48,30 @@ public interface PermissionService {
     CriteriaBuilder getPermissionCriteriaBuilder();
 
     /**
-     * List all RecordPermissions matching a built query.
+     * List all Permissions matching a built query.
      *
      * @param query The query to match by.
-     * @return A list of matching RecordPermissions.
+     * @return A list of matching Permissions.
      */
-    List<RecordPermission> listRecordPermissions(CriteriaQuery<RecordPermission> query);
+    List<Permission> listPermissions(CriteriaQuery<Permission> query);
 
     /**
-     * List all RecordPermissions matching a built query.
+     * List all Permissions matching a built query.
      *
      * @param query       The query to match by.
      * @param firstResult The first result to obtain
      * @param maxResults  The max number of results to obtain
-     * @return A list of matching RecordPermissions.
+     * @return A list of matching Permissions.
      */
-    List<RecordPermission> listRecordPermissions(CriteriaQuery<RecordPermission> query,
-                                                 int firstResult, int maxResults);
+    List<Permission> listPermissions(CriteriaQuery<Permission> query, int firstResult, int maxResults);
 
     /**
-     * Count all RecordPermissions matching a built query.
+     * Count all Permissions matching a built query.
      *
      * @param query The criteria query to execute
-     * @return A count of matching RecordPermissions.
+     * @return A count of matching Permissions.
      */
-    long countRecordPermissions(CriteriaQuery<Long> query);
+    long countPermissions(CriteriaQuery<Long> query);
 
     /**
      * Get a single Permission matching a built query.

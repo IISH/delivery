@@ -40,6 +40,9 @@ $(document).ready(function(){
     toggleCustomReproduction();
     toggleReproductionForm();
 
+    $('select.permission').change(toggleInventory);
+    toggleInventory();
+
     $('.with-sub-rows').on('click', 'tr', function () {
         $(this).nextUntil(':not(.sub-row)').toggleClass('hidden');
     });
@@ -79,6 +82,22 @@ function toggleReproductionForm() {
     if (reproductionItemsSelect.length > 0) {
         var noCheckedItems = (reproductionItemsSelect.find('input[type=radio]:checked').length === 0);
         $('.reproduction_form input').prop('disabled', noCheckedItems);
+    }
+}
+
+function toggleInventory() {
+    if ($('select.permission').val() === 'true') {
+        $('.on-granted').removeClass('hidden');
+
+        $("#inventory")
+            .jstree({plugins: ['checkbox']})
+            .on('changed.jstree', function () {
+                var jsTree = $.jstree.reference('#inventory');
+                $('input[type=hidden][name=invNosGranted]').val(jsTree.get_bottom_selected().join('__'));
+            });
+    }
+    else {
+        $('.on-granted').addClass('hidden');
     }
 }
 

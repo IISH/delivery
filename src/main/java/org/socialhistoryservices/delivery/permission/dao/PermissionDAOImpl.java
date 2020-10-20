@@ -1,7 +1,6 @@
 package org.socialhistoryservices.delivery.permission.dao;
 
 import org.socialhistoryservices.delivery.permission.entity.Permission;
-import org.socialhistoryservices.delivery.permission.entity.RecordPermission;
 import org.socialhistoryservices.delivery.record.entity.Record;
 import org.springframework.stereotype.Repository;
 
@@ -51,20 +50,6 @@ public class PermissionDAOImpl implements PermissionDAO {
     }
 
     /**
-     * Remove a RecordPermission from the database.
-     *
-     * @param obj RecordPermission to remove.
-     */
-    public void remove(RecordPermission obj) {
-        try {
-            obj = entityManager.getReference(RecordPermission.class, obj.getId());
-            entityManager.remove(obj);
-        }
-        catch (EntityNotFoundException ignored) {
-        }
-    }
-
-    /**
      * Save changes to a Permission in the database.
      *
      * @param obj Permission to save.
@@ -93,24 +78,24 @@ public class PermissionDAOImpl implements PermissionDAO {
     }
 
     /**
-     * List all RecordPermissions matching a built query.
+     * List all Permissions matching a built query.
      *
      * @param query The query to match by.
-     * @return A list of matching RecordPermissions.
+     * @return A list of matching Permissions.
      */
-    public List<RecordPermission> list(CriteriaQuery<RecordPermission> query) {
+    public List<Permission> list(CriteriaQuery<Permission> query) {
         return entityManager.createQuery(query).getResultList();
     }
 
     /**
-     * List all RecordPermissions matching a built query.
+     * List all Permissions matching a built query.
      *
      * @param query       The query to match by.
      * @param firstResult The first result to obtain
      * @param maxResults  The max number of results to obtain
-     * @return A list of matching RecordPermissions.
+     * @return A list of matching Permissions.
      */
-    public List<RecordPermission> list(CriteriaQuery<RecordPermission> query, int firstResult, int maxResults) {
+    public List<Permission> list(CriteriaQuery<Permission> query, int firstResult, int maxResults) {
         return entityManager
                 .createQuery(query)
                 .setFirstResult(firstResult)
@@ -152,7 +137,7 @@ public class PermissionDAOImpl implements PermissionDAO {
      * @return Whether any permission requests have been made including this record.
      */
     public boolean hasPermissions(Record record) {
-        String query = "select p from RecordPermission p join p.record r where r.id = :id";
+        String query = "select p from Permission p join p.record r where r.id = :id";
 
         Query q = entityManager.createQuery(query);
         q.setParameter("id", record.getId());

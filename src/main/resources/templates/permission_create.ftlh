@@ -6,56 +6,34 @@
 <@userbase title>
   <h1>${title}</h1>
 
-  <p>${_("createpermission.note", "")}</p>
+  <p>${_("permission.note", "")}</p>
 
   <section>
     <@form "" "permission" "create">
       <heading>
         <hgroup>
           <fieldset>
-            <legend>${_("permission.records", "")}</legend>
-              <#assign skip = []>
-              <#list records as r>
-                  <#assign info = r.externalInfo>
-                  <#if !skip?seq_contains(r.pid)>
-                    <h3>${info.title}</h3>
+            <ul class="recordDetails">
+              <#assign info = record.externalInfo>
 
-                    <ul class="holdingDetails">
-                      <li>
-                        <span>${_("record.externalInfo.materialType", "Material Type")}</span>
-                          ${_("record.externalInfo.materialType.${info.materialType}", "")}
-                      </li>
+              <#if record.title??>
+                <li>
+                  <span>${_("record.title", "Title")}</span> ${record.title}
+                </li>
+              </#if>
 
-                        <#if r.parent??>
-                          <li>
-                            <span>${_("record.items", "Items")}</span>
+              <#if info.author??>
+                <li>
+                  <span>${_("record.externalInfo.author", "Author")}</span> ${info.author}
+                </li>
+              </#if>
 
-                              <#assign items = []>
-                              <#list records as childR>
-                                  <#if childR.parent.pid == r.parent.pid>
-                                      <#assign skip = skip + [childR.pid]>
-                                      <#assign items = items + [childR.holdings[0].signature]>
-                                  </#if>
-                              </#list>
-
-                              ${items?join(', ')}
-                          </li>
-                        </#if>
-
-                        <#if info.author??>
-                          <li>
-                            <span>${_("record.externalInfo.author", "Author")}</span> ${info.author}
-                          </li>
-                        </#if>
-
-                        <#if info.displayYear??>
-                          <li>
-                            <span>${_("record.externalInfo.displayYear", "Year")}</span> ${info.displayYear}
-                          </li>
-                        </#if>
-                    </ul>
-                  </#if>
-              </#list>
+              <#if info.displayYear??>
+                <li>
+                  <span>${_("record.externalInfo.displayYear", "Year")}</span> ${info.displayYear}
+                </li>
+              </#if>
+            </ul>
           </fieldset>
         </hgroup>
       </heading>
@@ -65,9 +43,10 @@
             <@input "permission.visitorName" ""/>
             <@input "permission.visitorEmail" ""/>
             <@textarea "permission.address" "" false/>
-            <@input "permission.researchOrganization" "create"/>
-            <@textarea "permission.researchSubject" "create"/>
-            <@textarea "permission.explanation" "create" false/>
+            <@input "permission.researchOrganization" ""/>
+            <@textarea "permission.researchSubject" ""/>
+            <@textarea "permission.request" ""/>
+            <@textarea "permission.explanation" "" false/>
 
           <label for="captcha_response_field" class="field">
               ${_("captcha.explanation", "Type the following word to prevent spam")}

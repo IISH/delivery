@@ -2,7 +2,6 @@ package org.socialhistoryservices.delivery.permission.service;
 
 import org.socialhistoryservices.delivery.util.Mailer;
 import org.socialhistoryservices.delivery.permission.entity.Permission;
-import org.socialhistoryservices.delivery.permission.entity.RecordPermission;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
@@ -68,12 +67,7 @@ public class PermissionMailer extends Mailer {
      * @return Whether to send a permission code (true) or not (false).
      */
     private boolean isCodeEligible(Permission pm) {
-        for (RecordPermission rp : pm.getRecordPermissions()) {
-            if (rp.getGranted()) {
-                return true;
-            }
-        }
-        return false;
+        return !pm.getInvNosGranted().isEmpty();
     }
 
     /**

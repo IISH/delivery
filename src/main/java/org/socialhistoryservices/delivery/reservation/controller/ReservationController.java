@@ -164,12 +164,16 @@ public class ReservationController extends AbstractRequestController {
         }
 
         // If the reservation contains restricted items, go to the choice screen
-        List<HoldingReservation> open = findHoldingsOnRestriction(newRes, codes, false);
-        List<HoldingReservation> restricted = findHoldingsOnRestriction(newRes, codes, true);
+        List<HoldingReservation> open = findHoldingsOnRestriction(newRes, false);
+        List<HoldingReservation> restricted = findHoldingsOnRestriction(newRes, true);
         if (!restricted.isEmpty()) {
+            Collection<List<HoldingReservation>> restrictedByParent = restricted.stream()
+                    .collect(Collectors.groupingBy(hr -> hr.getHolding().getRecord().getParent().getId()))
+                    .values();
+
             model.addAttribute("reservation", newRes);
             model.addAttribute("holdingReservationsOpen", open);
-            model.addAttribute("holdingReservationsRestricted", restricted);
+            model.addAttribute("holdingReservationsRestricted", restrictedByParent);
             return "reservation_choice";
         }
 
@@ -224,12 +228,10 @@ public class ReservationController extends AbstractRequestController {
     /***
      * Based on the codes given, returns the holdings of the given reservation that are either open or reserved.
      * @param reservation The reservation with holdings to check.
-     * @param codes The codes giving access to certain restricted records.
      * @param returnRestricted Whether to return a list of restricted records, or open records.
      * @return The list with records matched.
      */
-    private List<HoldingReservation> findHoldingsOnRestriction(Reservation reservation, String[] codes,
-                                                               boolean returnRestricted) {
+    private List<HoldingReservation> findHoldingsOnRestriction(Reservation reservation, boolean returnRestricted) {
         List<HoldingReservation> foundHr = new ArrayList<>();
         for (HoldingReservation hr : reservation.getHoldingReservations()) {
             Record record = hr.getHolding().getRecord();

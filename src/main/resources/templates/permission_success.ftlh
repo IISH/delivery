@@ -9,14 +9,6 @@
       <h1>${title}</h1>
     </heading>
 
-    <section>
-      <ul class="items">
-        <#list records as rec>
-          <li>${rec.toString()}</li>
-        </#list>
-      </ul>
-    </section>
-
     ${_("permission.successMsg", "Permission has been requested. You will be contacted with the decision as soon as possible.")}
 
     <#if error??>

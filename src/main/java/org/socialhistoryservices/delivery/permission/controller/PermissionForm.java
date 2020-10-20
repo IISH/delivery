@@ -185,6 +185,31 @@ public class PermissionForm {
     }
 
     /**
+     * The request of the permission's applicant.
+     */
+    @NotNull
+    @Size(max = 255)
+    private String request;
+
+    /**
+     * Get the Permission's request.
+     *
+     * @return the Permission's request.
+     */
+    public String getRequest() {
+        return request;
+    }
+
+    /**
+     * Set the Permission's request.
+     *
+     * @param request the Permission's request.
+     */
+    public void setRequest(String request) {
+        this.request = request;
+    }
+
+    /**
      * Save data into a model.
      *
      * @param obj Permission to save into.
@@ -195,6 +220,7 @@ public class PermissionForm {
         obj.setEmail(getVisitorEmail());
         obj.setAddress(getAddress());
         obj.setExplanation(getExplanation());
+        obj.setRequest(getRequest());
         obj.setResearchOrganization(getResearchOrganization());
         obj.setResearchSubject(getResearchSubject());
     }

@@ -38,8 +38,10 @@
     </style>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <link type="text/css" href="${rc.contextPath}/css/jquery-ui.min.css" rel="stylesheet"/>
+    <link type="text/css" href="${rc.contextPath}/css/style.min.css" rel="stylesheet"/>
     <script type="text/javascript" src="${rc.contextPath}/js/jquery-3.5.1.min.js"></script>
     <script type="text/javascript" src="${rc.contextPath}/js/jquery-ui.js"></script>
+    <script type="text/javascript" src="${rc.contextPath}/js/jstree.min.js"></script>
     <script type="text/javascript" src="${rc.contextPath}/js/delivery.js"></script>
     <#-- Locale dependent javascript -->
     <script type="text/javascript" src="${rc.contextPath}/js/delivery.locale.${rc.locale}.js"></script>

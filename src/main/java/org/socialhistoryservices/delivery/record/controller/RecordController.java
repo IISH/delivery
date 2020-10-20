@@ -51,21 +51,15 @@ public class RecordController extends ErrorHandlingController {
         Map<String, List<Record>> reservedChilds = new HashMap<>();
 
         for (String pid : pids) {
-            synchronized (this) { // Issue #139: Make sure that when A enters, B has to wait, and will detect the insert into the database by B when entering.
-                Record rec = records.getRecordByPid(pid);
-                if (rec == null) { // Issue #108
-                    // Try creating the record.
-                    try {
-                        rec = records.createRecordByPid(pid);
-                        records.addRecord(rec);
-                    }
-                    catch (NoSuchPidException e) {
-                        // Pass, catch if no of the requested PIDs are available
-                        // below.
-                    }
+            // Issue #139: Make sure that when A enters, B has to wait,
+            // and will detect the insert into the database by B when entering
+            synchronized (this) {
+                Record rec = null;
+                try {
+                    rec = records.getRecordByPidAndCreate(pid);
                 }
-                else if (records.updateExternalInfo(rec, false)) {
-                    records.saveRecord(rec);
+                catch (NoSuchPidException e) {
+                    // Pass, catch if no of the requested PIDs are available below.
                 }
 
                 if (rec != null) {
@@ -232,24 +226,17 @@ public class RecordController extends ErrorHandlingController {
     @RequestMapping(value = "/editform/{encPid:.*}", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ROLE_RECORD_MODIFY')")
     public String showEditForm(@PathVariable String encPid, Model model) {
-        // Check if the record already exists, lookup to check if valid otherwise.
         String pid = URLDecoder.decode(encPid, StandardCharsets.UTF_8);
-        Record r = records.getRecordByPid(pid);
-        if (r == null) {
-            try {
-                r = records.createRecordByPid(pid);
-                model.addAttribute("isNewRecord", true);
-            }
-            catch (NoSuchPidException e) {
-                // This should not happen with normal usage through record-home.
-                throw new InvalidRequestException("No such PID. Are you sure the " +
-                        "record you want to add is available in the SRW API?");
-            }
+        Record r;
+
+        try {
+            r = records.getRecordByPidAndCreate(pid);
         }
-        else {
-            // Add holding/other API info if present
-            records.updateExternalInfo(r, true);
+        catch (NoSuchPidException e) {
+            throw new InvalidRequestException(
+                    "No such PID. Are you sure the record you want to add is available in the SRW API?");
         }
+
         model.addAttribute("record", r);
         return "record_edit";
     }

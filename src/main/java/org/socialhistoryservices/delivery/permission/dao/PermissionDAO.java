@@ -1,7 +1,6 @@
 package org.socialhistoryservices.delivery.permission.dao;
 
 import org.socialhistoryservices.delivery.permission.entity.Permission;
-import org.socialhistoryservices.delivery.permission.entity.RecordPermission;
 import org.socialhistoryservices.delivery.record.entity.Record;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -28,13 +27,6 @@ public interface PermissionDAO {
     void remove(Permission obj);
 
     /**
-     * Remove a RecordPermission from the database.
-     *
-     * @param obj RecordPermission to remove.
-     */
-    void remove(RecordPermission obj);
-
-    /**
      * Save changes to a Permission in the database.
      *
      * @param obj Permission to save.
@@ -57,22 +49,22 @@ public interface PermissionDAO {
     CriteriaBuilder getCriteriaBuilder();
 
     /**
-     * List all RecordPermissions matching a built query.
+     * List all Permissions matching a built query.
      *
      * @param query The query to match by.
-     * @return A list of matching RecordPermissions.
+     * @return A list of matching Permissions.
      */
-    List<RecordPermission> list(CriteriaQuery<RecordPermission> query);
+    List<Permission> list(CriteriaQuery<Permission> query);
 
     /**
-     * List all RecordPermissions matching a built query.
+     * List all Permissions matching a built query.
      *
      * @param query       The query to match by.
      * @param firstResult The first result to obtain
      * @param maxResults  The max number of results to obtain
-     * @return A list of matching RecordPermissions.
+     * @return A list of matching Permissions.
      */
-    List<RecordPermission> list(CriteriaQuery<RecordPermission> query, int firstResult, int maxResults);
+    List<Permission> list(CriteriaQuery<Permission> query, int firstResult, int maxResults);
 
     /**
      * Count all RecordPermissions matching a built query.

@@ -3,7 +3,6 @@ package org.socialhistoryservices.delivery.permission.service;
 import org.socialhistoryservices.delivery.permission.dao.PermissionDAO;
 import org.socialhistoryservices.delivery.permission.entity.Permission;
 import org.socialhistoryservices.delivery.permission.entity.Permission_;
-import org.socialhistoryservices.delivery.permission.entity.RecordPermission;
 import org.socialhistoryservices.delivery.record.entity.Record;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,15 +41,6 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     /**
-     * Remove a RecordPermission from the database.
-     *
-     * @param obj RecordPermission to remove.
-     */
-    public void removeRecordPermission(RecordPermission obj) {
-        permissionDAO.remove(obj);
-    }
-
-    /**
      * Save changes to a Permission in the database.
      *
      * @param obj Permission to save.
@@ -79,35 +69,34 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     /**
-     * List all RecordPermissions matching a built query.
+     * List all Permissions matching a built query.
      *
      * @param query The query to match by.
-     * @return A list of matching RecordPermissions.
+     * @return A list of matching Permissions.
      */
-    public List<RecordPermission> listRecordPermissions(CriteriaQuery<RecordPermission> query) {
+    public List<Permission> listPermissions(CriteriaQuery<Permission> query) {
         return permissionDAO.list(query);
     }
 
     /**
-     * List all RecordPermissions matching a built query.
+     * List all Permissions matching a built query.
      *
      * @param query       The query to match by.
      * @param firstResult The first result to obtain
      * @param maxResults  The max number of results to obtain
-     * @return A list of matching RecordPermissions.
+     * @return A list of matching Permissions.
      */
-    public List<RecordPermission> listRecordPermissions(CriteriaQuery<RecordPermission> query,
-                                                        int firstResult, int maxResults) {
+    public List<Permission> listPermissions(CriteriaQuery<Permission> query, int firstResult, int maxResults) {
         return permissionDAO.list(query, firstResult, maxResults);
     }
 
     /**
-     * Count all RecordPermissions matching a built query.
+     * Count all Permissions matching a built query.
      *
      * @param query The criteria query to execute
-     * @return A count of matching RecordPermissions.
+     * @return A count of matching Permissions.
      */
-    public long countRecordPermissions(CriteriaQuery<Long> query) {
+    public long countPermissions(CriteriaQuery<Long> query) {
         return permissionDAO.count(query);
     }
 

@@ -10,11 +10,9 @@ ${permission.address}</#if>
 * ${_("permission.researchOrganization", "for")}: ${permission.researchOrganization}
 * ${_("permission.researchSubject", "Subject")}:
 ${permission.researchSubject}
+* ${_("permission.request", "Request for materials")}:
+${permission.request}
 <#if permission.explanation??>* ${_("permission.explanation", "Explanation")}:
 ${permission.explanation}</#if>
-
---- ${_("reservation.records", "Records")} ---
-<#list permission.recordPermissions as rp>
-* ${rp.record.toString()}
-</#list>
+* ${_("permission.record", "Item")}: ${permission.record.toString()}
 </@mail>

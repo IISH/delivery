@@ -102,6 +102,26 @@ public class RecordServiceImpl implements RecordService {
     }
 
     /**
+     * Retrieve the Record matching the given pid and create if it does not exists.
+     *
+     * @param pid Pid of the Record to retrieve.
+     * @return The Record matching the pid. Null if none exist.
+     * @throws NoSuchPidException Thrown when the provided PID does not exist in the API.
+     */
+    public Record getRecordByPidAndCreate(String pid) throws NoSuchPidException {
+        Record record = getRecordByPid(pid);
+        if (record == null) {
+            record = createRecordByPid(pid);
+            addRecord(record);
+        }
+        else if (updateExternalInfo(record, false)) {
+            saveRecord(record);
+        }
+
+        return record;
+    }
+
+    /**
      * Get a criteria builder for querying Records.
      *
      * @return the CriteriaBuilder.
@@ -253,37 +273,6 @@ public class RecordServiceImpl implements RecordService {
     }
 
     /**
-     * Create a record, using the metadata from the IISH API to populate its fields.
-     *
-     * @param pid The pid of the record (should exist in the API).
-     * @return The new Record (not yet committed to the database).
-     * @throws NoSuchPidException Thrown when the provided PID does not exist in the API.
-     */
-    public Record createRecordByPid(String pid) throws NoSuchPidException {
-        Record parent = null;
-        String itemSeparator = deliveryProperties.getItemSeparator();
-        if (pid.contains(itemSeparator)) {
-            int idx = pid.indexOf(itemSeparator);
-            String parentPid = pid.substring(0, idx);
-
-            parent = getRecordByPid(parentPid);
-            if (parent == null) {
-                parent = createRecordByPid(parentPid);
-                addRecord(parent);
-            }
-            else if (updateExternalInfo(parent, false)) {
-                saveRecord(parent);
-            }
-        }
-
-        MetadataRecordExtractor recordExtractor = lookup.getRecordExtractorByPid(pid);
-        Record r = createRecord(recordExtractor, parent);
-        createOrUpdateSiblings(r, recordExtractor.getRecordExtractorsForContainerSiblings());
-
-        return r;
-    }
-
-    /**
      * Updates the external info of the given record, if necessary.
      *
      * @param record      The record of which to update the external info.
@@ -318,6 +307,37 @@ public class RecordServiceImpl implements RecordService {
             // PID not found, or API down, then just skip the record
             return false;
         }
+    }
+
+    /**
+     * Create a record, using the metadata from the IISH API to populate its fields.
+     *
+     * @param pid The pid of the record (should exist in the API).
+     * @return The new Record (not yet committed to the database).
+     * @throws NoSuchPidException Thrown when the provided PID does not exist in the API.
+     */
+    private Record createRecordByPid(String pid) throws NoSuchPidException {
+        Record parent = null;
+        String itemSeparator = deliveryProperties.getItemSeparator();
+        if (pid.contains(itemSeparator)) {
+            int idx = pid.indexOf(itemSeparator);
+            String parentPid = pid.substring(0, idx);
+
+            parent = getRecordByPid(parentPid);
+            if (parent == null) {
+                parent = createRecordByPid(parentPid);
+                addRecord(parent);
+            }
+            else if (updateExternalInfo(parent, false)) {
+                saveRecord(parent);
+            }
+        }
+
+        MetadataRecordExtractor recordExtractor = lookup.getRecordExtractorByPid(pid);
+        Record r = createRecord(recordExtractor, parent);
+        createOrUpdateSiblings(r, recordExtractor.getRecordExtractorsForContainerSiblings());
+
+        return r;
     }
 
     /**

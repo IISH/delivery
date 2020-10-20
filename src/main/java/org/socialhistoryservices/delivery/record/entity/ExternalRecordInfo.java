@@ -1,5 +1,11 @@
 package org.socialhistoryservices.delivery.record.entity;
 
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+
+import org.socialhistoryservices.delivery.record.util.Inventory;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
@@ -12,12 +18,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Represents external info for a record (title from evergreen,
- * author etc.). This information is cached, cannot be relied upon to be
- * persistent.
+ * Represents external info for a record (title from evergreen, author etc.).
+ * This information is cached, cannot be relied upon to be persistent.
  */
 @Entity
 @Table(name = "external_record_info")
+@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class ExternalRecordInfo {
     private static final Pattern PATTERN_YEAR = Pattern.compile("[^\\d]*([12]\\d{3})[^\\d]*");
 
@@ -322,6 +328,28 @@ public class ExternalRecordInfo {
         this.container = container;
     }
 
+    @Type(type = "jsonb")
+    @Column(columnDefinition = "jsonb")
+    private Inventory inventory;
+
+    /**
+     * Get the inventory.
+     *
+     * @return The inventory.
+     */
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    /**
+     * Set the inventory.
+     *
+     * @param inventory The inventory.
+     */
+    public void setInventory(Inventory inventory) {
+        this.inventory = inventory;
+    }
+
     /**
      * Merge other record's data with this record.
      *
@@ -338,5 +366,6 @@ public class ExternalRecordInfo {
         setPhysicalDescription(other.getPhysicalDescription());
         setGenres(other.getGenres());
         setContainer(other.getContainer());
+        setInventory(other.getInventory());
     }
 }

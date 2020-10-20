@@ -10,6 +10,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.socialhistoryservices.delivery.record.util.Inventory;
 import org.socialhistoryservices.delivery.record.entity.ExternalHoldingInfo;
 import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
 import org.socialhistoryservices.delivery.record.entity.ArchiveHoldingInfo;
@@ -18,8 +19,8 @@ public class EADMetadataRecordExtractor implements MetadataRecordExtractor {
     private static final Logger LOGGER = LoggerFactory.getLogger(EADMetadataRecordExtractor.class);
 
     private static final XPath xpath;
-    private static final XPathExpression xpTitle, xpAuthor, xpPhysicalDescription, xpUnitId,
-            xpContainer, xpAccessAndUse, xpAccessRestrict, xpP, xpParent,
+    private static final XPathExpression xpTitle, xpTitleItem, xpAuthor, xpPhysicalDescription, xpUnitId, xpUnitIdItem,
+            xpContainer, xpInventory, xpAccessAndUse, xpAccessRestrict, xpP, xpParent, xpChildren,
             xpArchive931, xpArchiveLocation, xpArchiveMeter, xpArchiveNumbers, xpArchiveFormat, xpArchiveNote;
 
     private final String parentPid;
@@ -36,11 +37,14 @@ public class EADMetadataRecordExtractor implements MetadataRecordExtractor {
             xpath.setNamespaceContext(new IISHNamespaceContext());
 
             xpTitle = xpath.compile("normalize-space(.//ead:unittitle)");
+            xpTitleItem = xpath.compile("normalize-space(./ead:did/ead:unittitle)");
             xpAuthor = xpath.compile("normalize-space(.//ead:origination[@label='Creator']/ead:persname)");
             xpPhysicalDescription = xpath.compile(
                     "normalize-space(.//ead:physdesc[@label='Physical Description']/ead:extent)");
             xpUnitId = xpath.compile(".//ead:unitid");
+            xpUnitIdItem = xpath.compile("./ead:did/ead:unitid");
             xpContainer = xpath.compile("normalize-space(.//ead:container[@type='box'])");
+            xpInventory = xpath.compile(".//ead:dsc[@type='combined']");
             xpAccessAndUse = xpath.compile(".//ead:descgrp[@type='access_and_use']");
             xpAccessRestrict = xpath.compile(".//ead:accessrestrict");
             xpP = xpath.compile("normalize-space(./ead:p[1])");
@@ -57,6 +61,19 @@ public class EADMetadataRecordExtractor implements MetadataRecordExtractor {
                     "./ancestor::ead:c10|" +
                     "./ancestor::ead:c11|" +
                     "./ancestor::ead:c12)[last()]");
+            xpChildren = xpath.compile("(" +
+                    "./ead:c01|" +
+                    "./ead:c02|" +
+                    "./ead:c03|" +
+                    "./ead:c04|" +
+                    "./ead:c05|" +
+                    "./ead:c06|" +
+                    "./ead:c07|" +
+                    "./ead:c08|" +
+                    "./ead:c09|" +
+                    "./ead:c10|" +
+                    "./ead:c11|" +
+                    "./ead:c12)");
 
             xpArchive931 = XmlUtils.getXPathForMarcTag(xpath, "931");
             xpArchiveLocation = XmlUtils.getXPathForMarcSubfield(xpath, 'a');
@@ -127,6 +144,9 @@ public class EADMetadataRecordExtractor implements MetadataRecordExtractor {
 
         String physicalDescription = XmlUtils.evaluate(xpPhysicalDescription, ead);
         externalInfo.setPhysicalDescription((physicalDescription != null) ? physicalDescription.trim() : null);
+
+        Inventory inventory = getInventory();
+        externalInfo.setInventory(inventory);
 
         return externalInfo;
     }
@@ -298,5 +318,47 @@ public class EADMetadataRecordExtractor implements MetadataRecordExtractor {
         catch (XPathExpressionException e) {
             return ExternalRecordInfo.Restriction.OPEN;
         }
+    }
+
+    private Inventory getInventory() {
+        try {
+            if (this.item == null)
+                return getInventory(ead);
+
+            return null;
+        }
+        catch (XPathExpressionException ignored) {
+            LOGGER.debug("getInventory(): Invalid XPath", ignored);
+            return null;
+        }
+    }
+
+    private Inventory getInventory(Node itemNode) throws XPathExpressionException {
+        Inventory inventory = new Inventory();
+        inventory.setUnitId(XmlUtils.evaluate(xpUnitIdItem, itemNode));
+        inventory.setTitle(XmlUtils.evaluate(xpTitleItem, itemNode));
+
+        List<Inventory> children = new ArrayList<>();
+        inventory.setChildren(children);
+
+        if (itemNode == ead) {
+            itemNode = (Node) xpInventory.evaluate(ead, XPathConstants.NODE);
+            itemNode = itemNode.cloneNode(true);
+
+            inventory.setUnitId(XmlUtils.evaluate(xpUnitId, ead));
+            inventory.setTitle(XmlUtils.evaluate(xpTitle, ead));
+        }
+        else {
+            // Detach this node from the parent to speed up the processing of the inventory
+            itemNode.getParentNode().removeChild(itemNode);
+        }
+
+        NodeList itemNodes = (NodeList) xpChildren.evaluate(itemNode, XPathConstants.NODESET);
+        for (int i = 0; i < itemNodes.getLength(); i++) {
+            Node childItem = itemNodes.item(i);
+            children.add(getInventory(childItem));
+        }
+
+        return inventory;
     }
 }

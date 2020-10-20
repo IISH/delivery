@@ -58,6 +58,15 @@ public interface RecordService {
     Record getRecordByPid(String pid);
 
     /**
+     * Retrieve the Record matching the given pid and create if it does not exists.
+     *
+     * @param pid Pid of the Record to retrieve.
+     * @return The Record matching the pid. Null if none exist.
+     * @throws NoSuchPidException Thrown when the provided PID does not exist in the API.
+     */
+    Record getRecordByPidAndCreate(String pid) throws NoSuchPidException;
+
+    /**
      * Get a criteria builder for querying Records.
      *
      * @return the CriteriaBuilder.
@@ -105,7 +114,6 @@ public interface RecordService {
      */
     List<Holding> listHoldings(CriteriaQuery<Holding> query);
 
-
     /**
      * Remove a Holding from the database.
      *
@@ -131,15 +139,6 @@ public interface RecordService {
      *                               item separator (default .), but the parent record was not found in the database.
      */
     void createOrEdit(Record newRecord, Record oldRecord, BindingResult result) throws NoSuchParentException;
-
-    /**
-     * Create a record, using the metadata from the IISH API to populate its fields.
-     *
-     * @param pid The pid of the record (should exist in the API).
-     * @return The new Record (not yet committed to the database).
-     * @throws NoSuchPidException Thrown when the provided PID does not exist in the API.
-     */
-    Record createRecordByPid(String pid) throws NoSuchPidException;
 
     /**
      * Updates the external info of the given record, if necessary.

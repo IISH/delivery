@@ -100,40 +100,31 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
      * @return A list of holdings.
      */
     protected List<Holding> uriPathToHoldings(String path) {
-        List<Holding> holdings = new ArrayList<>();
-        String[] tuples = getPidsFromURL(path);
-        for (String tuple : tuples) {
-            String[] elements = tuple.split(Pattern.quote(deliveryProperties.getHoldingSeparator()));
-            Record r = records.getRecordByPid(elements[0]);
+        try {
+            List<Holding> holdings = new ArrayList<>();
+            String[] tuples = getPidsFromURL(path);
+            for (String tuple : tuples) {
+                String[] elements = tuple.split(Pattern.quote(deliveryProperties.getHoldingSeparator()));
+                Record r = records.getRecordByPidAndCreate(elements[0]);
 
-            if (r == null) {
-                // Try creating the record.
-                try {
-                    r = records.createRecordByPid(elements[0]);
-                    records.addRecord(r);
-                }
-                catch (NoSuchPidException e) {
-                    return null;
-                }
-            }
-            else if (records.updateExternalInfo(r, false)) {
-                records.saveRecord(r);
-            }
-
-            for (int i = 1; i < Math.max(2, elements.length); i++) {
-                boolean has = false;
-                for (Holding h : r.getHoldings()) {
-                    if ((elements.length == 1) || h.getSignature().equals(elements[i])) {
-                        holdings.add(h);
-                        has = true;
+                for (int i = 1; i < Math.max(2, elements.length); i++) {
+                    boolean has = false;
+                    for (Holding h : r.getHoldings()) {
+                        if ((elements.length == 1) || h.getSignature().equals(elements[i])) {
+                            holdings.add(h);
+                            has = true;
+                        }
+                    }
+                    if (!has) {
+                        return null;
                     }
                 }
-                if (!has) {
-                    return null;
-                }
             }
+            return holdings;
         }
-        return holdings;
+        catch (NoSuchPidException e) {
+            return null;
+        }
     }
 
     /**

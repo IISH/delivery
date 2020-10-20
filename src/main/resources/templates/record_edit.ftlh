@@ -1,7 +1,7 @@
 <#include "base.ftl"/>
 <#include "form.ftl"/>
 
-<#assign title=isNewRecord?then(_("newrecord.title", "New Record"), _("editrecord.title", "Edit Record"))>
+<#assign title=_("editrecord.title", "Edit Record")>
 
 <#macro fakeInput path value>
   <@spring.bind path/>
@@ -23,24 +23,22 @@
         <ul class="parent_tree">
           <@tree rec/>
 
-          <#if !isNewRecord??>
-            <#assign item = record>
-            <#if record.parent??>
-              <#assign item = record.parent>
-            </#if>
+          <#assign item = record>
+          <#if record.parent??>
+            <#assign item = record.parent>
+          </#if>
+        </ul>
 
-            </ul>
-            <ul>
-              <li class="edit_item">
-                <@form_plain "" "edititem">
-                  <input type="hidden" name="edit" value="${item.pid}"/>
-                  <label for="${item.pid}_item">
-                    ${_("edititem.label", "Sub-Item:")}
-                  </label>
-                  <input type="text" id="${item.pid}_item" name="item" value=""/>
-                  <@submit "edititem"/>
-                </@form_plain>
-            </#if>
+        <ul>
+          <li class="edit_item">
+            <@form_plain "" "edititem">
+              <input type="hidden" name="edit" value="${item.pid}"/>
+              <label for="${item.pid}_item">
+                ${_("edititem.label", "Sub-Item:")}
+              </label>
+              <input type="text" id="${item.pid}_item" name="item" value=""/>
+              <@submit "edititem"/>
+            </@form_plain>
           </li>
         </ul>
       </li>
@@ -130,9 +128,9 @@
             <td>
               <select id="holdings.new.usageRestriction" class="field">
                 <#list usageRestriction_types?keys as value>
-                  <#assign label = "holding.usageRestriction." + usageRestriction_types[value]/>
+                  <#assign label = "holding.usageRestriction." + usageRestriction_types[value]?string/>
                   <option value="${value}">
-                    ${_(label, usageRestriction_types[value])}
+                    ${_(label, usageRestriction_types[value]?string)}
                   </option>
                 </#list>
               </select>
@@ -166,7 +164,8 @@
   <div class="btlist">
     <#if _sec.ifAllGranted("ROLE_RECORD_DELETE")>
       <@buttons>
-        <@button "" "delete" "editrecord.delete" "return confirm('${_("editrecord.confirmDelete", "Are you sure you want to delete the record?")}');"/>
+        <#assign confirmDelete = _("editrecord.confirmDelete", "Are you sure you want to delete the record?")/>
+        <@button "" "delete" "editrecord.delete" "return confirm('${confirmDelete}');"/>
       </@buttons>
     </#if>
   </div>
