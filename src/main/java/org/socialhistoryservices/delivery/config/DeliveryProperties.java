@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 public class DeliveryProperties {
     private String apiBase = "/solr/all/srw";
     private String apiDomain = "api.socialhistoryservices.org";
-    private int apiPort = 80;
-    private String apiProto = "http";
+    private int apiPort = 443;
+    private String apiProto = "https";
     private String dateFormat = "yyyy-MM-dd";
     private int externalInfoMinDaysCache = 30;
     private String holdingSeparator = "^";

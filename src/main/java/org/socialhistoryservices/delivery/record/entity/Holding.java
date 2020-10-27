@@ -73,12 +73,19 @@ public class Holding {
      */
     public void setSignature(String sig) {
         signature = sig;
+        checkSignature();
+    }
 
-        // Determine the usage restriction by checking the signature for patterns
+    /**
+     * Determine the usage restriction by checking the signature for patterns
+     */
+    private void checkSignature() {
         String checkSignature = signature.trim().toLowerCase();
-        if (checkSignature.endsWith(".x") || checkSignature.endsWith("(missing)") ||
-                checkSignature.startsWith("no circulation") || checkSignature.startsWith("niet ter inzage") ||
-                checkSignature.endsWith("(not available)")) {
+        if (checkSignature.endsWith(".x")
+                || checkSignature.endsWith("(missing)")
+                || checkSignature.startsWith("no circulation")
+                || checkSignature.startsWith("niet ter inzage")
+                || checkSignature.endsWith("(not available)")) {
             this.setUsageRestriction(UsageRestriction.CLOSED);
         }
     }
