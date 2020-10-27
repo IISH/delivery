@@ -15,7 +15,7 @@
       </#list>
     </ul>
 
-    <form action="${rc.contextPath}/permission/createform/${hrByParent[0].holding.record.parent.pid?url}"
+    <form action="${rc.contextPath}/permission/createform/${hrByParent[0].holding.record.parentPid?url}"
           method="GET" target="_blank">
       <input type="submit" value="${_("reservation.reqPermission", "Request Permission")}"/>
     </form>

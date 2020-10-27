@@ -14,4 +14,4 @@ COPY --from=build /app/target/dependency/META-INF /app/META-INF
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-cp", "/app:/app/lib/*", "org.socialhistoryservices.delivery.Application"]
+ENTRYPOINT ["java", "-cp", "/app:/app/lib/*", "-Dhibernate.types.print.banner=false", "org.socialhistoryservices.delivery.Application"]

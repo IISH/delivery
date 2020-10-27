@@ -413,7 +413,7 @@ public class Permission {
         if (getDateGranted() == null || getDateGranted().before(minDateCalender.getTime()))
             return false;
 
-        return invNosGranted.contains(rec.getHoldings().get(0).getSignature());
+        return record.getId() == rec.getId() || invNosGranted.contains(rec.getHoldings().get(0).getSignature());
     }
 
     /**

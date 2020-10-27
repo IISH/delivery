@@ -9,5 +9,7 @@ ${_("permissionMail.code", "Code")}: ${permission.code}
 ${permission.motivation}
 </#if>
 
+<#if permission.invNosGranted?size != 0>
 ${_("permission.invNosGranted", "Permission for items")}: ${permission.invNosGranted?join(', ')}
+</#if>
 </@mail>

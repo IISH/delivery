@@ -2,6 +2,8 @@
 <@mail to="${permission.name}">
 ${_("permissionMail.confirmationMessage", "With this mail we confirm your permission request has been successfully received. We will notify you when your request has either been approved or refused.")}
 
+${_("permission.request.extra", "Permission requests for additional inventory numbers later on can be sent to")} ${_("iisg.email", "")}
+
 
 * ${_("permission.name", "Name")}: ${permission.name}
 * ${_("permission.email", "E-mail")}: ${permission.email}

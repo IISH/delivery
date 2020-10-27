@@ -168,7 +168,7 @@ public class ReservationController extends AbstractRequestController {
         List<HoldingReservation> restricted = findHoldingsOnRestriction(newRes, true);
         if (!restricted.isEmpty()) {
             Collection<List<HoldingReservation>> restrictedByParent = restricted.stream()
-                    .collect(Collectors.groupingBy(hr -> hr.getHolding().getRecord().getParent().getId()))
+                    .collect(Collectors.groupingBy(hr -> hr.getHolding().getRecord().getParentPid()))
                     .values();
 
             model.addAttribute("reservation", newRes);

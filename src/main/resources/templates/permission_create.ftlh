@@ -40,16 +40,27 @@
 
       <div class="permission_form">
         <fieldset>
-            <@input "permission.visitorName" ""/>
-            <@input "permission.visitorEmail" ""/>
-            <@textarea "permission.address" "" false/>
-            <@input "permission.researchOrganization" ""/>
-            <@textarea "permission.researchSubject" ""/>
-            <@textarea "permission.request" ""/>
-            <@textarea "permission.explanation" "" false/>
+          <@input "permission.visitorName" ""/>
+          <@input "permission.visitorEmail" ""/>
+          <@textarea "permission.address" "" false/>
+          <@input "permission.researchOrganization" ""/>
+          <@textarea "permission.researchSubject" ""/>
+
+          <label for="permission.request" class="field">
+            ${_('permission.request')}
+            <span class="red">*</span>
+
+            <span class="note">
+              ${_("permission.request.extra", "")}
+              <a href="mailto:${_("iisg.email", "")}">${_("iisg.email", "")}</a>
+            </span>
+          </label>
+          <@textarea_nolabel "permission.request" ""/>
+
+          <@textarea "permission.explanation" "" false/>
 
           <label for="captcha_response_field" class="field">
-              ${_("captcha.explanation", "Type the following word to prevent spam")}
+            ${_("captcha.explanation", "Type the following word to prevent spam")}
             <span class="red">*</span>
           </label>
 

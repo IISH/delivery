@@ -599,6 +599,10 @@ ul.reservationDetails span, ul.permissionDetails span {
    float: left;
 }
 
+ul.permissionDetails span {
+    width: 16em;
+}
+
 ul.permissionDetails li.spacing {
     margin-top: 10px;
 }

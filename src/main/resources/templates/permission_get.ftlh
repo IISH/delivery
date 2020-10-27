@@ -107,19 +107,21 @@
         </li>
       </ul>
 
-      <div class="on-granted hidden">
-        <h3>Permission granted on</h3>
+      <#if permission.record.externalInfo.inventory??>
+        <div class="on-granted hidden">
+          <h3>Permission granted on</h3>
 
-        <input type="hidden" name="invNosGranted" value="${permission.invNosGranted?join('__')}"/>
+          <input type="hidden" name="invNosGranted" value="${permission.invNosGranted?join('__')}"/>
 
-        <div id="inventory">
-          <ul>
-            <#list permission.record.externalInfo.inventory.children as node>
-              <@createNode node permission.invNosGranted/>
-            </#list>
-          </ul>
+          <div id="inventory">
+            <ul>
+              <#list permission.record.externalInfo.inventory.children as node>
+                <@createNode node permission.invNosGranted/>
+              </#list>
+            </ul>
+          </div>
         </div>
-      </div>
+      </#if>
     </fieldset>
 
     <input type="submit" name="save" value="${_("permissionSingle.save", "Save")}"/>

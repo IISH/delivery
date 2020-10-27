@@ -135,8 +135,14 @@ public class PermissionController extends AbstractRequestController {
         }
 
         pm.setInvNosGranted(new ArrayList<>());
-        if (p.containsKey("invNosGranted") && pm.getDateGranted() != null && pm.getGranted()) {
-            pm.setInvNosGranted(Arrays.asList(p.get("invNosGranted")[0].split("__")));
+        if (pm.getRecord().getExternalInfo().getInventory() != null && pm.getDateGranted() != null && pm.getGranted()) {
+            if (p.containsKey("invNosGranted") && !p.get("invNosGranted")[0].isEmpty())
+                pm.setInvNosGranted(Arrays.asList(p.get("invNosGranted")[0].split("__")));
+
+            if (pm.getInvNosGranted().isEmpty()) {
+                pm.setGranted(false);
+                pm.setDateGranted(null);
+            }
         }
 
         permissions.savePermission(pm);
@@ -179,7 +185,8 @@ public class PermissionController extends AbstractRequestController {
 
         // Notify the requester.
         try {
-            pmMailer.mailCode(pm);
+            if (pm.getDateGranted() != null)
+                pmMailer.mailCode(pm);
         }
         catch (MailException e) {
             LOGGER.error("Failed to send email", e);

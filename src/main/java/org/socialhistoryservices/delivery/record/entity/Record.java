@@ -79,6 +79,17 @@ public class Record {
     }
 
     /**
+     * Get the parent pid, unless there is no parent. Then take this pid.
+     *
+     * @return The parent pid.
+     */
+    public String getParentPid() {
+        if (parent == null)
+            return pid;
+        return parent.pid;
+    }
+
+    /**
      * Set the Record's pid.
      *
      * @param pid the Record's pid.

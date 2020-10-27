@@ -322,7 +322,7 @@ public class EADMetadataRecordExtractor implements MetadataRecordExtractor {
 
     private Inventory getInventory() {
         try {
-            if (this.item == null)
+            if (this.item == null && xpInventory.evaluate(ead, XPathConstants.NODE) != null)
                 return getInventory(ead);
 
             return null;
