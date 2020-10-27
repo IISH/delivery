@@ -18,6 +18,7 @@
           <td>${_("reproductionStandardOption.optionDescription", "Option description")}</td>
           <td>${_("reproductionStandardOption.price", "Price")}</td>
           <td>${_("reproductionStandardOption.deliveryTime", "Delivery time")}</td>
+          <td>${_("reproductionStandardOption.administrationCosts", "Charge handling costs?")}</td>
           <td>&nbsp;</td>
           <td>${_("reproductionStandardOption.enabled", "Is enabled?")}</td>
         </tr>
@@ -88,6 +89,13 @@
                     </li>
                   </ul>
                 </#if>
+              </label>
+            </td>
+
+            <td>
+              <label>
+                <@spring.formCheckbox "standardOptions.options[${idx}].administrationCosts"/>
+                <span>${_("yes", "Yes")}</span>
               </label>
             </td>
 
@@ -173,6 +181,13 @@
             <label>
               <input type="text" id="new.deliveryTime" name="new.deliveryTime" value="0" class="smaller">
               <span>${_("days", "days")}</span>
+            </label>
+          </td>
+
+          <td>
+            <label>
+              <input id="new.administrationCosts" name="new.administrationCosts" checked="checked" type="checkbox"/>
+              <span>${_("yes", "Yes")}</span>
             </label>
           </td>
 

@@ -261,6 +261,28 @@ public class ReproductionStandardOption {
         this.deliveryTime = deliveryTime;
     }
 
+    @NotNull
+    @Column(name = "hasadministrationcosts", nullable = false)
+    private boolean administrationCosts = true;
+
+    /**
+     * Charge administration costs?
+     *
+     * @return Whether this charges administration costs?
+     */
+    public boolean isAdministrationCosts() {
+        return administrationCosts;
+    }
+
+    /**
+     * Set whether this charges administration costs.
+     *
+     * @param hasAdministrationCosts Whether this charges administration costs?
+     */
+    public void setAdministrationCosts(boolean hasAdministrationCosts) {
+        this.administrationCosts = hasAdministrationCosts;
+    }
+
     /* The following are fields that are only entered for certain material types */
 
     @NotNull
@@ -321,6 +343,7 @@ public class ReproductionStandardOption {
         setOptionDescriptionEN(other.getOptionDescriptionEN());
         setPrice(other.getPrice());
         setDeliveryTime(other.getDeliveryTime());
+        setAdministrationCosts(other.isAdministrationCosts());
         setPoster(other.isPoster());
         setEnabled(other.isEnabled());
     }

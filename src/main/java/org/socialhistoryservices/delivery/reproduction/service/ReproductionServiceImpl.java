@@ -1132,6 +1132,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
 
         // Set the price and delivery time for each item
         int totalNoOfPages = 0;
+        boolean chargeAdministrationCosts = false;
         for (HoldingReproduction hr : reproduction.getHoldingReproductions()) {
             ReproductionStandardOption standardOption = hr.getStandardOption();
 
@@ -1168,19 +1169,22 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
                 }
             }
 
+            // Check if we have to charge administration costs; if custom reproduction: always charge
+            if (standardOption == null || standardOption.isAdministrationCosts())
+                chargeAdministrationCosts = true;
+
             // Count the number of pages in this request, but only if there are only books in this request
             ExternalRecordInfo.MaterialType materialType
                     = hr.getHolding().getRecord().getExternalInfo().getMaterialType();
-            if (totalNoOfPages >= 0 && standardOption != null && materialType == ExternalRecordInfo.MaterialType.BOOK)
+            if (standardOption != null && materialType == ExternalRecordInfo.MaterialType.BOOK)
                 totalNoOfPages += hr.getNumberOfPages();
-            else
-                totalNoOfPages = -1;
         }
 
         // Set the administration costs if initial create
         if (isCreateInit) {
             BigDecimal administrationCosts = new BigDecimal(deliveryProperties.getReproductionAdministrationCosts());
-            if (totalNoOfPages > 0 && totalNoOfPages < deliveryProperties.getReproductionAdministrationCostsMinPages())
+            if (!chargeAdministrationCosts &&
+                    totalNoOfPages < deliveryProperties.getReproductionAdministrationCostsMinPages())
                 administrationCosts = BigDecimal.ZERO;
 
             reproduction.setAdminstrationCosts(administrationCosts);
