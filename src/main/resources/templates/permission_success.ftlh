@@ -15,6 +15,6 @@
       <p class="error">${_("permission.error."+error, error)}</p>
     </#if>
 
-    <p>${_("permission.backToSearch", "Close this tab and return to Search for new requests")}</p>
+    <p>${_("permission.backToSearch", "Close this tab to continue your search.")}</p>
   </section>
 </@userbase>

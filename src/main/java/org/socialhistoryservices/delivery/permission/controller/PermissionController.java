@@ -183,10 +183,8 @@ public class PermissionController extends AbstractRequestController {
         }
         updateRecordPermissions(pm, req.getParameterMap());
 
-        // Notify the requester.
         try {
-            if (pm.getDateGranted() != null)
-                pmMailer.mailCode(pm);
+            pmMailer.mailPermissionOutcome(pm);
         }
         catch (MailException e) {
             LOGGER.error("Failed to send email", e);

@@ -18,16 +18,15 @@ public class PermissionMailer extends Mailer {
 
     /**
      * Mails a requester when the permission request has been approved or
-     * refused. If all the records were denied access, the requester will
-     * receive a mail without an access code. Else a mail with an access code
-     * will be sent.
+     * refused. If the permission request was denied access, the requester will
+     * receive a mail without an access code. Else a mail with an access code will be sent.
      *
      * @param pm The permission to use for composing the mail.
      * @throws MailException Thrown when sending mail somehow failed.
      */
-    public void mailCode(Permission pm) throws MailException {
-        // Do not mail when mail is disabled.
-        if (!deliveryProperties.isMailEnabled()) {
+    public void mailPermissionOutcome(Permission pm) throws MailException {
+        // Do not mail when mail is disabled or when there is no outcome yet
+        if (!deliveryProperties.isMailEnabled() || pm.getDateGranted() == null) {
             return;
         }
 
@@ -40,13 +39,11 @@ public class PermissionMailer extends Mailer {
         msg.setReplyTo(getMessage("iisg.email", ""));
 
         // Be sure the recipient will receive the message in their language,
-        // instead of the language of the employee activating this mail
-        // function.
+        // instead of the language of the employee activating this mail function
         Locale rl = pm.getRequestLocale();
         model.addAttribute("locale", rl.toString());
 
-        // Set content and title based on which template to send.
-        if (isCodeEligible(pm)) {
+        if (pm.getGranted()) {
             msg.setSubject(getMessage("permissionMail.approvedSubject",
                     "Delivery: Permission Request Approved", rl));
             msg.setText(templateToString("mail/permission_approved.mail.ftl", model, rl));
@@ -56,18 +53,8 @@ public class PermissionMailer extends Mailer {
                     "Delivery: Permission Request Refused", rl));
             msg.setText(templateToString("mail/permission_refused.mail.ftl", model, rl));
         }
-        mailSender.send(msg);
-    }
 
-    /**
-     * Check whether to send a permission code or not. Only send one if there
-     * is at least one record granted permission.
-     *
-     * @param pm The permission to check.
-     * @return Whether to send a permission code (true) or not (false).
-     */
-    private boolean isCodeEligible(Permission pm) {
-        return !pm.getInvNosGranted().isEmpty();
+        mailSender.send(msg);
     }
 
     /**
