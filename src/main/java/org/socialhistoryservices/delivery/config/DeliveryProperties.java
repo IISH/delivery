@@ -44,6 +44,7 @@ public class DeliveryProperties {
     private int reservationMaxDaysInAdvance = 31;
     private int reservationMaxItems = 3;
     private int reservationMaxChildren = 10;
+    private boolean printEnabled = true;
     private String printerArchive = "delivery-archive";
     private String printerReadingRoom = "delivery-reading-room";
     private String sorAccessToken = "bla";
@@ -59,6 +60,14 @@ public class DeliveryProperties {
 
     public void setMailEnabled(boolean mailEnabled) {
         this.mailEnabled = mailEnabled;
+    }
+
+    public boolean isPrintEnabled() {
+        return printEnabled;
+    }
+
+    public void setPrintEnabled(boolean printEnabled) {
+        this.printEnabled = printEnabled;
     }
 
     public String getApiBase() {

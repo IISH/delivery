@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.socialhistoryservices.delivery.api.*;
-import org.socialhistoryservices.delivery.config.DeliveryProperties;
 import org.socialhistoryservices.delivery.config.PrinterConfiguration;
 import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
 import org.socialhistoryservices.delivery.record.entity.Holding;
@@ -78,9 +77,6 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
 
     @Autowired
     private BeanFactory bf;
-
-    @Autowired
-    private DeliveryProperties deliveryProperties;
 
     @Autowired
     private PrinterConfiguration printerConfiguration;

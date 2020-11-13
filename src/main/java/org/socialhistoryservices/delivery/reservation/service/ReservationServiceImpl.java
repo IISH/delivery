@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import org.socialhistoryservices.delivery.config.PrinterConfiguration;
 import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
-import org.socialhistoryservices.delivery.config.DeliveryProperties;
 import org.socialhistoryservices.delivery.record.entity.Holding;
 import org.socialhistoryservices.delivery.record.entity.Record;
 import org.socialhistoryservices.delivery.request.entity.HoldingRequest;
@@ -18,7 +17,6 @@ import org.socialhistoryservices.delivery.reservation.entity.Reservation;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,13 +50,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
     private ReservationDateExceptionService dateExceptionService;
 
     @Autowired
-    protected MessageSource messageSource;
-
-    @Autowired
     private BeanFactory bf;
-
-    @Autowired
-    private DeliveryProperties deliveryProperties;
 
     @Autowired
     private PrinterConfiguration printerConfiguration;
@@ -438,7 +430,7 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
 
                 String msg;
                 if (dateExceptionService.getExceptionDates().contains(resCalendar)) {
-                    msg = messageSource.getMessage("reservationDateException.dateIsException",
+                    msg = msgSource.getMessage("reservationDateException.dateIsException",
                             new Object[]{}, LocaleContextHolder.getLocale()) +
                             dateExceptionService.getReasonForExceptionDate(resCalendar);
                 }

@@ -413,7 +413,12 @@ public class Permission {
         if (getDateGranted() == null || getDateGranted().before(minDateCalender.getTime()))
             return false;
 
-        return record.getId() == rec.getId() || invNosGranted.contains(rec.getHoldings().get(0).getSignature());
+        boolean isSameRecord = record.getId() == rec.getId();
+        boolean isParentRecord = record.getId() == rec.getParent().getId();
+        boolean wildcardInvNo = invNosGranted.contains("*");
+        boolean containsInvNo = invNosGranted.contains(rec.getHoldings().get(0).getSignature());
+
+        return isSameRecord || (isParentRecord && (wildcardInvNo || containsInvNo));
     }
 
     /**

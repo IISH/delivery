@@ -93,7 +93,14 @@ function toggleInventory() {
             .jstree({plugins: ['checkbox']})
             .on('changed.jstree', function () {
                 var jsTree = $.jstree.reference('#inventory');
-                $('input[type=hidden][name=invNosGranted]').val(jsTree.get_bottom_selected().join('__'));
+
+                var topIds = jsTree.get_json().map(function (node) { return node.id; });
+                var topIdsSelected = jsTree.get_top_selected();
+
+                if (topIds.every(function(id) { return topIdsSelected.indexOf(id) >= 0; }))
+                    $('input[type=hidden][name=invNosGranted]').val('*');
+                else
+                    $('input[type=hidden][name=invNosGranted]').val(jsTree.get_bottom_selected().join('__'));
             });
     }
     else {

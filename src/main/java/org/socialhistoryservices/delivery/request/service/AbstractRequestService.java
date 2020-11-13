@@ -1,5 +1,6 @@
 package org.socialhistoryservices.delivery.request.service;
 
+import org.socialhistoryservices.delivery.config.DeliveryProperties;
 import org.socialhistoryservices.delivery.record.entity.ExternalRecordInfo;
 import org.socialhistoryservices.delivery.record.entity.Holding;
 import org.socialhistoryservices.delivery.record.entity.Record;
@@ -34,6 +35,9 @@ public abstract class AbstractRequestService implements RequestService {
 
     @Autowired
     protected RecordService records;
+
+    @Autowired
+    protected DeliveryProperties deliveryProperties;
 
     /**
      * Validate provided holding part of request.
@@ -188,6 +192,9 @@ public abstract class AbstractRequestService implements RequestService {
      */
     protected void printRequest(List<RequestPrintable> requestPrintables, String printerName, boolean alwaysPrint)
             throws PrinterException {
+        if (!deliveryProperties.isPrintEnabled())
+            return;
+
         Book pBook = new Book();
         HashMap<Integer, Set<String>> containersPrinted = new HashMap<>();
 
