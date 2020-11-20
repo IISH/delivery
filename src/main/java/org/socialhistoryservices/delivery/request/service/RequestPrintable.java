@@ -43,7 +43,6 @@ public abstract class RequestPrintable implements Printable {
     protected DeliveryProperties deliveryProperties;
     protected final HoldingRequest holdingRequest;
 
-    private final Locale l;
     private final MessageSource msgSource;
 
     protected static class DrawInfo {
@@ -84,11 +83,10 @@ public abstract class RequestPrintable implements Printable {
         deliveryProperties = prop;
         holdingRequest = hr;
 
-        l = new Locale("en");
         msgSource = mSource;
         df = format;
 
-        normalFont = new Font("Arial", Font.PLAIN, 10);
+        normalFont = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
         boldFont = normalFont.deriveFont(Font.BOLD);
         italicFont = normalFont.deriveFont(Font.ITALIC);
 
@@ -427,7 +425,7 @@ public abstract class RequestPrintable implements Printable {
      * @return The message if found, or the default.
      */
     protected String getMessage(String code, String def) {
-        return msgSource.getMessage(code, null, def, l);
+        return msgSource.getMessage(code, null, def, Locale.ENGLISH);
     }
 
 
