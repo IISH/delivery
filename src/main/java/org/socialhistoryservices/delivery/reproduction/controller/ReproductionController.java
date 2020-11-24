@@ -1068,7 +1068,8 @@ public class ReproductionController extends AbstractRequestController {
     @RequestMapping(value = "/masscreateform", method = RequestMethod.POST, params = "searchSubmit")
     @PreAuthorize("hasRole('ROLE_REPRODUCTION_CREATE')")
     public String processSearchMassCreateForm(@ModelAttribute("reproduction") Reproduction newReproduction,
-                                              @RequestParam String searchTitle, @RequestParam String searchSignature,
+                                              @RequestParam(required = false) String searchTitle,
+                                              @RequestParam(required = false) String searchSignature,
                                               Model model) {
         List<Holding> holdingList = searchMassCreate(newReproduction, searchTitle, searchSignature);
 
@@ -1103,7 +1104,8 @@ public class ReproductionController extends AbstractRequestController {
     @RequestMapping(value = "/masscreateform", method = RequestMethod.POST)
     @PreAuthorize("hasRole('ROLE_REPRODUCTION_CREATE')")
     public String processMassCreateForm(@ModelAttribute("reproduction") Reproduction newReproduction,
-                                        BindingResult result, @RequestParam String searchTitle,
+                                        BindingResult result,
+                                        @RequestParam(required = false) String searchTitle,
                                         @RequestParam(required = false) String searchSignature,
                                         boolean mail, Model model) {
         List<Holding> holdingList = searchMassCreate(newReproduction, searchTitle, searchSignature);

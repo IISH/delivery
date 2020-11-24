@@ -599,7 +599,8 @@ public class ReservationController extends AbstractRequestController {
     @RequestMapping(value = "/masscreateform", method = RequestMethod.POST, params = "searchSubmit")
     @PreAuthorize("hasRole('ROLE_RESERVATION_CREATE')")
     public String processSearchMassCreateForm(@ModelAttribute("reservation") Reservation newRes,
-                                              @RequestParam String searchTitle, @RequestParam String searchSignature,
+                                              @RequestParam(required = false) String searchTitle,
+                                              @RequestParam(required = false) String searchSignature,
                                               Model model) {
         List<Holding> holdingList = searchMassCreate(newRes, searchTitle, searchSignature);
 
@@ -624,7 +625,7 @@ public class ReservationController extends AbstractRequestController {
     @RequestMapping(value = "/masscreateform", method = RequestMethod.POST)
     @PreAuthorize("hasRole('ROLE_RESERVATION_CREATE')")
     public String processMassCreateForm(@ModelAttribute("reservation") Reservation newRes, BindingResult result,
-                                        @RequestParam String searchTitle,
+                                        @RequestParam(required = false) String searchTitle,
                                         @RequestParam(required = false) String searchSignature,
                                         @RequestParam(required = false) Boolean print, Boolean mail, Model model) {
         List<Holding> holdingList = searchMassCreate(newRes, searchTitle, searchSignature);
