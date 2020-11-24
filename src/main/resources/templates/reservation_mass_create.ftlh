@@ -21,8 +21,8 @@
 <@body>
   <h1>${title}</h1>
 
-  <fieldset class="reservation_form">
-    <@form "" "reservation">
+  <@form "" "reservation">
+    <fieldset class="reservation_form">
       <ul class="form">
         <li><@input "reservation.visitorName" ""/></li>
         <li><@input "reservation.visitorEmail" ""/></li>

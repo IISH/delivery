@@ -8,7 +8,7 @@ RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
 FROM openjdk:11-jdk-slim
 
-RUN apt-get update -y && apt-get install -y fontconfig libfreetype6 cups cups-bsd cups-client
+RUN apt-get update -y && apt-get install -y fontconfig libfreetype6 fonts-liberation cups cups-bsd cups-client
 
 COPY --from=build /app/target/dependency/BOOT-INF/classes /app
 COPY --from=build /app/target/dependency/BOOT-INF/lib /app/lib
