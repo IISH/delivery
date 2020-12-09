@@ -17,6 +17,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 @Configuration
 @EnableConfigurationProperties(DeliveryProperties.class)
@@ -37,6 +38,11 @@ public class ConfigConfiguration {
         ServletRegistrationBean<WebServlet> registrationBean = new ServletRegistrationBean<>(new WebServlet());
         registrationBean.addUrlMappings("/console/*");
         return registrationBean;
+    }
+
+    @PostConstruct
+    public void setTimeZone() {
+        TimeZone.setDefault(TimeZone.getTimeZone(deliveryProperties.getTimezone()));
     }
 
     @PostConstruct

@@ -738,6 +738,10 @@ table.holdings td {
     color: orange;
 }
 
+.grey {
+    color: grey;
+}
+
 ul li input[type="text"].price, ul li input[type="text"].percentage {
     width: 8em;
 }

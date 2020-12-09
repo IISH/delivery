@@ -10,6 +10,7 @@ public class DeliveryProperties {
     private String apiDomain = "api.socialhistoryservices.org";
     private int apiPort = 443;
     private String apiProto = "https";
+    private String timezone = "Europe/Amsterdam";
     private String dateFormat = "yyyy-MM-dd";
     private int externalInfoMinDaysCache = 30;
     private String holdingSeparator = "^";
@@ -100,6 +101,14 @@ public class DeliveryProperties {
 
     public void setApiProto(String apiProto) {
         this.apiProto = apiProto;
+    }
+
+    public String getTimezone() {
+        return timezone;
+    }
+
+    public void setTimezone(String timezone) {
+        this.timezone = timezone;
     }
 
     public String getDateFormat() {

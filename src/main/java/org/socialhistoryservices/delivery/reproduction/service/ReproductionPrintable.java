@@ -33,7 +33,7 @@ public class ReproductionPrintable extends RequestPrintable {
     @Override
     protected void draw(DrawInfo drawInfo) {
         drawBarcode(drawInfo, this.holdingRequest.getId());
-        drawReturnNotice(drawInfo);
+        drawReproBottom(drawInfo);
 
         drawRepro(drawInfo);
         drawId(drawInfo);
@@ -68,6 +68,30 @@ public class ReproductionPrintable extends RequestPrintable {
     @Override
     protected String getRecipient() {
         return getMessage("print.repro", "Intended for repro");
+    }
+
+    /**
+     * Draw the notice that this print is intended for repro at the bottom of the print.
+     *
+     * @param drawInfo Draw offsets.
+     */
+    private void drawReproBottom(DrawInfo drawInfo) {
+        int orgOffsetY = drawInfo.offsetY;
+        drawInfo.offsetY = drawInfo.height - 60;
+
+        DrawValueInfo drawValueInfo = new DrawValueInfo(drawInfo);
+        drawValueInfo.value = getRecipient();
+        drawValueInfo.font = boldFont;
+        drawKeyValueNewLine(drawValueInfo);
+        drawInfo.offsetY += 5;
+
+        drawValueInfo = new DrawValueInfo(drawInfo);
+        drawValueInfo.value = holdingRequest.getRequest().getName();
+        drawValueInfo.font = italicFont;
+        drawValueInfo.underline = true;
+        drawKeyValueNewLine(drawValueInfo);
+
+        drawInfo.offsetY = orgOffsetY;
     }
 
     /**

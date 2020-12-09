@@ -197,10 +197,7 @@ public abstract class RequestPrintable implements Printable {
      * @param drawInfo Draw offsets.
      */
     protected void drawCreationDate(DrawInfo drawInfo) {
-        String dateLabel = getMessage("request.creationDate", "Created at");
-        String dateTimeFormat = deliveryProperties.getDateFormat() + " " +
-                deliveryProperties.getTimeFormat();
-
+        String dateTimeFormat = deliveryProperties.getDateFormat() + " " + deliveryProperties.getTimeFormat();
         SimpleDateFormat spdf = new SimpleDateFormat(dateTimeFormat);
 
         DrawValueInfo drawValueInfo = new DrawValueInfo(drawInfo);

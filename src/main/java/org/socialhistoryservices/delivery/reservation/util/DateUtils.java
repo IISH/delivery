@@ -1,4 +1,4 @@
-package org.socialhistoryservices.delivery.reproduction.util;
+package org.socialhistoryservices.delivery.reservation.util;
 
 import org.socialhistoryservices.delivery.config.DeliveryProperties;
 
@@ -12,8 +12,9 @@ import java.util.GregorianCalendar;
  * Various date utility functions.
  */
 public class DateUtils {
+
     /**
-     * Determine if the given time is between today->open and today->close of the readingroom.
+     * Determine if the given time is between today->open and today->close of the reading room.
      *
      * @param properties The properties.
      * @param time       The given time.

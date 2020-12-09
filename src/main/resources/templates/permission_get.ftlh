@@ -3,25 +3,40 @@
 
 <#assign title=_("permissionSingle.title", "Permission Request") + " " + permission.id?c/>
 
-<#macro createNode node selected>
+<#macro createNode node selected isParent=true>
   <li <#if node.unitId??>id="${node.unitId}"</#if>
+      <#if isParent>class="jstree-open"</#if>
       <#if node.children?size == 0>data-jstree='{"icon":"jstree-icon jstree-file"}'</#if>>
     <#if node.children?size gt 0>
-      <#if node.unitId??>${node.unitId}. </#if>
-      <#if node.title??>${node.title}</#if>
+      <@createNodeItem node/>
 
       <ul>
         <#list node.children as nodeChild>
-          <@createNode nodeChild selected/>
+          <@createNode nodeChild selected false/>
         </#list>
       </ul>
     <#else>
-      <a href="#" <#if selected?seq_contains(node.unitId)>class="jstree-clicked"</#if>>
-        <#if node.unitId??>${node.unitId}. </#if>
-        <#if node.title??>${node.title}</#if>
+      <a href="#" <#if selected?seq_contains(node.unitId) || selected?seq_contains('*')>class="jstree-clicked"</#if>>
+        <@createNodeItem node/>
       </a>
     </#if>
   </li>
+</#macro>
+
+<#macro createNodeItem node>
+  <span class="grey">
+    <#if node.unitId??>
+      ${node.unitId}
+    <#else>
+      <#assign first=node.firstChildUnitId!"?"/>
+      <#assign last=node.lastChildUnitId!"?"/>
+      <#if first == last>${first}<#else>${first} - ${last}</#if>
+    </#if>
+
+    &#9642;
+  </span>
+
+  <#if node.title??>${node.title}</#if>
 </#macro>
 
 <@base title>
@@ -115,9 +130,7 @@
 
           <div id="inventory">
             <ul>
-              <#list permission.record.externalInfo.inventory.children as node>
-                <@createNode node permission.invNosGranted/>
-              </#list>
+              <@createNode permission.record.externalInfo.inventory permission.invNosGranted/>
             </ul>
           </div>
         </div>
