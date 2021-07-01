@@ -44,7 +44,7 @@ public class EADMetadataRecordExtractor implements MetadataRecordExtractor {
             xpUnitId = xpath.compile(".//ead:unitid");
             xpUnitIdItem = xpath.compile("./ead:did/ead:unitid");
             xpContainer = xpath.compile("normalize-space(.//ead:container[@type='box'])");
-            xpInventory = xpath.compile(".//ead:dsc[@type='combined']");
+            xpInventory = xpath.compile(".//ead:dsc");
             xpAccessAndUse = xpath.compile(".//ead:descgrp[@type='access_and_use']");
             xpAccessRestrict = xpath.compile(".//ead:accessrestrict");
             xpP = xpath.compile("normalize-space(./ead:p[1])");
