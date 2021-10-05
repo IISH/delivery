@@ -17,7 +17,7 @@ public class DeliveryProperties {
     private String itemSeparator = ".";
     private String ldapManagerDn = "cn=admin,dc=socialhistoryservices,dc=org";
     private String ldapManagerPassword = "test";
-    private String ldapUrl = "ldap://ds0.socialhistoryservices.org/dc=socialhistoryservices,dc=org";
+    private String ldapUrl = "ldap://ds4.socialhistoryservices.org/dc=socialhistoryservices,dc=org";
     private String ldapUserSearchBase = "ou=users";
     private String ldapUserSearchFilter = "cn={0}";
     private boolean mailEnabled = true;
