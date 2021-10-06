@@ -62,6 +62,6 @@ public class RootContextConfiguration implements WebMvcConfigurer {
 
     @Bean
     public RequestContextToViewInterceptor reqIntercept() {
-        return new RequestContextToViewInterceptor();
+        return new RequestContextToViewInterceptor(deliveryProperties.getRelease(), deliveryProperties.getProfile());
     }
 }

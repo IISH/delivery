@@ -28,12 +28,15 @@
   <!DOCTYPE html>
   <html>
   <head>
-    <title>${title} - Delivery</title>
+    <title>${title} - Delivery ${release}</title>
     <link rel="stylesheet" media="all" href="${rc.contextPath}/css/screen.css"/>
     <link rel="shortcut icon" type="image/x-icon" href="${rc.contextPath}/logo.ico"/>
     <style>
         header.main {
             background: url("${rc.contextPath}/css/images/iish_logo_${rc.locale}.jpg") no-repeat 50px 10px;
+        }
+        body {
+        background-color: ${profile}
         }
     </style>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
@@ -52,7 +55,7 @@
 
 <#macro userHeading disableLanguage=false>
   <header class="main">
-    <a href="/"><h1>Delivery</h1></a>
+    <a href="/"><h1>Delivery ${release}</h1></a>
     <#if !disableLanguage>
       <div class="languageSelect">
         <span>${_("language", "Language")}</span>
@@ -69,7 +72,7 @@
 
 <#macro heading>
   <header class="main">
-    <a href="/"><h1>Delivery</h1></a>
+    <a href="/"><h1>Delivery ${release}</h1></a>
     <div class="languageSelect">
       <span>${_("language", "Language")}</span>
       <ul>

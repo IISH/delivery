@@ -675,8 +675,14 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
      */
     private void reserveAvailableRequiredHoldings(Reproduction reproduction) {
         for (HoldingReproduction hr : reproduction.getHoldingReproductions()) {
-            if (!hr.isInSor() && (hr.getHolding().getStatus() == Holding.Status.AVAILABLE))
-                records.updateHoldingStatus(hr.getHolding(), Holding.Status.RESERVED);
+            if (!hr.isInSor() && (hr.getHolding().getStatus() == Holding.Status.AVAILABLE)) {
+                final String parentPid = hr.getHolding().getRecord().getParentPid();
+                if (parentPid.endsWith("/" + hr.getHolding().getSignature())) {
+                    LOGGER.info("Ignore archival collection level identifier " + parentPid);
+                } else {
+                    records.updateHoldingStatus(hr.getHolding(), Holding.Status.RESERVED);
+                }
+            }
         }
     }
 

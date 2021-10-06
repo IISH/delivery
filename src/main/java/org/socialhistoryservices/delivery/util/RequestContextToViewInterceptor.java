@@ -15,6 +15,14 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class RequestContextToViewInterceptor implements AsyncHandlerInterceptor {
 
+    final String release;
+    final String profile;
+
+    public RequestContextToViewInterceptor(String release, String profile) {
+        this.release = release;
+        this.profile = profile;
+    }
+
     /**
      * Expose the request context to the views.
      */
@@ -28,6 +36,9 @@ public class RequestContextToViewInterceptor implements AsyncHandlerInterceptor 
             RequestContext rc = new RequestContext(request);
             rc.setUrlPathHelper(uph);
             model.addObject("rc", rc);
+
+            model.addObject("profile", profile);
+            model.addObject("release", release);
         }
     }
 }

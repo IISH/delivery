@@ -49,23 +49,8 @@ public class SharedObjectRepositoryService {
      * @return The SOR has metadata, if found.
      */
     public SorMetadata getMetadataForPid(String pid) {
-        try {
-            URL req = new URL(url + "/metadata/" + pid + "?accept=text/xml&format=xml");
-
-            LOGGER.debug(String.format("hasMetadata(): Querying SOR API: %s", req.toString()));
-            HttpURLConnection conn = (HttpURLConnection) req.openConnection();
-            Document document = documentBuilder.parse(conn.getInputStream());
-
-            return getMetadataFromDocument(document, pid);
-        }
-        catch (IOException ioe) {
-            LOGGER.error("getMetadataForPid(): SOR API connection failed", ioe);
-            return null;
-        }
-        catch (SAXException saxe) {
-            LOGGER.debug("getMetadataForPid(): Could not parse received metadata", saxe);
-            return null;
-        }
+        LOGGER.debug("getMetadataForPid() not implemented");
+        return null;
     }
 
     /**

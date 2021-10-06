@@ -54,6 +54,8 @@ public class DeliveryProperties {
     private String urlSearch = "search-acc.socialhistory.org";
     private String urlSelf = "http://localhost:8080";
     private int recordPageLen = 20;
+    private String profile = "white";
+    private String release = "development";
 
     public boolean isMailEnabled() {
         return mailEnabled;
@@ -437,5 +439,21 @@ public class DeliveryProperties {
 
     public void setRecordPageLen(int recordPageLen) {
         this.recordPageLen = recordPageLen;
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    public void setProfile(String profile) {
+        this.profile = profile;
+    }
+
+    public String getRelease() {
+        return release;
+    }
+
+    public void setRelease(String release) {
+        this.release = release;
     }
 }
