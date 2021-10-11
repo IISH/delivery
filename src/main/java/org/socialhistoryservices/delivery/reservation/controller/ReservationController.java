@@ -3,6 +3,8 @@ package org.socialhistoryservices.delivery.reservation.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.socialhistoryservices.delivery.reproduction.entity.HoldingReproduction;
+import org.socialhistoryservices.delivery.reproduction.entity.Reproduction;
 import org.socialhistoryservices.delivery.reservation.service.*;
 import org.socialhistoryservices.delivery.util.ResourceNotFoundException;
 import org.socialhistoryservices.delivery.permission.entity.Permission;
@@ -197,8 +199,7 @@ public class ReservationController extends AbstractRequestController {
                     // Mail the confirmation to the visitor.
                     try {
                         resMailer.mailConfirmation(newRes);
-                    }
-                    catch (MailException e) {
+                    } catch (MailException e) {
                         LOGGER.error("Failed to send email", e);
                         model.addAttribute("error", "mail");
                     }
@@ -207,16 +208,13 @@ public class ReservationController extends AbstractRequestController {
                     model.addAttribute("reservation", newRes);
                     return "reservation_success";
                 }
-            }
-            else {
+            } else {
                 reservations.validateHoldings(newRes, null);
             }
-        }
-        catch (NoHoldingsException e) {
+        } catch (NoHoldingsException e) {
             model.addAttribute("error", "nothingAvailable");
             return "reservation_error";
-        }
-        catch (ClosedException e) {
+        } catch (ClosedException e) {
             model.addAttribute("error", "restricted");
             return "reservation_error";
         }
@@ -250,8 +248,7 @@ public class ReservationController extends AbstractRequestController {
 
                 if (returnRestricted && !hasPermission)
                     foundHr.add(hr);
-            }
-            else if (!returnRestricted && (restriction == ExternalRecordInfo.Restriction.OPEN)) {
+            } else if (!returnRestricted && (restriction == ExternalRecordInfo.Restriction.OPEN)) {
                 foundHr.add(hr);
             }
         }
@@ -361,8 +358,7 @@ public class ReservationController extends AbstractRequestController {
 
             if (DateUtils.isBetweenOpeningAndClosingTime(deliveryProperties, create))
                 reservations.printReservation(res);
-        }
-        catch (PrinterException e) {
+        } catch (PrinterException e) {
             LOGGER.warn("Printing reservation failed", e);
             // Do nothing, let an employee print it later on.
         }
@@ -400,8 +396,7 @@ public class ReservationController extends AbstractRequestController {
         if (!hrs.isEmpty()) {
             try {
                 reservations.printItems(hrs, false);
-            }
-            catch (PrinterException e) {
+            } catch (PrinterException e) {
                 return "reservation_print_failure";
             }
         }
@@ -423,13 +418,47 @@ public class ReservationController extends AbstractRequestController {
         if (!hrs.isEmpty()) {
             try {
                 reservations.printItems(hrs, true);
-            }
-            catch (PrinterException e) {
+            } catch (PrinterException e) {
                 return "reservation_print_failure";
             }
         }
 
         String qs = req.getQueryString() != null ? "?" + req.getQueryString() : "";
+        return "redirect:/reservation/" + qs;
+    }
+
+    @RequestMapping(value = "/batchprocess", method = RequestMethod.POST, params = "merge")
+    @PreAuthorize("hasRole('ROLE_RESERVATION_MODIFY')")
+    public String batchProcessMerge(HttpServletRequest req, @RequestParam(required = false) List<String> checked) {
+        final String qs = (req.getQueryString() != null) ? "?" + req.getQueryString() : "";
+
+        final List<HoldingReservation> hrs = getHoldingReservationsForBulk(checked);
+        if (hrs.size() > 1) {
+            final Set<Reservation> _reservations = new HashSet<>();
+            for (HoldingReservation hr : hrs) {
+                final Reservation _reservation = hr.getReservation();
+                _reservations.add(_reservation);
+            }
+
+            if (_reservations.size() > 1) {
+                final Reservation reservationClone = new Reservation().mergeWith(_reservations.iterator().next()); // willekeur. Dit is de basis voor de nieuwe reproductie.
+
+                for (HoldingReservation hr : hrs) { // pak alle holders en schuif die onder de nieuwe)
+                    final HoldingReservation holdingReservationClone = new HoldingReservation();
+                    holdingReservationClone.mergeWith(hr);
+                    holdingReservationClone.setReservation(reservationClone);
+                    reservationClone.getHoldingReservations().add(holdingReservationClone);
+                }
+
+                reservations.saveReservation(reservationClone);
+
+                // Verwijder alle (en daarmee alle holdings wegens cascade delete)
+                for (Reservation _reservation : _reservations) {
+                    reservations.removeReservation(_reservation);
+                }
+            }
+        }
+
         return "redirect:/reservation/" + qs;
     }
 
@@ -641,18 +670,15 @@ public class ReservationController extends AbstractRequestController {
                 }
                 return "redirect:/reservation/" + newRes.getId();
             }
-        }
-        catch (ClosedException e) {
+        } catch (ClosedException e) {
             String msg = msgSource.getMessage("reservation.error.restricted", null, "",
                     LocaleContextHolder.getLocale());
             result.addError(new ObjectError(result.getObjectName(), null, null, msg));
-        }
-        catch (NoHoldingsException e) {
+        } catch (NoHoldingsException e) {
             String msg = msgSource.getMessage("reservation.error.noHoldings", null, "",
                     LocaleContextHolder.getLocale());
             result.addError(new ObjectError(result.getObjectName(), null, null, msg));
-        }
-        catch (PrinterException e) {
+        } catch (PrinterException e) {
             // Do nothing if printing fails.
             // You will see the printed flag being false in the overview.
             LOGGER.warn("Printing reservation failed", e);

@@ -1,6 +1,7 @@
 package org.socialhistoryservices.delivery.request.entity;
 
 import org.socialhistoryservices.delivery.record.entity.Holding;
+import org.socialhistoryservices.delivery.reservation.entity.Reservation;
 
 import java.util.Date;
 import java.util.List;
@@ -47,4 +48,6 @@ public abstract class Request {
      * @return A list of HoldingRequests.
      */
     public abstract List<? extends HoldingRequest> getHoldingRequests();
+
+    public abstract Request mergeWith(Request reservation);
 }

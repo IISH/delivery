@@ -1,6 +1,7 @@
 package org.socialhistoryservices.delivery.reservation.entity;
 
 import org.socialhistoryservices.delivery.record.entity.Holding;
+import org.socialhistoryservices.delivery.reproduction.entity.HoldingReproduction;
 import org.socialhistoryservices.delivery.request.entity.HoldingRequest;
 import org.socialhistoryservices.delivery.request.entity.Request;
 
@@ -181,5 +182,14 @@ public class HoldingReservation extends HoldingRequest {
     @Override
     public void setHolding(Holding h) {
         this.holding = h;
+    }
+
+    @Override
+    public void mergeWith(HoldingRequest other) {
+        super.mergeWith(other);
+        if (other instanceof HoldingReservation) {
+            this.completed = other.isCompleted();
+            this.printed = other.isPrinted();
+        }
     }
 }

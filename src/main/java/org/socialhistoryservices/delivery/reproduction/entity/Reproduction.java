@@ -19,6 +19,7 @@ import java.util.*;
 @Table(name = "reproductions")
 @Configurable
 public class Reproduction extends Request {
+
     /**
      * Status of the reproduction.
      */
@@ -725,6 +726,27 @@ public class Reproduction extends Request {
                 return false;
         }
         return true;
+    }
+
+    @Override
+    public Request mergeWith(Request request) {
+        final Reproduction reproduction = (Reproduction) request;
+        this.adminstrationCosts = reproduction.getAdminstrationCosts();
+        this.adminstrationCostsBtwPercentage = reproduction.getAdminstrationCostsBtwPercentage();
+        this.adminstrationCosts = reproduction.getAdminstrationCosts();
+        this.adminstrationCostsDiscount = reproduction.getAdminstrationCostsDiscount();
+        this.comment = reproduction.getComment();
+        this.creationDate = reproduction.getCreationDate();
+        this.customerEmail = reproduction.getCustomerEmail();
+        this.customerName = reproduction.getCustomerName();
+        this.date = reproduction.getDate();
+        this.dateHasOrderDetails = reproduction.getDateHasOrderDetails();
+        this.datePaymentAccepted = reproduction.getDatePaymentAccepted();
+        this.discountPercentage = reproduction.getDiscountPercentage();
+        this.order = reproduction.getOrder();
+        this.orderId = reproduction.getOrderId();
+        this.token = reproduction.getToken();
+        return this;
     }
 
     @Override

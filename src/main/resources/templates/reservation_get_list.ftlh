@@ -231,6 +231,7 @@
                 </select>
 
                 <input type="submit" name="changeStatus" value="${_("reservationList.toStatus", "Change Status")}"/>
+                <input type="submit" name="merge" value="${_("reservationList.merge", "Merge reservation")}"/>
                 <span class="note">${_("reservationList.ignoreStatusBackwards", "Reservation status can only be changed in forward order, i.e. Pending->Active->Completed, but not the other way around.")}</span>
               </li>
             </#if>

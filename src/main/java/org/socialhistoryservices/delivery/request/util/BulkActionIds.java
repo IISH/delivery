@@ -19,4 +19,20 @@ public class BulkActionIds {
     public int getHoldingId() {
         return holdingId;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof  BulkActionIds) {
+            final BulkActionIds bulkActionIds = (BulkActionIds) obj;
+            return ( bulkActionIds.requestId == this.requestId && bulkActionIds.holdingId == this.holdingId);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return requestId;
+    }
+
 }

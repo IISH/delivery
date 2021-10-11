@@ -996,3 +996,13 @@ ul.reproduction_totals > li {
     margin-bottom: 10px;
 }
 
+div.release {
+    font-size: x-small;
+    color: darkgray;
+    float: right;
+    margin:  0;
+    padding:  0.5em;
+    right: 10px;
+    top: 40px;
+    position: absolute;
+}

@@ -251,6 +251,7 @@
                 </select>
 
                 <input type="submit" name="changeStatus" value="${_("reproductionList.toStatus", "Change Status")}"/>
+                <input type="submit" name="merge" value="${_("reproductionList.merge", "Merge reproductions")}"/>
 
                 <span class="note">
                   ${_("reproductionList.ignoreStatusBackwards", "The status can only be changed forward (Waiting for order details->Has order details->Confirmed->Payed->Active->Completed->Delivered->Cancelled), not the other way around.")}

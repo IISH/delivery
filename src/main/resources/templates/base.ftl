@@ -28,16 +28,14 @@
   <!DOCTYPE html>
   <html>
   <head>
-    <title>${title} - Delivery ${release}</title>
+    <title>${title} - Delivery</title>
     <link rel="stylesheet" media="all" href="${rc.contextPath}/css/screen.css"/>
     <link rel="shortcut icon" type="image/x-icon" href="${rc.contextPath}/logo.ico"/>
     <style>
         header.main {
             background: url("${rc.contextPath}/css/images/iish_logo_${rc.locale}.jpg") no-repeat 50px 10px;
         }
-        body {
-        background-color: ${profile}
-        }
+        <#if profile??>body { background-color: ${profile} }</#if>
     </style>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <link type="text/css" href="${rc.contextPath}/css/jquery-ui.min.css" rel="stylesheet"/>
@@ -55,7 +53,7 @@
 
 <#macro userHeading disableLanguage=false>
   <header class="main">
-    <a href="/"><h1>Delivery ${release}</h1></a>
+    <a href="/"><h1>Delivery</h1></a>
     <#if !disableLanguage>
       <div class="languageSelect">
         <span>${_("language", "Language")}</span>
@@ -65,6 +63,8 @@
         </ul>
       </div>
     </#if>
+
+    <#if gitCommitId??><div class="release"><a href="https://github.com/IISH/delivery/commit/${gitCommitId}" target="_blank">${gitClosestTagName}</a></div></#if>
   </header>
 
   <nav class="main"></nav>
@@ -72,7 +72,7 @@
 
 <#macro heading>
   <header class="main">
-    <a href="/"><h1>Delivery ${release}</h1></a>
+    <a href="/"><h1>Delivery</h1></a>
     <div class="languageSelect">
       <span>${_("language", "Language")}</span>
       <ul>
@@ -80,6 +80,7 @@
         <li><a href="<@paramUrl {"locale" : "en"} />">EN</a></li>
       </ul>
     </div>
+    <#if gitCommitId??><div class="release"><a href="https://github.com/IISH/delivery/commit/${gitCommitId}" target="_blank">${gitClosestTagName}</a></div></#if>
   </header>
 
   <nav class="main">

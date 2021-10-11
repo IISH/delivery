@@ -15,6 +15,6 @@ COPY --from=build /app/target/dependency/BOOT-INF/lib /app/lib
 COPY --from=build /app/target/dependency/META-INF /app/META-INF
 
 COPY run.sh /opt
-RUN chmod +x /opt/run.sh
+RUN chmod +x /opt/run.sh && [ -f '/app/git.properties' ] && grep -E 'tag|version|id' /app/git.properties > d && mv d /app/git.properties
 
 ENTRYPOINT ["/opt/run.sh"]

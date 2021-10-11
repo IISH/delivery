@@ -12,10 +12,7 @@
 *.ipr
 
 # Builds
-/target
+target/
 
 # Other
-/config
-
-# system
-version.ftlh
+config/

@@ -3,6 +3,15 @@ package org.socialhistoryservices.delivery.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Properties;
+
 @Component
 @ConfigurationProperties(prefix = "delivery")
 public class DeliveryProperties {
@@ -55,7 +64,44 @@ public class DeliveryProperties {
     private String urlSelf = "http://localhost:8080";
     private int recordPageLen = 20;
     private String profile = "white";
-    private String release = "development";
+    private String gitClosestTagName = "";
+    private String gitCommitId = "";
+    private String gitBuildVersion = "";
+
+    public DeliveryProperties() {
+
+        final ClassLoader classLoader = getClass().getClassLoader();
+        final InputStream inputStream = classLoader.getResourceAsStream("git.properties");
+        if (inputStream != null) {
+            final Properties properties = new Properties();
+            try {
+                properties.load(inputStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+            @SuppressWarnings("unchecked")
+            final Enumeration<String> enums = (Enumeration<String>) properties.propertyNames();
+            while (enums.hasMoreElements()) {
+                final String key = enums.nextElement();
+                final String value = properties.getProperty(key);
+
+                switch (key) {
+                    case "git.closest.tag.name":
+                        this.gitClosestTagName = value;
+                        break;
+                    case "git.commit.id":
+                        this.gitCommitId=value;
+                    case "git.build.version":
+                        this.gitBuildVersion = value;
+                        break;
+                    default:
+                        // ignore
+                        break;
+                }
+            }
+        }
+    }
 
     public boolean isMailEnabled() {
         return mailEnabled;
@@ -449,11 +495,15 @@ public class DeliveryProperties {
         this.profile = profile;
     }
 
-    public String getRelease() {
-        return release;
+    public String getGitClosestTagName() {
+        return gitClosestTagName;
     }
 
-    public void setRelease(String release) {
-        this.release = release;
+    public String getGitCommitId() {
+        return gitCommitId;
+    }
+
+    public String getGitBuildVersion() {
+        return gitBuildVersion;
     }
 }

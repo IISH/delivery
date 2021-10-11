@@ -1,5 +1,6 @@
 package org.socialhistoryservices.delivery.request.controller;
 
+import org.socialhistoryservices.delivery.reproduction.entity.HoldingReproduction;
 import org.socialhistoryservices.delivery.util.ErrorHandlingController;
 import org.socialhistoryservices.delivery.util.InvalidRequestException;
 import org.socialhistoryservices.delivery.util.ResourceNotFoundException;
@@ -388,8 +389,8 @@ public abstract class AbstractRequestController extends ErrorHandlingController 
      * @param bulk A list of request id and holding id pairs.
      * @return The ids.
      */
-    protected List<BulkActionIds> getIdsFromBulk(List<String> bulk) {
-        List<BulkActionIds> bulkActionIds = new ArrayList<>();
+    protected Set<BulkActionIds> getIdsFromBulk(List<String> bulk) {
+        Set<BulkActionIds> bulkActionIds = new HashSet<>();
         if (bulk != null) {
             for (String bulkIds : bulk) {
                 String[] ids = bulkIds.split(":");

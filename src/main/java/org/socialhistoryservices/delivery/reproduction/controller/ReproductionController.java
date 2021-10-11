@@ -3,6 +3,7 @@ package org.socialhistoryservices.delivery.reproduction.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.socialhistoryservices.delivery.request.service.RequestPrintable;
 import org.socialhistoryservices.delivery.util.InvalidRequestException;
 import org.socialhistoryservices.delivery.util.ResourceNotFoundException;
 import org.socialhistoryservices.delivery.util.TemplatePreparationException;
@@ -183,8 +184,7 @@ public class ReproductionController extends AbstractRequestController {
             headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
 
             return new ResponseEntity<>(pdf, headers, HttpStatus.OK);
-        }
-        catch (TemplatePreparationException tpe) {
+        } catch (TemplatePreparationException tpe) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -246,6 +246,50 @@ public class ReproductionController extends AbstractRequestController {
     }
 
     /**
+     * Merge holdings for reproductions.
+     *
+     * @param req     The HTTP request object.
+     * @param checked The reproductions marked for the merge.
+     * @return The view to resolve.
+     */
+    @RequestMapping(value = "/batchprocess", method = RequestMethod.POST, params = "merge")
+    @PreAuthorize("hasRole('ROLE_REPRODUCTION_MODIFY')")
+    public String batchProcessMerge(HttpServletRequest req, @RequestParam(required = false) List<String> checked) {
+        final String qs = (req.getQueryString() != null) ? "?" + req.getQueryString() : "";
+
+        final List<HoldingReproduction> hrs = getHoldingReproductionsForBulk(checked);
+        if (hrs.size() >1) {
+            final Set<Reproduction> _reproductions = new HashSet<>();
+            for (HoldingReproduction hr : hrs) {
+                final Reproduction _reproduction = hr.getReproduction();
+                if (_reproduction.getOrder() == null) // als er een order is, dan niet samenvoegen
+                    _reproductions.add(_reproduction);
+            }
+
+            if ( _reproductions.size()>1) {
+                final Reproduction reproductionClone = (Reproduction) new Reproduction().mergeWith(_reproductions.iterator().next()); // willekeur. Dit is de basis voor de nieuwe reproductie.
+
+                for (HoldingReproduction hr : hrs) { // pak alle holders en schuif die onder de nieuwe)
+                    final HoldingReproduction holdingReproductionClone = new HoldingReproduction();
+                    holdingReproductionClone.mergeWith(hr);
+                    holdingReproductionClone.setReproduction(reproductionClone);
+                    reproductionClone.getHoldingReproductions().add(holdingReproductionClone);
+                }
+
+                // Sla de nieuwe reproductie op
+                reproductions.saveReproduction(reproductionClone);
+
+                // Verwijder alle reproducties (en daarmee alle holdings wegens cascade delete)
+                for (Reproduction _reproduction : _reproductions) {
+                    reproductions.removeReproduction(_reproduction);
+                }
+            }
+        }
+
+        return "redirect:/reproduction/" + qs;
+    }
+
+    /**
      * Show print marked holdings (except already printed).
      *
      * @param req     The HTTP request object.
@@ -258,8 +302,7 @@ public class ReproductionController extends AbstractRequestController {
         if (!hrs.isEmpty()) {
             try {
                 reproductions.printItems(hrs, false);
-            }
-            catch (PrinterException e) {
+            } catch (PrinterException e) {
                 return "reproduction_print_failure";
             }
         }
@@ -281,8 +324,7 @@ public class ReproductionController extends AbstractRequestController {
         if (!hrs.isEmpty()) {
             try {
                 reproductions.printItems(hrs, true);
-            }
-            catch (PrinterException e) {
+            } catch (PrinterException e) {
                 return "reproduction_print_failure";
             }
         }
@@ -453,19 +495,15 @@ public class ReproductionController extends AbstractRequestController {
                     autoPrintReproduction(reproduction);
                     return determineNextStep(reproduction, model);
                 }
-            }
-            else {
+            } else {
                 reproductions.validateReproductionHoldings(reproduction, null);
             }
-        }
-        catch (NoHoldingsException e) {
+        } catch (NoHoldingsException e) {
             throw new ResourceNotFoundException();
-        }
-        catch (ClosedException e) {
+        } catch (ClosedException e) {
             model.addAttribute("error", "restricted");
             return "reproduction_error";
-        }
-        catch (ClosedForReproductionException e) {
+        } catch (ClosedForReproductionException e) {
             model.addAttribute("error", "closed");
             return "reproduction_error";
         }
@@ -589,8 +627,7 @@ public class ReproductionController extends AbstractRequestController {
     protected void autoPrintReproduction(final Reproduction reproduction) {
         try {
             reproductions.printReproduction(reproduction);
-        }
-        catch (PrinterException e) {
+        } catch (PrinterException e) {
             // Do nothing, let an employee print it later on
             LOGGER.warn("Printing reproduction failed", e);
         }
@@ -612,19 +649,16 @@ public class ReproductionController extends AbstractRequestController {
             // Mail the confirmation (offer is ready) to the customer
             try {
                 reproductionMailer.mailOfferReady(reproduction);
-            }
-            catch (MailException me) {
+            } catch (MailException me) {
                 model.addAttribute("error", "mail");
             }
 
             return "redirect:/reproduction/confirm/" + reproduction.getId() + "/" + reproduction.getToken();
-        }
-        else {
+        } else {
             // Mail the reproduction pending details to the customer and inform the reading room
             try {
                 reproductionMailer.mailPending(reproduction);
-            }
-            catch (MailException me) {
+            } catch (MailException me) {
                 model.addAttribute("error", "mail");
             }
 
@@ -724,12 +758,10 @@ public class ReproductionController extends AbstractRequestController {
                 }
 
                 return "redirect:" + payWayService.getPaymentPageRedirectLink(order.getId());
-            }
-            catch (IncompleteOrderDetailsException onre) {
+            } catch (IncompleteOrderDetailsException onre) {
                 // We already checked for this one though
                 throw new InvalidRequestException("Reproduction is not ready yet.");
-            }
-            catch (OrderRegistrationFailureException orfe) {
+            } catch (OrderRegistrationFailureException orfe) {
                 String msg = msgSource.getMessage("payway.error", null, LocaleContextHolder.getLocale());
                 throw new InvalidRequestException(msg);
             }
@@ -765,12 +797,10 @@ public class ReproductionController extends AbstractRequestController {
 
                 // Otherwise redirect the user to the payment page
                 return "redirect:" + payWayService.getPaymentPageRedirectLink(order.getId());
-            }
-            catch (IncompleteOrderDetailsException onre) {
+            } catch (IncompleteOrderDetailsException onre) {
                 // We already checked for this one though
                 throw new InvalidRequestException("Reproduction is not ready yet.");
-            }
-            catch (OrderRegistrationFailureException orfe) {
+            } catch (OrderRegistrationFailureException orfe) {
                 String msg = msgSource.getMessage("payway.error", null, LocaleContextHolder.getLocale());
                 model.addAttribute("paywayError", msg);
             }
@@ -999,20 +1029,17 @@ public class ReproductionController extends AbstractRequestController {
                 if (mail) {
                     try {
                         reproductionMailer.mailOfferReady(originalReproduction);
-                    }
-                    catch (MailException me) {
+                    } catch (MailException me) {
                         mailSuccess = false;
                     }
                 }
                 return "redirect:/reproduction/" + originalReproduction.getId() + (!mailSuccess ? "?mail=error" : "");
             }
-        }
-        catch (ClosedException | ClosedForReproductionException e) {
+        } catch (ClosedException | ClosedForReproductionException e) {
             String msg = msgSource.getMessage("reproduction.error.restricted", null, "",
                     LocaleContextHolder.getLocale());
             result.addError(new ObjectError(result.getObjectName(), null, null, msg));
-        }
-        catch (NoHoldingsException e) {
+        } catch (NoHoldingsException e) {
             String msg = msgSource.getMessage("reproduction.error.noHoldings", null, "",
                     LocaleContextHolder.getLocale());
             result.addError(new ObjectError(result.getObjectName(), null, null, msg));
@@ -1120,20 +1147,17 @@ public class ReproductionController extends AbstractRequestController {
                 if (mail) {
                     try {
                         reproductionMailer.mailOfferReady(newReproduction);
-                    }
-                    catch (MailException me) {
+                    } catch (MailException me) {
                         mailSuccess = false;
                     }
                 }
                 return "redirect:/reproduction/" + newReproduction.getId() + (!mailSuccess ? "?mail=error" : "");
             }
-        }
-        catch (ClosedException | ClosedForReproductionException e) {
+        } catch (ClosedException | ClosedForReproductionException e) {
             String msg = msgSource.getMessage("reproduction.error.restricted", null, "",
                     LocaleContextHolder.getLocale());
             result.addError(new ObjectError(result.getObjectName(), null, null, msg));
-        }
-        catch (NoHoldingsException e) {
+        } catch (NoHoldingsException e) {
             String msg = msgSource.getMessage("reproduction.error.noHoldings", null, "",
                     LocaleContextHolder.getLocale());
             result.addError(new ObjectError(result.getObjectName(), null, null, msg));

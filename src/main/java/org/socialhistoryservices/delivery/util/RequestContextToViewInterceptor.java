@@ -1,5 +1,8 @@
 package org.socialhistoryservices.delivery.util;
 
+import org.socialhistoryservices.delivery.config.DeliveryProperties;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -15,12 +18,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class RequestContextToViewInterceptor implements AsyncHandlerInterceptor {
 
-    final String release;
-    final String profile;
+    DeliveryProperties properties;
 
-    public RequestContextToViewInterceptor(String release, String profile) {
-        this.release = release;
-        this.profile = profile;
+    public RequestContextToViewInterceptor(DeliveryProperties properties) {
+        this.properties = properties;
     }
 
     /**
@@ -37,8 +38,10 @@ public class RequestContextToViewInterceptor implements AsyncHandlerInterceptor 
             rc.setUrlPathHelper(uph);
             model.addObject("rc", rc);
 
-            model.addObject("profile", profile);
-            model.addObject("release", release);
+            model.addObject("profile", properties.getProfile());
+            model.addObject("gitClosestTagName", properties.getGitClosestTagName());
+            model.addObject("gitCommitId", properties.getGitCommitId());
+            model.addObject("gitBuildVersion", properties.getGitBuildVersion());
         }
     }
 }

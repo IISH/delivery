@@ -317,6 +317,20 @@ public class Reservation extends Request {
     }
 
     @Override
+    public Reservation mergeWith(Request request) {
+        final Reservation reservation = (Reservation) request;
+        this.creationDate = reservation.getCreationDate();
+        this.comment = reservation.getComment();
+        this.date = reservation.getDate();
+        this.permissions.addAll(reservation.getPermissions());
+        this.returnDate = reservation.getReturnDate();
+        this.status = reservation.getStatus();
+        this.visitorEmail = reservation.getVisitorEmail();
+        this.visitorName = reservation.getVisitorName();
+        return this;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof Reservation) {
             Reservation other = (Reservation) obj;
