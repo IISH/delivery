@@ -56,8 +56,8 @@ public class ReservationDAOImpl implements ReservationDAO {
      *
      * @param obj Reservation to save.
      */
-    public void save(Reservation obj) {
-        entityManager.merge(obj);
+    public Reservation save(Reservation obj) {
+        return entityManager.merge(obj);
     }
 
     /**

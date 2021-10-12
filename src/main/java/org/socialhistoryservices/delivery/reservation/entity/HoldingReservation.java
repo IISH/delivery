@@ -187,9 +187,5 @@ public class HoldingReservation extends HoldingRequest {
     @Override
     public void mergeWith(HoldingRequest other) {
         super.mergeWith(other);
-        if (other instanceof HoldingReservation) {
-            this.completed = other.isCompleted();
-            this.printed = other.isPrinted();
-        }
     }
 }

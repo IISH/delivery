@@ -38,7 +38,7 @@ public interface ReservationService {
      *
      * @param obj Reservation to save.
      */
-    void saveReservation(Reservation obj);
+    Reservation saveReservation(Reservation obj);
 
     /**
      * Retrieve the Reservation matching the given Id.

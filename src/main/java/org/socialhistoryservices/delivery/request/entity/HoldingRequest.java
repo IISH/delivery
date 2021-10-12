@@ -90,6 +90,8 @@ public abstract class HoldingRequest {
     public void mergeWith(HoldingRequest other) {
         setComment(other.getComment());
         setHolding(other.getHolding());
+        this.setCompleted(other.isCompleted());
+        this.setPrinted(other.isPrinted());
     }
 
     public String toShortString() {

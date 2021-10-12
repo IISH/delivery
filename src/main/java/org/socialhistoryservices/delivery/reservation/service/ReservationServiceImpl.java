@@ -101,8 +101,8 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
      *
      * @param obj Reservation to save.
      */
-    public void saveReservation(Reservation obj) {
-        reservationDAO.save(obj);
+    public Reservation saveReservation(Reservation obj) {
+        return reservationDAO.save(obj);
     }
 
     /**

@@ -32,7 +32,7 @@ public interface ReservationDAO {
      *
      * @param obj Reservation to save.
      */
-    void save(Reservation obj);
+    Reservation save(Reservation obj);
 
     /**
      * Retrieve the Reservation matching the given Id.

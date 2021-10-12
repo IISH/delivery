@@ -3,6 +3,7 @@ package org.socialhistoryservices.delivery.reproduction.entity;
 import org.socialhistoryservices.delivery.record.entity.Holding;
 import org.socialhistoryservices.delivery.request.entity.HoldingRequest;
 import org.socialhistoryservices.delivery.request.entity.Request;
+import org.socialhistoryservices.delivery.reservation.entity.Reservation;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.i18n.LocaleContextHolder;
 
@@ -730,22 +731,33 @@ public class Reproduction extends Request {
 
     @Override
     public Request mergeWith(Request request) {
-        final Reproduction reproduction = (Reproduction) request;
-        this.adminstrationCosts = reproduction.getAdminstrationCosts();
-        this.adminstrationCostsBtwPercentage = reproduction.getAdminstrationCostsBtwPercentage();
-        this.adminstrationCosts = reproduction.getAdminstrationCosts();
-        this.adminstrationCostsDiscount = reproduction.getAdminstrationCostsDiscount();
-        this.comment = reproduction.getComment();
-        this.creationDate = reproduction.getCreationDate();
-        this.customerEmail = reproduction.getCustomerEmail();
-        this.customerName = reproduction.getCustomerName();
-        this.date = reproduction.getDate();
-        this.dateHasOrderDetails = reproduction.getDateHasOrderDetails();
-        this.datePaymentAccepted = reproduction.getDatePaymentAccepted();
-        this.discountPercentage = reproduction.getDiscountPercentage();
-        this.order = reproduction.getOrder();
-        this.orderId = reproduction.getOrderId();
-        this.token = reproduction.getToken();
+        if ( request instanceof Reproduction) {
+            final Reproduction reproduction = (Reproduction) request;
+            this.adminstrationCosts = reproduction.getAdminstrationCosts();
+            this.adminstrationCostsBtwPercentage = reproduction.getAdminstrationCostsBtwPercentage();
+            this.adminstrationCosts = reproduction.getAdminstrationCosts();
+            this.adminstrationCostsDiscount = reproduction.getAdminstrationCostsDiscount();
+            this.comment = reproduction.getComment();
+            this.creationDate = reproduction.getCreationDate();
+            this.customerEmail = reproduction.getCustomerEmail();
+            this.customerName = reproduction.getCustomerName();
+            this.date = reproduction.getDate();
+            this.dateHasOrderDetails = reproduction.getDateHasOrderDetails();
+            this.datePaymentAccepted = reproduction.getDatePaymentAccepted();
+            this.discountPercentage = reproduction.getDiscountPercentage();
+            this.order = reproduction.getOrder();
+            this.orderId = reproduction.getOrderId();
+            this.token = reproduction.getToken();
+        }
+        else {
+            final Reservation reservation = (Reservation) request;
+            this.comment = reservation.getComment();
+            this.creationDate = reservation.getCreationDate();
+            this.date = reservation.getDate();
+            this.customerEmail = reservation.getVisitorEmail(); // of reservation.getEmail(); ?
+            this.customerName = reservation.getVisitorName();
+        }
+
         return this;
     }
 

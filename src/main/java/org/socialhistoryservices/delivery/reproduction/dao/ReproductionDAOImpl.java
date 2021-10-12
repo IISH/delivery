@@ -56,10 +56,11 @@ public class ReproductionDAOImpl implements ReproductionDAO {
      * Save changes to a Reproduction in the database.
      *
      * @param obj Reproduction to save.
+     * @return The Reproduction saved
      */
-    public void save(Reproduction obj) {
+    public Reproduction save(Reproduction obj) {
         // On save, cascading does not work for new holdings
-        entityManager.merge(obj);
+        return entityManager.merge(obj);
     }
 
     /**

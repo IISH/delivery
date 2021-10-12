@@ -4,6 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.socialhistoryservices.delivery.request.service.RequestPrintable;
+import org.socialhistoryservices.delivery.reservation.entity.HoldingReservation;
+import org.socialhistoryservices.delivery.reservation.entity.Reservation;
+import org.socialhistoryservices.delivery.reservation.service.ReservationService;
 import org.socialhistoryservices.delivery.util.InvalidRequestException;
 import org.socialhistoryservices.delivery.util.ResourceNotFoundException;
 import org.socialhistoryservices.delivery.util.TemplatePreparationException;
@@ -59,6 +62,9 @@ public class ReproductionController extends AbstractRequestController {
 
     @Autowired
     private ReproductionService reproductions;
+
+    @Autowired
+    private ReservationService reservations;
 
     @Autowired
     private ReproductionMailer reproductionMailer;
@@ -1289,12 +1295,34 @@ public class ReproductionController extends AbstractRequestController {
         res.flushBuffer();
     }
 
+    @RequestMapping(value = "/{id:[\\d]+}/convert", method = RequestMethod.GET)
+    @PreAuthorize("hasRole('ROLE_REPRODUCTION_DELETE') && hasRole('ROLE_RESERVATION_CREATE')")
+    public String convert(@PathVariable int id) {
+        final Reproduction reproduction = reproductions.getReproductionById(id);
+        if (reproduction == null)
+            throw new ResourceNotFoundException();
+
+        final Reservation reservation = new Reservation();
+        reservation.mergeWith(reproduction);
+        for (HoldingReproduction holdingReproduction : reproduction.getHoldingReproductions()) {
+            final HoldingReservation holdingReservation = new HoldingReservation();
+            holdingReservation.mergeWith(holdingReproduction);
+            holdingReservation.setReservation(reservation);
+            reservation.getHoldingReservations().add(holdingReservation);
+        }
+
+        final Reservation saved = reservations.saveReservation(reservation);
+        reproductions.removeReproduction(reproduction);
+
+        return "redirect:/reservation/" + saved.getId();
+    }
+
     /**
      * Returns the payed reproductions for a given period.
      *
      * @param from From date.
      * @param to   To date.
-     * @return The payed reproductions.
+     * @return The paid reproductions.
      */
     private List<Reproduction> getPayedReproductions(Date from, Date to) {
         CriteriaBuilder cb = reproductions.getHoldingReproductionCriteriaBuilder();

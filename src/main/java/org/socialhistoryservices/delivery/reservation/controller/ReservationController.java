@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import org.socialhistoryservices.delivery.reproduction.entity.HoldingReproduction;
 import org.socialhistoryservices.delivery.reproduction.entity.Reproduction;
+import org.socialhistoryservices.delivery.reproduction.service.ReproductionService;
 import org.socialhistoryservices.delivery.reservation.service.*;
 import org.socialhistoryservices.delivery.util.ResourceNotFoundException;
 import org.socialhistoryservices.delivery.permission.entity.Permission;
@@ -50,6 +51,9 @@ public class ReservationController extends AbstractRequestController {
 
     @Autowired
     private ReservationService reservations;
+
+    @Autowired
+    private ReproductionService reproductions;
 
     @Autowired
     private PermissionService permissions;
@@ -519,6 +523,28 @@ public class ReservationController extends AbstractRequestController {
 
         String qs = (req.getQueryString() != null) ? "?" + req.getQueryString() : "";
         return "redirect:/reservation/" + qs;
+    }
+
+    @RequestMapping(value = "/{id:[\\d]+}/convert", method = RequestMethod.GET)
+    @PreAuthorize("hasRole('ROLE_RESERVATION_DELETE') && hasRole('ROLE_REPRODUCTION_CREATE')")
+    public String convert(@PathVariable int id) {
+        final Reservation reservation = reservations.getReservationById(id);
+        if (reservation == null)
+            throw new ResourceNotFoundException();
+
+        final Reproduction reproduction = new Reproduction();
+        reproduction.mergeWith(reservation);
+        for (HoldingReservation holdingReservation : reservation.getHoldingReservations()) {
+            final HoldingReproduction holdingReproduction = new HoldingReproduction();
+            holdingReproduction.mergeWith(holdingReservation);
+            holdingReproduction.setReproduction(reproduction);
+            reproduction.getHoldingReproductions().add(holdingReproduction);
+        }
+
+        final Reproduction saved = reproductions.saveReproduction(reproduction);
+        reservations.removeReservation(reservation);
+
+        return "redirect:/reproduction/" + saved.getId();
     }
 
     /**

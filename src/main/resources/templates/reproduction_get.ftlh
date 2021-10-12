@@ -71,6 +71,14 @@
       </li>
     </#if>
 
+    <#if _sec.ifAllGranted("ROLE_RESERVATION_CREATE,ROLE_REPRODUCTION_DELETE")>
+      <li>
+        <a href="${rc.contextPath}/reproduction/${reproduction.id?c}/convert">
+          ${_("reproductionSingle.convert")}
+        </a>
+      </li>
+    </#if>
+
     <#list reproduction.holdingReproductions as hr>
       <#assign h = hr.holding>
       <#assign info = h.record.externalInfo>

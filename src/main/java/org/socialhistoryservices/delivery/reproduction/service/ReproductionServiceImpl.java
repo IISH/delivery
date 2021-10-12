@@ -123,8 +123,8 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
      *
      * @param obj Reproduction to save.
      */
-    public void saveReproduction(Reproduction obj) {
-        reproductionDAO.save(obj);
+    public Reproduction saveReproduction(Reproduction obj) {
+        return reproductionDAO.save(obj);
     }
 
     /**

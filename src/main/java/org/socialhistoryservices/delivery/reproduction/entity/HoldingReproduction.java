@@ -3,6 +3,7 @@ package org.socialhistoryservices.delivery.reproduction.entity;
 import org.socialhistoryservices.delivery.record.entity.Holding;
 import org.socialhistoryservices.delivery.request.entity.HoldingRequest;
 import org.socialhistoryservices.delivery.request.entity.Request;
+import org.socialhistoryservices.delivery.reservation.entity.HoldingReservation;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -467,7 +468,7 @@ public class HoldingReproduction extends HoldingRequest {
     public void mergeWith(HoldingRequest other) {
         super.mergeWith(other);
         if (other instanceof HoldingReproduction) {
-            HoldingReproduction otherHr = (HoldingReproduction) other;
+            final HoldingReproduction otherHr = (HoldingReproduction) other;
 
             setBtwPrice(otherHr.getBtwPrice());
             setBtwPercentage(otherHr.getBtwPercentage());
@@ -481,6 +482,8 @@ public class HoldingReproduction extends HoldingRequest {
 
             setCustomReproductionCustomer(otherHr.getCustomReproductionCustomer());
             setCustomReproductionReply(otherHr.getCustomReproductionReply());
+        } else {
+            this.customReproductionCustomer = "NA";
         }
     }
 }

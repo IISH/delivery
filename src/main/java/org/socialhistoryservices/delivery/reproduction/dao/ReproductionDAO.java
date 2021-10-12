@@ -31,7 +31,7 @@ public interface ReproductionDAO {
      *
      * @param obj Reproduction to save.
      */
-    void save(Reproduction obj);
+    Reproduction save(Reproduction obj);
 
     /**
      * Retrieve the Reproduction matching the given Id.

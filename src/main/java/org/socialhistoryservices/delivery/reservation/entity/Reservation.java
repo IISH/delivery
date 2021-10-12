@@ -2,6 +2,7 @@ package org.socialhistoryservices.delivery.reservation.entity;
 
 import org.socialhistoryservices.delivery.permission.entity.Permission;
 import org.socialhistoryservices.delivery.record.entity.Holding;
+import org.socialhistoryservices.delivery.reproduction.entity.Reproduction;
 import org.socialhistoryservices.delivery.request.entity.HoldingRequest;
 import org.socialhistoryservices.delivery.request.entity.Request;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -318,15 +319,24 @@ public class Reservation extends Request {
 
     @Override
     public Reservation mergeWith(Request request) {
-        final Reservation reservation = (Reservation) request;
-        this.creationDate = reservation.getCreationDate();
-        this.comment = reservation.getComment();
-        this.date = reservation.getDate();
-        this.permissions.addAll(reservation.getPermissions());
-        this.returnDate = reservation.getReturnDate();
-        this.status = reservation.getStatus();
-        this.visitorEmail = reservation.getVisitorEmail();
-        this.visitorName = reservation.getVisitorName();
+        if ( request instanceof Reservation) {
+            final Reservation reservation = (Reservation) request;
+            this.creationDate = reservation.getCreationDate();
+            this.comment = reservation.getComment();
+            this.date = reservation.getDate();
+            this.permissions.addAll(reservation.getPermissions());
+            this.returnDate = reservation.getReturnDate();
+            this.status = reservation.getStatus();
+            this.visitorEmail = reservation.getVisitorEmail();
+            this.visitorName = reservation.getVisitorName();
+        } else {
+            final Reproduction reproduction = (Reproduction) request;
+            this.comment = reproduction.getComment();
+            this.creationDate = reproduction.getCreationDate();
+            this.date = reproduction.getDate();
+            this.visitorEmail = reproduction.getCustomerEmail();
+            this.visitorName = reproduction.getCustomerName();
+        }
         return this;
     }
 

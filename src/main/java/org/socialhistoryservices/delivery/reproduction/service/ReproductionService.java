@@ -273,7 +273,7 @@ public interface ReproductionService {
      *
      * @param obj Reproduction to save.
      */
-    void saveReproduction(Reproduction obj);
+    Reproduction saveReproduction(Reproduction obj);
 
     /**
      * Prints holding reproductions by using the default printer.
