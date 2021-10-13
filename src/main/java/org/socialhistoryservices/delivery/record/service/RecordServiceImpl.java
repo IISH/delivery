@@ -113,8 +113,10 @@ public class RecordServiceImpl implements RecordService {
         if (record == null) {
             record = createRecordByPid(pid);
             addRecord(record);
+            return record;
         }
-        else if (updateExternalInfo(record, false)) {
+
+        if (record.isCataloged() && updateExternalInfo(record, false)) {
             saveRecord(record);
         }
 

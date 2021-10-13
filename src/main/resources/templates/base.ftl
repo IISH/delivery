@@ -116,6 +116,13 @@
           </a>
         </li>
       </#if>
+      <#if _sec.ifAllGranted("ROLE_REPRODUCTION_CREATE")>
+        <li>
+          <a href="${rc.contextPath}/record/createform">
+            ${_("newrecord.title", "Create Record")}
+          </a>
+        </li>
+      </#if>
 
       <#if _sec.ifAllGranted("ROLE_PERMISSION_VIEW")>
         <li>

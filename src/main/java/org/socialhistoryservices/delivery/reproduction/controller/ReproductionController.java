@@ -268,7 +268,7 @@ public class ReproductionController extends AbstractRequestController {
             final Set<Reproduction> _reproductions = new HashSet<>();
             for (HoldingReproduction hr : hrs) {
                 final Reproduction _reproduction = hr.getReproduction();
-                if (_reproduction.getOrder() == null) // als er een order is, dan niet samenvoegen
+                if (_reproduction.getOrder() == null) // als er geen order is, dan samenvoegen
                     _reproductions.add(_reproduction);
             }
 

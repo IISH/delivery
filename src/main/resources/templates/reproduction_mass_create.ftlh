@@ -289,6 +289,8 @@
                 <span>${_("search.notfound", "No results...")}</span>
               </li>
             </#if>
+          <#else>
+            <a href="${rc.contextPath}/record/createform">${_("search.suggestion")}</a>
           </#if>
         </ul>
       </fieldset>

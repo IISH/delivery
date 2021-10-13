@@ -22,6 +22,10 @@ import java.util.List;
 @Entity
 @Table(name = "records", indexes = {@Index(columnList = "external_info_id", name = "records_external_info_fk")})
 public class Record {
+
+    @Column(name = "cataloged", columnDefinition = "boolean default true not null")
+    private boolean cataloged = true;
+
     /**
      * Type of restrictions on the use of the record.
      */
@@ -300,6 +304,24 @@ public class Record {
     }
 
     /**
+     * Get the origin of the record, which is either a catalog or delivery.
+     *
+     * @return True if the record lives in a catalog
+     */
+    public boolean isCataloged() {
+        return cataloged;
+    }
+
+    /**
+     * Get the origin of the record, which is either a catalog (true) or delivery.
+     * @param cataloged True if from a catalog
+     */
+    public void setCataloged(boolean cataloged) {
+        this.cataloged = cataloged;
+    }
+
+
+    /**
      * Holdings associated with the record.
      */
     @NotNull
@@ -358,6 +380,13 @@ public class Record {
             // Add/update provided.
             addOrUpdateHoldingsProvidedByRecord(other);
         }
+    }
+
+    public void mergeHoldingsWith(Record other) {
+        deleteHoldingsNotInProvidedRecord(other);
+
+        // Add/update provided.
+        addOrUpdateHoldingsProvidedByRecord(other);
     }
 
     /**

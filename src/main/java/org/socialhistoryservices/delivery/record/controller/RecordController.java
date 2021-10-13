@@ -20,10 +20,7 @@ import java.nio.charset.StandardCharsets;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Pages to manage or request record metadata.
@@ -216,6 +213,52 @@ public class RecordController extends ErrorHandlingController {
         return "record_home";
     }
 
+    @RequestMapping(value = "/createform", method = RequestMethod.GET)
+    @PreAuthorize("hasRole('ROLE_REPRODUCTION_CREATE')") // Je maakt records voor reproducties met fake holdings
+    public String showCreateForm() {
+        return "record_create";
+    }
+
+    @RequestMapping(value = "/createform", method = RequestMethod.POST)
+    @PreAuthorize("hasRole('ROLE_REPRODUCTION_CREATE')") // Je maakt records voor reproducties met fake holdings
+    public String showCreateForm(@RequestParam(value = "title") String title, @RequestParam(value="signature") String signature, Model model) {
+
+        final Record record = new Record();
+        record.setCataloged(false);
+
+        final String id = UUID.randomUUID().toString().toUpperCase(Locale.ROOT);
+        final String na = "10622"; // todo: naar properties
+        final String pid = na + "/" + id;
+        record.setPid(pid);
+
+        record.setTitle(title);
+
+        final ExternalRecordInfo info = new ExternalRecordInfo();
+        info.setTitle(title);
+        info.setAuthor("na");
+        info.setMaterialType(ExternalRecordInfo.MaterialType.OTHER);
+        info.setCopyright("na");
+        info.setRestriction(ExternalRecordInfo.Restriction.OPEN);
+        info.setPublicationStatus(ExternalRecordInfo.PublicationStatus.OPEN);
+        info.setPhysicalDescription("na");
+        info.setGenres("na");
+        record.setExternalInfo(info);
+
+        record.setExternalInfoUpdated(new Date());
+
+        final Holding holding = new Holding();
+        holding.setSignature(signature);
+        final ExternalHoldingInfo info1 = new ExternalHoldingInfo();
+        info1.setBarcode(signature);
+        info1.setShelvingLocation("na");
+        holding.setExternalInfo(info1);
+        holding.setRecord(record);
+        record.getHoldings().add(holding);
+
+        records.saveRecord(record);
+        return "redirect:/record/editform/" + URLEncoder.encode(pid, StandardCharsets.UTF_8);
+    }
+
     /**
      * Edit form of record metadata.
      *
@@ -268,12 +311,17 @@ public class RecordController extends ErrorHandlingController {
             }
         }
 
-        try {
-            records.createOrEdit(newRecord, oldRecord, result);
-        }
-        catch (NoSuchParentException e) {
-            // Cannot get here with normal use.
-            throw new InvalidRequestException(e.getMessage());
+        if ( oldRecord.isCataloged()) {
+            try {
+                records.createOrEdit(newRecord, oldRecord, result);
+            } catch (NoSuchParentException e) {
+                // Cannot get here with normal use.
+                throw new InvalidRequestException(e.getMessage());
+            }
+        } else {
+            oldRecord.mergeHoldingsWith(newRecord);
+            newRecord.mergeWith(oldRecord);
+            records.saveRecord(oldRecord);
         }
 
         model.addAttribute("record", newRecord);
