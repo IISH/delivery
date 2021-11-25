@@ -1311,6 +1311,7 @@ public class ReproductionController extends AbstractRequestController {
             reservation.getHoldingReservations().add(holdingReservation);
         }
 
+        reproduction.getHoldingReproductions().clear();
         final Reservation saved = reservations.saveReservation(reservation);
         reproductions.removeReproduction(reproduction);
 
