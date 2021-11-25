@@ -71,7 +71,7 @@
       </li>
     </#if>
 
-    <#if _sec.ifAllGranted("ROLE_RESERVATION_CREATE,ROLE_REPRODUCTION_DELETE")>
+    <#if _sec.ifAllGranted("ROLE_RESERVATION_CREATE,ROLE_REPRODUCTION_MODIFY")>
       <li>
         <a href="${rc.contextPath}/reproduction/${reproduction.id?c}/convert">
           ${_("reproductionSingle.convert")}

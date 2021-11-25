@@ -214,13 +214,13 @@ public class RecordController extends ErrorHandlingController {
     }
 
     @RequestMapping(value = "/createform", method = RequestMethod.GET)
-    @PreAuthorize("hasRole('ROLE_REPRODUCTION_CREATE')") // Je maakt records voor reproducties met fake holdings
+    @PreAuthorize("hasRole('ROLE_REPRODUCTION_MODIFY')") // Je maakt records voor reproducties met fake holdings
     public String showCreateForm() {
         return "record_create";
     }
 
     @RequestMapping(value = "/createform", method = RequestMethod.POST)
-    @PreAuthorize("hasRole('ROLE_REPRODUCTION_CREATE')") // Je maakt records voor reproducties met fake holdings
+    @PreAuthorize("hasRole('ROLE_REPRODUCTION_MODIFY')") // Je maakt records voor reproducties met fake holdings
     public String showCreateForm(@RequestParam(value = "title") String title, @RequestParam(value="signature") String signature, Model model) {
 
         final Record record = new Record();

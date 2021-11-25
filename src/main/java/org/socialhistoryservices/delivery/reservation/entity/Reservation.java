@@ -319,7 +319,7 @@ public class Reservation extends Request {
 
     @Override
     public Reservation mergeWith(Request request) {
-        if ( request instanceof Reservation) {
+        if (request instanceof Reservation) {
             final Reservation reservation = (Reservation) request;
             this.creationDate = reservation.getCreationDate();
             this.comment = reservation.getComment();
@@ -331,6 +331,21 @@ public class Reservation extends Request {
             this.visitorName = reservation.getVisitorName();
         } else {
             final Reproduction reproduction = (Reproduction) request;
+            switch (reproduction.getStatus()) {
+                case WAITING_FOR_ORDER_DETAILS:
+                    setStatus(Status.PENDING);
+                    break;
+                case HAS_ORDER_DETAILS:
+                case CONFIRMED:
+                case ACTIVE:
+                    setStatus(Status.ACTIVE);
+                    break;
+                case COMPLETED:
+                case DELIVERED:
+                case CANCELLED:
+                    setStatus(Status.COMPLETED);
+                    break;
+            }
             this.comment = reproduction.getComment();
             this.creationDate = reproduction.getCreationDate();
             this.date = reproduction.getDate();

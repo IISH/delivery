@@ -30,7 +30,7 @@
               ${_("reservationSingle.newReservation")}</a></li>
     </#if>
 
-    <#if _sec.ifAllGranted("ROLE_REPRODUCTION_CREATE,ROLE_RESERVATION_DELETE")>
+    <#if _sec.ifAllGranted("ROLE_REPRODUCTION_CREATE,ROLE_RESERVATION_MODIFY")>
       <li>
         <a href="${rc.contextPath}/reservation/${reservation.id?c}/convert">
           ${_("reservationSingle.convert")}

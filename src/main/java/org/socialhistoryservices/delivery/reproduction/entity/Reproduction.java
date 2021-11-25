@@ -731,7 +731,7 @@ public class Reproduction extends Request {
 
     @Override
     public Request mergeWith(Request request) {
-        if ( request instanceof Reproduction) {
+        if (request instanceof Reproduction) {
             final Reproduction reproduction = (Reproduction) request;
             this.adminstrationCosts = reproduction.getAdminstrationCosts();
             this.adminstrationCostsBtwPercentage = reproduction.getAdminstrationCostsBtwPercentage();
@@ -748,9 +748,19 @@ public class Reproduction extends Request {
             this.order = reproduction.getOrder();
             this.orderId = reproduction.getOrderId();
             this.token = reproduction.getToken();
-        }
-        else {
+        } else {
             final Reservation reservation = (Reservation) request;
+            switch (reservation.getStatus()) {
+                case ACTIVE:
+                    setStatus(Status.ACTIVE);
+                    break;
+                case COMPLETED:
+                    setStatus(Status.COMPLETED);
+                    break;
+                case PENDING:
+                    setStatus(Status.WAITING_FOR_ORDER_DETAILS);
+                    break;
+            }
             this.comment = reservation.getComment();
             this.creationDate = reservation.getCreationDate();
             this.date = reservation.getDate();

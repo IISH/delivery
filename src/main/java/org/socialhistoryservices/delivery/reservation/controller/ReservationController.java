@@ -526,7 +526,7 @@ public class ReservationController extends AbstractRequestController {
     }
 
     @RequestMapping(value = "/{id:[\\d]+}/convert", method = RequestMethod.GET)
-    @PreAuthorize("hasRole('ROLE_RESERVATION_DELETE') && hasRole('ROLE_REPRODUCTION_CREATE')")
+    @PreAuthorize("hasRole('ROLE_RESERVATION_MODIFY') && hasRole('ROLE_REPRODUCTION_CREATE')")
     public String convert(@PathVariable int id) {
         final Reservation reservation = reservations.getReservationById(id);
         if (reservation == null)
@@ -541,6 +541,7 @@ public class ReservationController extends AbstractRequestController {
             reproduction.getHoldingReproductions().add(holdingReproduction);
         }
 
+        reservation.getHoldingReservations().clear();
         final Reproduction saved = reproductions.saveReproduction(reproduction);
         reservations.removeReservation(reservation);
 

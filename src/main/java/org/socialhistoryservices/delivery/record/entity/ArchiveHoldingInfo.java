@@ -68,7 +68,7 @@ public class ArchiveHoldingInfo {
     }
 
     public void setFormat(String format) {
-        this.format = format;
+        this.format = (format == null || format.length() <= 50) ? format : format.substring(0, 50);
     }
 
     @Column(name = "note", columnDefinition = "TEXT")

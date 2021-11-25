@@ -1296,7 +1296,7 @@ public class ReproductionController extends AbstractRequestController {
     }
 
     @RequestMapping(value = "/{id:[\\d]+}/convert", method = RequestMethod.GET)
-    @PreAuthorize("hasRole('ROLE_REPRODUCTION_DELETE') && hasRole('ROLE_RESERVATION_CREATE')")
+    @PreAuthorize("hasRole('ROLE_REPRODUCTION_MODIFY') && hasRole('ROLE_RESERVATION_CREATE')")
     public String convert(@PathVariable int id) {
         final Reproduction reproduction = reproductions.getReproductionById(id);
         if (reproduction == null)
