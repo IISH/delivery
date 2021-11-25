@@ -287,6 +287,7 @@ public class ReproductionController extends AbstractRequestController {
 
                 // Verwijder alle reproducties (en daarmee alle holdings wegens cascade delete)
                 for (Reproduction _reproduction : _reproductions) {
+                    _reproduction.getHoldingReproductions().clear();
                     reproductions.removeReproduction(_reproduction);
                 }
             }

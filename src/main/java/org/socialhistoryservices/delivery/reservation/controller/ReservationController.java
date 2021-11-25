@@ -458,6 +458,7 @@ public class ReservationController extends AbstractRequestController {
 
                 // Verwijder alle (en daarmee alle holdings wegens cascade delete)
                 for (Reservation _reservation : _reservations) {
+                    _reservation.getHoldingReservations().clear();
                     reservations.removeReservation(_reservation);
                 }
             }
