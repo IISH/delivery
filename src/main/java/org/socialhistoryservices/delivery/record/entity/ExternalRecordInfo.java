@@ -246,6 +246,7 @@ public class ExternalRecordInfo {
      * @return The year
      */
     public Integer getYear() {
+        if ( displayYear == null) return 0;
         Matcher yearMatcher = PATTERN_YEAR.matcher(displayYear);
         if (yearMatcher.matches())
             return Integer.parseInt(yearMatcher.group(1));
