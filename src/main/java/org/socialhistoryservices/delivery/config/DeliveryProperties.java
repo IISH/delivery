@@ -47,7 +47,7 @@ public class DeliveryProperties {
     private int reproductionMaxDaysReminder = 14;
     private int reproductionBtwPercentage = 21;
     private String requestAutoPrintStartTime = "9:00";
-    private String requestLatestTime = "16:00";
+    private String requestLatestTime = "15:00";
     private int requestMaxPageLen = 100;
     private int requestPageLen = 20;
     private int requestPageStepSize = 10;
