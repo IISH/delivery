@@ -12,6 +12,9 @@
 
     <properties>
         <java.version>11</java.version>
+
+        <!-- Upgrade Spring Framework to prevent against spring4shell -->
+        <spring-framework.version>5.3.18</spring-framework.version>
     </properties>
 
     <!-- Inherit defaults from Spring Boot -->
