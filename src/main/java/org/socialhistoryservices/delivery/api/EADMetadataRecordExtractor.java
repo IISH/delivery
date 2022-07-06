@@ -20,7 +20,7 @@ public class EADMetadataRecordExtractor implements MetadataRecordExtractor {
 
     private static final XPath xpath;
     private static final XPathExpression xpTitle, xpTitleItem, xpAuthor, xpPhysicalDescription, xpUnitId, xpUnitIdItem,
-            xpContainer, xpInventory, xpArchdesc, xpAccessRestrict, xpP, xpParent, xpChildren,
+            xpContainer, xpInventory, xpAccessAndUse, xpAccessRestrict, xpP, xpParent, xpChildren,
             xpArchive931, xpArchiveLocation, xpArchiveMeter, xpArchiveNumbers, xpArchiveFormat, xpArchiveNote;
 
     private final String parentPid;
@@ -45,7 +45,7 @@ public class EADMetadataRecordExtractor implements MetadataRecordExtractor {
             xpUnitIdItem = xpath.compile("./ead:did/ead:unitid");
             xpContainer = xpath.compile("normalize-space(.//ead:container[@type='box'])");
             xpInventory = xpath.compile(".//ead:dsc");
-            xpArchdesc = xpath.compile(".//ead:archdesc");
+            xpAccessAndUse = xpath.compile(".//ead:descgrp[@type='access_and_use']");
             xpAccessRestrict = xpath.compile(".//ead:accessrestrict");
             xpP = xpath.compile("normalize-space(./ead:p[1])");
             xpParent = xpath.compile("(" +
@@ -285,8 +285,8 @@ public class EADMetadataRecordExtractor implements MetadataRecordExtractor {
 
     private ExternalRecordInfo.Restriction evaluateRestriction() {
         try {
-            Element archdesc = (Element) xpArchdesc.evaluate(ead, XPathConstants.NODE);
-            Element accessRestrict = (Element) xpAccessRestrict.evaluate(archdesc, XPathConstants.NODE);
+            Element accessAndUse = (Element) xpAccessAndUse.evaluate(ead, XPathConstants.NODE);
+            Element accessRestrict = (Element) xpAccessRestrict.evaluate(accessAndUse, XPathConstants.NODE);
             String restriction = xpP.evaluate(accessRestrict);
 
             String type = accessRestrict.getAttribute("type").toLowerCase();
