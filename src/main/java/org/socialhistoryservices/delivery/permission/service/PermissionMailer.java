@@ -34,9 +34,9 @@ public class PermissionMailer extends Mailer {
         model.addAttribute("permission", pm);
 
         SimpleMailMessage msg = new SimpleMailMessage();
-        msg.setFrom(deliveryProperties.getMailSystemAddress());
+        msg.setFrom(deliveryProperties.getMailSystemAddressReadingRoom());
         msg.setTo(pm.getEmail());
-        msg.setReplyTo(getMessage("iisg.email", ""));
+        msg.setReplyTo(deliveryProperties.getMailReadingRoom());
 
         // Be sure the recipient will receive the message in their language,
         // instead of the language of the employee activating this mail function
@@ -74,9 +74,9 @@ public class PermissionMailer extends Mailer {
         model.addAttribute("permission", pm);
 
         SimpleMailMessage msg = new SimpleMailMessage();
-        msg.setFrom(deliveryProperties.getMailSystemAddress());
+        msg.setFrom(deliveryProperties.getMailSystemAddressReadingRoom());
         msg.setTo(pm.getEmail());
-        msg.setReplyTo(getMessage("iisg.email", ""));
+        msg.setReplyTo(deliveryProperties.getMailReadingRoom());
 
         msg.setSubject(getMessage("permissionMail.confirmationSubject",
                 "Delivery: Permission Request Confirmation"));
@@ -101,7 +101,7 @@ public class PermissionMailer extends Mailer {
         model.addAttribute("permission", pm);
 
         SimpleMailMessage msg = new SimpleMailMessage();
-        msg.setFrom(deliveryProperties.getMailSystemAddress());
+        msg.setFrom(deliveryProperties.getMailSystemAddressReadingRoom());
         msg.setTo(deliveryProperties.getMailReadingRoom());
 
         msg.setSubject(getMessage("permissionMail.readingRoomSubject", "New permission request"));

@@ -29,8 +29,8 @@ public abstract class RequestMailer extends Mailer {
      * @param locale       The locale.
      * @throws MailException Thrown when sending mail somehow failed.
      */
-    protected void sendMail(String subject, String templateName, Model model, Locale locale) throws MailException {
-        sendMail(deliveryProperties.getMailReadingRoom(), subject, templateName, model, locale);
+    protected void sendMailReproduction(String subject, String templateName, Model model, Locale locale) throws MailException {
+        sendMail(deliveryProperties.getMailRepro(), deliveryProperties.getMailSystemAddressRepro(), deliveryProperties.getMailRepro(), subject, templateName, model, locale);
     }
 
     /**
@@ -43,23 +43,28 @@ public abstract class RequestMailer extends Mailer {
      * @param locale       The locale.
      * @throws MailException Thrown when sending mail somehow failed.
      */
-    protected void sendMail(Request request, String subject, String templateName, Model model, Locale locale)
+    protected void sendMailReproduction(Request request, String subject, String templateName, Model model, Locale locale)
             throws MailException {
-        sendMail(request.getEmail(), subject, templateName, model, locale);
+        sendMail(deliveryProperties.getMailRepro(), deliveryProperties.getMailSystemAddressRepro(), request.getEmail(), subject, templateName, model, locale);
     }
 
     /**
-     * Send information/confirmation mails.
+     * Send information/confirmation mails dealing with requests
      *
-     * @param to           The recipient.
+     * @param request      The request in question.
      * @param subject      The subject of the email.
      * @param templateName The name of the template to use.
      * @param model        The model.
      * @param locale       The locale.
      * @throws MailException Thrown when sending mail somehow failed.
      */
-    private void sendMail(String to, String subject, String templateName, Model model, Locale locale)
+    protected void sendMailReservation(Request request, String subject, String templateName, Model model, Locale locale)
             throws MailException {
+        sendMail(deliveryProperties.getMailReadingRoom(), deliveryProperties.getMailSystemAddressReadingRoom(), request.getEmail(), subject, templateName, model, locale);
+    }
+
+    private void sendMail(String from, String reply, String to, String subject, String templateName, Model model, Locale locale) {
+
         // Do not mail when mail is disabled.
         if (!deliveryProperties.isMailEnabled()) {
             return;
@@ -68,9 +73,9 @@ public abstract class RequestMailer extends Mailer {
         model.addAttribute("locale", locale.toString());
 
         SimpleMailMessage msg = new SimpleMailMessage();
-        msg.setFrom(deliveryProperties.getMailSystemAddress());
+        msg.setFrom(from);
+        msg.setReplyTo(reply);
         msg.setTo(to);
-        msg.setReplyTo(getMessage("iisg.email", ""));
 
         msg.setSubject(profile() + subject);
         msg.setText(templateToString(templateName, model, locale));
@@ -119,9 +124,9 @@ public abstract class RequestMailer extends Mailer {
         model.addAttribute("locale", locale.toString());
 
         MimeMessage msg = mailSender.createMimeMessage();
-        msg.setFrom(new InternetAddress(deliveryProperties.getMailSystemAddress()));
+        msg.setFrom(new InternetAddress(deliveryProperties.getMailRepro()));
         msg.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
-        msg.setReplyTo(InternetAddress.parse(getMessage("iisg.email", "")));
+        msg.setReplyTo(InternetAddress.parse(deliveryProperties.getMailRepro()));
         msg.setSubject(profile() + subject);
 
         // The mail wil consists of multiple parts, the content and the PDF attachment

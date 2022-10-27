@@ -3,13 +3,9 @@ package org.socialhistoryservices.delivery.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Properties;
 
 @Component
@@ -31,7 +27,9 @@ public class DeliveryProperties {
     private String ldapUserSearchFilter = "cn={0}";
     private boolean mailEnabled = true;
     private String mailReadingRoom = "blabla@iisg.nl";
-    private String mailSystemAddress = "n0r3ply@iisg.nl";
+    private String mailSystemAddressReadingRoom = "n0r3ply@iisg.nl";
+    private String mailRepro = "blablablabla@iisg.nl";
+    private String mailSystemAddressRepro = "n0r3ply@iisg.nl";
     private String payWayAddress = "https://payway-acc.socialhistoryservices.org/api";
     private String payWayPassPhraseIn = "bla";
     private String PayWayPassPhraseOut = "bla";
@@ -239,12 +237,28 @@ public class DeliveryProperties {
         this.mailReadingRoom = mailReadingRoom;
     }
 
-    public String getMailSystemAddress() {
-        return mailSystemAddress;
+    public String getMailRepro() {
+        return mailRepro;
     }
 
-    public void setMailSystemAddress(String mailSystemAddress) {
-        this.mailSystemAddress = mailSystemAddress;
+    public void setMailRepro(String mailRepro) {
+        this.mailRepro = mailRepro;
+    }
+
+    public String getMailSystemAddressRepro() {
+        return mailSystemAddressRepro;
+    }
+
+    public void setMailSystemAddressReadingRepro(String mailSystemAddressRepro) {
+        this.mailSystemAddressRepro = mailSystemAddressRepro;
+    }
+
+    public String getMailSystemAddressReadingRoom() {
+        return mailSystemAddressReadingRoom;
+    }
+
+    public void setMailSystemAddressReadingRoom(String mailSystemAddressReadingRoom) {
+        this.mailSystemAddressReadingRoom = mailSystemAddressReadingRoom;
     }
 
     public String getPayWayAddress() {

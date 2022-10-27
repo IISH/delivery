@@ -52,13 +52,13 @@ public class ReproductionMailer extends RequestMailer {
         // Send an email to the customer
         String subjectCustomer = getMessage("reproductionMail.pendingSubjectCustomer", "Confirmation of reproduction",
                 reproduction.getRequestLocale());
-        sendMail(reproduction, subjectCustomer, "mail/reproduction_pending_customer.mail.ftl",
+        sendMailReproduction(reproduction, subjectCustomer, "mail/reproduction_pending_customer.mail.ftl",
                 model, reproduction.getRequestLocale());
 
         // Send an email to the reading room
         String subjectReadingRoom = getMessage("reproductionMail.pendingSubjectReadingRoom",
                 "New reproduction waiting for offer", ENGLISH_LOCALE);
-        sendMail(subjectReadingRoom, "mail/reproduction_pending_readingroom.mail.ftl", model, ENGLISH_LOCALE);
+        sendMailReproduction(subjectReadingRoom, "mail/reproduction_pending_readingroom.mail.ftl", model, ENGLISH_LOCALE);
     }
 
     /**
@@ -73,7 +73,7 @@ public class ReproductionMailer extends RequestMailer {
 
         String subject = getMessage("reproductionMail.offerReadySubject",
                 "Confirmation of reproduction - Your offer is ready", reproduction.getRequestLocale());
-        sendMail(reproduction, subject, "mail/reproduction_offer_ready.mail.ftl", getReproductionModel(reproduction),
+        sendMailReproduction(reproduction, subject, "mail/reproduction_offer_ready.mail.ftl", getReproductionModel(reproduction),
                 reproduction.getRequestLocale());
     }
 
@@ -89,7 +89,7 @@ public class ReproductionMailer extends RequestMailer {
 
         String subject = getMessage("reproductionMail.offerReminderSubject",
                 "Reminder of reproduction - Your order is not paid", reproduction.getRequestLocale());
-        sendMail(reproduction, subject, "mail/reproduction_payment_reminder.mail.ftl", getReproductionModel(reproduction),
+        sendMailReproduction(reproduction, subject, "mail/reproduction_payment_reminder.mail.ftl", getReproductionModel(reproduction),
                 reproduction.getRequestLocale());
     }
 
@@ -138,7 +138,7 @@ public class ReproductionMailer extends RequestMailer {
             // Then sent the reading room / repro the confirmation
             String subjectRepro = getMessage("reproductionMail.activeReproductionSubject", "New active reproduction",
                     ENGLISH_LOCALE);
-            sendMail(subjectRepro, "mail/reproduction_active.mail.ftl", model, ENGLISH_LOCALE);
+            sendMailReproduction(subjectRepro, "mail/reproduction_active.mail.ftl", model, ENGLISH_LOCALE);
         }
         catch (TemplatePreparationException | MessagingException tpe) {
             throw new MailPreparationException(tpe);
@@ -157,7 +157,7 @@ public class ReproductionMailer extends RequestMailer {
 
         String subject = getMessage("reproductionMail.cancelledReproductionSubject", "Reproduction cancelled",
                 ENGLISH_LOCALE);
-        sendMail(subject, "mail/reproduction_cancelled.mail.ftl", getReproductionModel(reproduction), ENGLISH_LOCALE);
+        sendMailReproduction(subject, "mail/reproduction_cancelled.mail.ftl", getReproductionModel(reproduction), ENGLISH_LOCALE);
     }
 
     /**

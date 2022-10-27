@@ -27,7 +27,7 @@ public class ReservationMailer extends RequestMailer {
         model.addAttribute("reservation", res);
 
         String subject = getMessage("reservationMail.confirmationSubject", "Delivery: ");
-        sendMail(res, subject, "mail/reservation_confirmation.mail.ftl", model,
+        sendMailReservation(res, subject, "mail/reservation_confirmation.mail.ftl", model,
                 LocaleContextHolder.getLocale());
     }
 }
