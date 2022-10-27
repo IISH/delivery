@@ -249,7 +249,7 @@ public class DeliveryProperties {
         return mailSystemAddressRepro;
     }
 
-    public void setMailSystemAddressReadingRepro(String mailSystemAddressRepro) {
+    public void setMailSystemAddressRepro(String mailSystemAddressRepro) {
         this.mailSystemAddressRepro = mailSystemAddressRepro;
     }
 
