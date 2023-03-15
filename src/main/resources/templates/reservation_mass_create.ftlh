@@ -10,7 +10,10 @@
               "dateFormat": "yy-mm-dd",
               "minDate": "0",
               "maxDate": "+${delivery.reservationMaxDaysInAdvance}",
-              "beforeShowDay": $.datepicker.noWeekends
+              "beforeShowDay": function( date ) {
+                let day = date.getDay();
+                return [ ( day > 0 && day < 5 ), "" ];
+              }
           });
       });
   </script>

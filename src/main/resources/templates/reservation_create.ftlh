@@ -19,7 +19,10 @@
                 "minDate": "0",
                 "maxDate": "+${delivery.reservationMaxDaysInAdvance}",
               </#if>
-              "beforeShowDay": $.datepicker.noWeekends
+              "beforeShowDay": function( date ) {
+                  let day = date.getDay();
+                  return [ ( day > 0 && day < 5 ), "" ];
+              }
           });
       });
   </script>
