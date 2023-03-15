@@ -510,11 +510,15 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
         }
 
         // Check if date is an exception date
+        // Vrijdag zaterdag en zondag geen diensten.
         List<Calendar> exceptionDates = dateExceptionService.getExceptionDates();
         for (Calendar exceptionDate : exceptionDates) {
             if (fromCal.equals(exceptionDate)) {
                 fromCal.add(Calendar.DAY_OF_YEAR, 1);
                 // Check for weekends
+                if (fromCal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY) {
+                    fromCal.add(Calendar.DAY_OF_YEAR, 3);
+                }
                 if (fromCal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
                     fromCal.add(Calendar.DAY_OF_YEAR, 2);
                 }
@@ -524,7 +528,10 @@ public class ReservationServiceImpl extends AbstractRequestService implements Re
             }
         }
 
-        // Check for weekends
+        // Vrijdag zaterdag en zondag geen diensten.
+        if (fromCal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY) {
+            fromCal.add(Calendar.DAY_OF_YEAR, 3);
+        }
         if (fromCal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
             fromCal.add(Calendar.DAY_OF_YEAR, 2);
         }
