@@ -62,10 +62,11 @@
   <#if tuplePayedAmounts?size gt 0>
     <ul class="reproduction_totals">
       <#list tuplePayedAmounts as tuple>
+        <#if tuple.get('btwPercentage')??>
         <li>
           <strong>
             ${tuple.get('totalItems')} ${_("items", "items")}
-            <#if tuple.get('btwPercentage')??>${_("inclusive" "incl.")} ${tuple.get('btwPercentage')?c}&percnt; ${_("btw", "BTW")}:</#if>
+            ${_("inclusive" "incl.")} ${tuple.get('btwPercentage')?c}&percnt; ${_("btw", "BTW")}:
           </strong>
 
           <ul>
@@ -85,6 +86,7 @@
             </li>
           </ul>
         </li>
+        </#if>
       </#list>
     </ul>
   </#if>
