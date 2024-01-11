@@ -65,7 +65,7 @@
         <li>
           <strong>
             ${tuple.get('totalItems')} ${_("items", "items")}
-            ${_("inclusive" "incl.")} ${tuple.get('btwPercentage')?c}&percnt; ${_("btw", "BTW")}:
+            <#if tuple.get('btwPercentage')??>${_("inclusive" "incl.")} ${tuple.get('btwPercentage')?c}&percnt; ${_("btw", "BTW")}:</#if>
           </strong>
 
           <ul>
