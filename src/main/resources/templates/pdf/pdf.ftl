@@ -139,7 +139,7 @@
             </fo:table-cell>
             <fo:table-cell>
               <fo:block>
-                ${_("reproductionInvoice.bankInfo", "DEUTSCHE BANK 41.13.90.805")}
+                ${_("reproductionInvoice.bankHolder", "bankHolder")}
               </fo:block>
             </fo:table-cell>
             <fo:table-cell>
@@ -182,7 +182,7 @@
             </fo:table-cell>
             <fo:table-cell>
               <fo:block>
-                ${_("reproductionInvoice.bankIBAN", "IBAN")}
+                ${_("reproductionInvoice.bankInfo", "bankInfo")}
               </fo:block>
             </fo:table-cell>
             <fo:table-cell>
@@ -225,7 +225,7 @@
             </fo:table-cell>
             <fo:table-cell>
               <fo:block>
-                ${_("reproductionInvoice.bankBIC", "BIC")}
+                ${_("reproductionInvoice.bankIBAN", "bankIBAN")}
               </fo:block>
             </fo:table-cell>
             <fo:table-cell>
@@ -268,6 +268,7 @@
             </fo:table-cell>
             <fo:table-cell>
               <fo:block>
+                ${_("reproductionInvoice.bankSWIFT", "swift")}
               </fo:block>
             </fo:table-cell>
             <fo:table-cell>
