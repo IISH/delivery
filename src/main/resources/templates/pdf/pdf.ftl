@@ -182,7 +182,7 @@
             </fo:table-cell>
             <fo:table-cell>
               <fo:block>
-                ${_("reproductionInvoice.bankIBAN", "IBAN NL63DEUT0411390805")}
+                ${_("reproductionInvoice.bankIBAN", "IBAN")}
               </fo:block>
             </fo:table-cell>
             <fo:table-cell>
@@ -225,7 +225,7 @@
             </fo:table-cell>
             <fo:table-cell>
               <fo:block>
-                ${_("reproductionInvoice.bankBIC", "BIC DEUTNL2N")}
+                ${_("reproductionInvoice.bankBIC", "BIC")}
               </fo:block>
             </fo:table-cell>
             <fo:table-cell>
@@ -259,7 +259,7 @@
             </fo:table-cell>
             <fo:table-cell>
               <fo:block>
-                ${_("reproductionInvoice.website", "socialhistory.org")}
+                ${_("reproductionInvoice.website", "iisg.amsterdam")}
               </fo:block>
             </fo:table-cell>
             <fo:table-cell>
