@@ -64,11 +64,11 @@ public class ReproductionCustomNote {
         materialType = type;
     }
 
-    @Size(max = 255)
+    @Size(max = 511)
     @Column(name = "note_nl")
     private String noteNL;
 
-    @Size(max = 255)
+    @Size(max = 511)
     @Column(name = "note_en")
     private String noteEN;
 
