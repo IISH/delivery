@@ -135,12 +135,12 @@ public class ReproductionStandardOption {
     }
 
     @NotBlank
-    @Size(max = 255)
+    @Size(max = 511)
     @Column(name = "optiondescription_nl", nullable = false)
     private String optionDescriptionNL;
 
     @NotBlank
-    @Size(max = 255)
+    @Size(max = 511)
     @Column(name = "optiondescription_en", nullable = false)
     private String optionDescriptionEN;
 
