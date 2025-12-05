@@ -1,4 +1,4 @@
-FROM openjdk:11-jdk-slim AS build
+FROM eclipse-temurin:11-jdk AS build
 
 COPY . /app
 WORKDIR /app
@@ -6,7 +6,7 @@ WORKDIR /app
 RUN ./mvnw install -P jar -DskipTests
 RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
-FROM openjdk:11-jdk-slim
+FROM eclipse-temurin:11-jdk
 
 RUN apt-get update -y && apt-get install -y fontconfig libfreetype6 fonts-liberation cups cups-bsd cups-client
 
