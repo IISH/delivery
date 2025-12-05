@@ -140,7 +140,7 @@ public class ReproductionExcel {
         cell.setCellStyle(defaultStyle);
 
         cell = row.createCell(1);
-        cell.setCellValue(reproduction.getOrderId() != null ? reproduction.getOrderId() : 0);
+        cell.setCellValue(reproduction.getOrderId() != null ? reproduction.getOrderId() : "");
         cell.setCellStyle(defaultStyle);
 
         cell = row.createCell(2);

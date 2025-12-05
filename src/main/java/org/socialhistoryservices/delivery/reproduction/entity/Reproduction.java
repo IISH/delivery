@@ -571,9 +571,9 @@ public class Reproduction extends Request {
 
     // For reading purposes only, to prevent loading the complete order entity
     @Column(name = "order_id", insertable = false, updatable = false)
-    private Long orderId;
+    private String orderId;
 
-    public Long getOrderId() {
+    public String getOrderId() {
         return orderId;
     }
 

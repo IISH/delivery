@@ -140,6 +140,12 @@
             <artifactId>hibernate-jpamodelgen</artifactId>
             <optional>true</optional>
         </dependency>
+
+        <dependency>
+            <groupId>com.mollie</groupId>
+            <artifactId>mollie</artifactId>
+            <version>0.23.6</version>
+        </dependency>
     </dependencies>
 
     <profiles>
