@@ -1,5 +1,7 @@
 package org.socialhistoryservices.delivery.reproduction.service;
 
+import com.mollie.mollie.models.components.PaymentResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +26,6 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +42,6 @@ import java.awt.print.PrinterException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.util.*;
-import java.util.concurrent.Future;
 
 /**
  * Represents the service of the reproduction package.
@@ -67,7 +67,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
     private ReproductionCustomNoteDAO reproductionCustomNoteDAO;
 
     @Autowired
-    private PayWayService payWayService;
+    private PaymentService paymentService;
 
     @Autowired
     private SharedObjectRepositoryService sorService;
@@ -171,7 +171,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
      * @param id Id of the Order to retrieve.
      * @return The Order matching the id.
      */
-    public Order getOrderById(long id) {
+    public Order getOrderById(String id) {
         return orderDAO.getById(id);
     }
 
@@ -398,8 +398,8 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
             case CANCELLED:
                 completed = true;
                 mailCancelled(reproduction);
-                if (reproduction.getOrder() != null)
-                    refundOrder(reproduction.getOrder());
+                // if (reproduction.getOrder() != null)
+                    // TODO: refundOrder(reproduction.getOrder()); Find out if and how to do refunds with Mollie
                 break;
         }
 
@@ -905,7 +905,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
      * @param r The reproduction.
      * @return The created and registered order. (Or null if the reproduction is for free)
      * @throws IncompleteOrderDetailsException   Thrown when not all holdings have an order ready.
-     * @throws OrderRegistrationFailureException Thrown in case we failed to register the order in PayWay.
+     * @throws OrderRegistrationFailureException Thrown in case we failed to register the order in Mollie.
      */
     public Order createOrder(Reproduction r) throws IncompleteOrderDetailsException, OrderRegistrationFailureException {
         if (!hasOrderDetails(r))
@@ -922,94 +922,41 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
                 updateStatusAndAssociatedHoldingStatus(r, Reproduction.Status.COMPLETED);
         }
 
-        // First attempt to create and register a new order in PayWay
+        // First attempt to create and register a new order in Mollie
         try {
-            // PayWay wants the amounts in number of cents
-            BigDecimal price = r.getTotalPriceWithDiscount();
-            long amount = price.movePointRight(2).longValue();
+            PaymentResponse payment = paymentService.createPaymentForReproduction(r);
 
-            PayWayMessage message = new PayWayMessage();
-            message.put("amount", amount);
-            message.put("currency", "EUR");
-            message.put("language", r.getRequestLocale().toString().equals("en") ? "en" : "nl");
-            message.put("cn", r.getCustomerName());
-            message.put("email", r.getCustomerEmail());
-            message.put("owneraddress", null);
-            message.put("ownerzip", null);
-            message.put("ownertown", null);
-            message.put("ownercty", null);
-            message.put("ownertelno", null);
-            message.put("com", "IISH reproduction " + r.getId());
-            message.put("paymentmethod", PayWayMessage.ORDER_OGONE_PAYMENT);
-
-            PayWayMessage orderMessage = payWayService.send("createOrder", message);
-
-            // We received an message from PayWay, so the order is registered
             order = new Order();
-            order.setId(orderMessage.getLong("orderid"));
+            order.mapFromPayment(payment);
 
             r.setOrder(order);
             reproductionDAO.save(r);
-
-            // Refresh the actual order details asynchronously
-            refreshOrder(order);
         }
-        catch (InvalidPayWayMessageException ipwme) {
-            LOGGER.error("Invalid or no PayWay message received when registering a new order.", ipwme);
-            throw new OrderRegistrationFailureException(ipwme);
+        catch (PaymentException pe) {
+            LOGGER.error("Invalid or no Mollie message received when registering a new order.", pe);
+            throw new OrderRegistrationFailureException(pe);
         }
 
         return order;
     }
 
     /**
-     * Will refresh the given order by retrieving the order details from PayWay.
-     * The API call is performed in a seperate thread and
-     * a Future object is returned to see when and whether the refresh was succesful.
+     * Will refresh the given order by retrieving the payment details from Mollie.
      *
      * @param order The order to refresh. The id must be set.
-     * @return A Future object that will return the refreshed Order when succesful.
+     * @return The refreshed Order when successful.
      */
-    @Async
-    public Future<Order> refreshOrder(Order order) {
+    public Order refreshOrder(Order order) {
         try {
-            PayWayMessage message = payWayService.getMessageForOrderId(order.getId());
-            PayWayMessage orderDetails = payWayService.send("orderDetails", message);
-
-            order.mapFromPayWayMessage(orderDetails);
+            PaymentResponse payment = paymentService.getPaymentDetails(order.getId());
+            order.mapFromPayment(payment);
             orderDAO.save(order);
 
-            return new AsyncResult<>(order);
+            return order;
         }
-        catch (InvalidPayWayMessageException ivwme) {
-            LOGGER.error(String.format("refreshOrder() : Failed to refresh the order with id %d", order.getId()));
-            return new AsyncResult<>(null);
-        }
-    }
-
-    /**
-     * Will refund everything for the given order. (NOTE: Only marked as such in PayWay)
-     * The API call is performed in a seperate thread and
-     * a Future object is returned to see when and whether the refund was succesful.
-     *
-     * @param order The order to refund. The id must be set.
-     * @return A Future object that will return the order when succesful.
-     */
-    @Async
-    public Future<Order> refundOrder(Order order) {
-        try {
-            if ((order.getPayed() == Order.ORDER_PAYED) && (order.getAmount() > 0)) {
-                PayWayMessage message = payWayService.getMessageForOrderId(order.getId());
-                message.put("amount", order.getAmount());
-                payWayService.send("refundPayment", message);
-                refreshOrder(order);
-            }
-
-            return new AsyncResult<>(order);
-        }
-        catch (InvalidPayWayMessageException ivwme) {
-            LOGGER.error(String.format("refundOrder() : Failed to refund the order with id %d", order.getId()));
-            return new AsyncResult<>(null);
+        catch (PaymentException pe) {
+            LOGGER.error(String.format("refreshOrder() : Failed to refresh the order with id %s", order.getId()));
+            return null;
         }
     }
 

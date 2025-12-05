@@ -30,10 +30,8 @@ public class DeliveryProperties {
     private String mailSystemAddressReadingRoom = "n0r3ply@iisg.nl";
     private String mailRepro = "blablablabla@iisg.nl";
     private String mailSystemAddressRepro = "n0r3ply@iisg.nl";
-    private String payWayAddress = "https://payway-acc.socialhistoryservices.org/api";
-    private String payWayPassPhraseIn = "bla";
-    private String PayWayPassPhraseOut = "bla";
-    private String payWayProjectName = "delivery";
+    private String mollieApiKey = "bla";
+    private String mollieProfile = "bla";
     private int permissionMaxPageLen = 100;
     private int permissionPageLen = 20;
     private int permissionPageStepSize = 10;
@@ -261,36 +259,20 @@ public class DeliveryProperties {
         this.mailSystemAddressReadingRoom = mailSystemAddressReadingRoom;
     }
 
-    public String getPayWayAddress() {
-        return payWayAddress;
+    public String getMollieApiKey() {
+        return mollieApiKey;
     }
 
-    public void setPayWayAddress(String payWayAddress) {
-        this.payWayAddress = payWayAddress;
+    public void setMollieApiKey(String mollieApiKey) {
+        this.mollieApiKey = mollieApiKey;
     }
 
-    public String getPayWayPassPhraseIn() {
-        return payWayPassPhraseIn;
+    public String getMollieProfile() {
+        return mollieProfile;
     }
 
-    public void setPayWayPassPhraseIn(String payWayPassPhraseIn) {
-        this.payWayPassPhraseIn = payWayPassPhraseIn;
-    }
-
-    public String getPayWayPassPhraseOut() {
-        return PayWayPassPhraseOut;
-    }
-
-    public void setPayWayPassPhraseOut(String payWayPassPhraseOut) {
-        PayWayPassPhraseOut = payWayPassPhraseOut;
-    }
-
-    public String getPayWayProjectName() {
-        return payWayProjectName;
-    }
-
-    public void setPayWayProjectName(String payWayProjectName) {
-        this.payWayProjectName = payWayProjectName;
+    public void setMollieProfile(String mollieProfile) {
+        this.mollieProfile = mollieProfile;
     }
 
     public int getPermissionMaxPageLen() {

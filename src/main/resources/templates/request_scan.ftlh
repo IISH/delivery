@@ -103,8 +103,8 @@
 
     <#if reproduction.order??>
       <li class="spacing">
-        <span>${_("reproduction.order", "Order id (PayWay)")}</span>
-        ${reproduction.order.id?c} <i>(${_("order.payed.${reproduction.order.payed}", "")})</i>
+        <span>${_("reproduction.order", "Order id")}</span>
+        ${reproduction.order.id} <i>(${_("order.payed.${reproduction.order.payed}", "")})</i>
       </li>
 
       <li>

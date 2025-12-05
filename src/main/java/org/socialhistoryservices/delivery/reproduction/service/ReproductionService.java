@@ -14,7 +14,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import java.awt.print.PrinterException;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 /**
  * Interface representing the service of the Reproduction package.
@@ -49,7 +48,7 @@ public interface ReproductionService {
      * @param id Id of the Order to retrieve.
      * @return The Order matching the id.
      */
-    Order getOrderById(long id);
+    Order getOrderById(String id);
 
     /**
      * Retrieve the ReproductionStandardOption matching the given id.
@@ -220,29 +219,17 @@ public interface ReproductionService {
      * @param r The reproduction.
      * @return The created and registered order. (Or null if the reproduction is for free)
      * @throws IncompleteOrderDetailsException   Thrown when not all holdings have an order ready.
-     * @throws OrderRegistrationFailureException Thrown in case we failed to register the order in PayWay.
+     * @throws OrderRegistrationFailureException Thrown in case we failed to register the order in Mollie.
      */
     Order createOrder(Reproduction r) throws IncompleteOrderDetailsException, OrderRegistrationFailureException;
 
     /**
-     * Will refresh the given order by retrieving the order details from PayWay.
-     * The API call is performed in a seperate thread and
-     * a Future object is returned to see when and whether the refresh was succesful.
+     * Will refresh the given order by retrieving the payment details from Mollie.
      *
      * @param order The order to refresh. The id must be set.
-     * @return A Future object that will return the refreshed Order when succesful.
+     * @return The refreshed Order when successful.
      */
-    Future<Order> refreshOrder(Order order);
-
-    /**
-     * Will refund everything for the given order. (NOTE: Only marked as such in PayWay)
-     * The API call is performed in a seperate thread and
-     * a Future object is returned to see when and whether the refund was succesful.
-     *
-     * @param order The order to refund. The id must be set.
-     * @return A Future object that will return the order when succesful.
-     */
-    Future<Order> refundOrder(Order order);
+    Order refreshOrder(Order order);
 
     /**
      * Returns whether the record accepts the standard reproduction option.

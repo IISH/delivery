@@ -1,6 +1,6 @@
 package org.socialhistoryservices.delivery.reproduction.entity;
 
-import org.socialhistoryservices.delivery.api.PayWayMessage;
+import com.mollie.mollie.models.components.PaymentResponse;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.persistence.*;
@@ -8,10 +8,17 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+import static java.util.Comparator.naturalOrder;
+import static com.mollie.mollie.models.components.PaymentResponseStatus.*;
 
 /**
- * Order object representing a Order from PayWay.
+ * Order object representing an Order from PayWay or Mollie.
  */
 @Entity
 @Table(name = "orders")
@@ -19,32 +26,21 @@ import java.util.Date;
 public class Order {
     public static final int ORDER_NOT_PAYED = 0;
     public static final int ORDER_PAYED = 1;
-    public static final int ORDER_REFUND_OGONE = 2;
-    public static final int ORDER_REFUND_BANK = 3;
-
-    public static final int ORDER_OGONE_PAYMENT = 0;
-    public static final int ORDER_BANK_PAYMENT = 1;
-    public static final int ORDER_CASH_PAYMENT = 2;
-
-    public static final int PAYMENT_ACCEPTED = 1;
-    public static final int PAYMENT_DECLINED = 2;
-    public static final int PAYMENT_EXCEPTION = 3;
-    public static final int PAYMENT_CANCELLED = 4;
-    public static final int PAYMENT_OTHER_STATUS = 5;
+    public static final int ORDER_REFUND = 2;
 
     /**
      * The Order's id.
      */
     @Id
     @Column(name = "id")
-    private long id;
+    private String id;
 
     /**
      * Get the Order's id.
      *
      * @return the Order's id.
      */
-    public long getId() {
+    public String getId() {
         return id;
     }
 
@@ -53,33 +49,8 @@ public class Order {
      *
      * @param id the Order's id.
      */
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
-    }
-
-    /**
-     * The order code
-     */
-    @Size(max = 50)
-    @Column(name = "ordercode", unique = true)
-    private String orderCode;
-
-    /**
-     * Get the order code.
-     *
-     * @return the order code.
-     */
-    public String getOrderCode() {
-        return orderCode;
-    }
-
-    /**
-     * Set the order code.
-     *
-     * @param orderCode the order code.
-     */
-    public void setOrderCode(String orderCode) {
-        this.orderCode = orderCode;
     }
 
     @Min(0)
@@ -169,25 +140,31 @@ public class Order {
     }
 
     @NotNull
-    @Column(name = "paymentmethod", nullable = false)
-    private int paymentMethod;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "provider", nullable = false)
+    private Provider provider;
 
-    /**
-     * Get the Order's payment method.
-     *
-     * @return the Order's payment method.
-     */
-    public int getPaymentMethod() {
-        return paymentMethod;
+    public enum Provider {
+        PAYWAY,
+        MOLLIE
     }
 
     /**
-     * Set the Order's payment method.
+     * Get the Order's provider.
      *
-     * @param paymentMethod the Order's payment method.
+     * @return the Order's provider.
      */
-    public void setPaymentMethod(int paymentMethod) {
-        this.paymentMethod = paymentMethod;
+    public Provider getProvider() {
+        return provider;
+    }
+
+    /**
+     * Set the Order's provider.
+     *
+     * @param provider the Order's provider.
+     */
+    public void setProvider(Provider provider) {
+        this.provider = provider;
     }
 
     /**
@@ -291,6 +268,27 @@ public class Order {
         this.description = description;
     }
 
+    @Column(name = "checkouturl")
+    private String checkoutUrl;
+
+    /**
+     * Get the Order's checkout url.
+     *
+     * @return the Order's checkout url.
+     */
+    public String getCheckoutUrl() {
+        return checkoutUrl;
+    }
+
+    /**
+     * Set the Order's checkout url.
+     *
+     * @param checkoutUrl the Order's checkout url.
+     */
+    public void setCheckoutUrl(String checkoutUrl) {
+        this.checkoutUrl = checkoutUrl;
+    }
+
     @OneToOne(mappedBy = "order", fetch = FetchType.LAZY)
     private Reproduction reproduction;
 
@@ -303,21 +301,36 @@ public class Order {
     }
 
     /**
-     * Maps the order details from a PayWay message to this order.
+     * Maps the order details from a Mollie Payment to this order.
      *
-     * @param message The PayWay message.
+     * @param payment The Mollie Payment.
      */
-    public void mapFromPayWayMessage(PayWayMessage message) {
-        this.id = message.getInteger("orderid");
-        this.orderCode = message.getString("ordercode");
-        this.amount = message.getLong("amount");
-        this.refundedAmount = (message.getLong("refundedamount") != null) ? message.getLong("refundedamount") : 0L;
-        this.payed = message.getInteger("payed");
-        this.paymentMethod = message.getInteger("paymentmethod");
-        this.createdAt = message.getDate("createdat");
-        this.updatedAt = message.getDate("updatedat");
-        this.refundedAt = message.getDate("refundedat");
-        this.description = message.getString("com");
+    public void mapFromPayment(PaymentResponse payment) {
+        this.id = payment.id();
+        this.description = payment.description();
+
+        this.amount = new BigDecimal(payment.amount().value()).movePointRight(2).longValue();
+        payment.amountRefunded().ifPresent(refundedAmount ->
+                this.refundedAmount = new BigDecimal(refundedAmount.value()).movePointRight(2).longValue());
+
+        if (payment.status() == PAID || payment.status() == AUTHORIZED)
+            this.payed = this.refundedAmount >= this.amount ? ORDER_REFUND : ORDER_PAYED;
+        else
+            this.payed = ORDER_NOT_PAYED;
+
+        payment.links().checkout().ifPresent(checkout ->
+                this.checkoutUrl = checkout.href());
+
+        this.createdAt = Date.from(ZonedDateTime.parse(payment.createdAt(), DateTimeFormatter.ISO_ZONED_DATE_TIME).toInstant());
+        this.updatedAt = Date.from(Stream.of(payment.createdAt(), payment.authorizedAt().orElse(null),
+                        payment.paidAt().orElse(null), payment.canceledAt().orElse(null),
+                        payment.expiredAt().orElse(null), payment.failedAt().orElse(null))
+                .filter(Objects::nonNull)
+                .map(s -> ZonedDateTime.parse(s, DateTimeFormatter.ISO_ZONED_DATE_TIME))
+                .max(naturalOrder()).get().toInstant());
+
+        if (this.refundedAt == null && this.refundedAmount > 0)
+            this.refundedAt = new Date();
     }
 
     /**
@@ -327,9 +340,8 @@ public class Order {
         setAmount(0L);
         setRefundedAmount(0L);
         setPayed(ORDER_NOT_PAYED);
-        setPaymentMethod(ORDER_OGONE_PAYMENT);
+        setProvider(Provider.MOLLIE);
         setCreatedAt(new Date());
         setUpdatedAt(new Date());
-        setRefundedAt(new Date());
     }
 }

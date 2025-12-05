@@ -43,8 +43,8 @@
     </ol>
   </#if>
 
-  <#if paywayError??>
-    <div class="errors">${paywayError}</div>
+  <#if paymentError??>
+    <div class="errors">${paymentError}</div>
   </#if>
 
   <#if error??>
