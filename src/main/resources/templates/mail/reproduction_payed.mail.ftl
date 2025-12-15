@@ -7,5 +7,5 @@ ${_("reproductionMail.payedNotFreeMessage", "You will also receive an email from
 </#if>
 
 ${_("reproductionMail.reproductionId", "Reproduction number")}: ${reproduction.id?c}
-<#if reproduction.order??>${_("reproductionMail.orderId", "Order number")}: ${reproduction.orderId?c}</#if>
+<#if reproduction.order??>${_("reproductionMail.orderId", "Payment id")}: ${reproduction.orderId}</#if>
 </@mail>

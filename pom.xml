@@ -12,16 +12,14 @@
 
     <properties>
         <java.version>11</java.version>
-
-        <!-- Upgrade Spring Framework to prevent against spring4shell -->
-        <spring-framework.version>5.3.18</spring-framework.version>
+        <jackson-bom.version>2.18.2</jackson-bom.version>
     </properties>
 
     <!-- Inherit defaults from Spring Boot -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.0</version>
+        <version>2.7.18</version>
     </parent>
 
     <repositories>
@@ -139,6 +137,12 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-jpamodelgen</artifactId>
             <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mollie</groupId>
+            <artifactId>mollie</artifactId>
+            <version>0.24.2</version>
         </dependency>
     </dependencies>
 
