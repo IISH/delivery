@@ -2,12 +2,11 @@ package org.socialhistoryservices.delivery.config;
 
 import org.socialhistoryservices.delivery.util.RequestContextToViewInterceptor;
 import org.socialhistoryservices.delivery.api.IISHRecordLookupService;
-import org.socialhistoryservices.delivery.api.PayWayService;
+import org.socialhistoryservices.delivery.api.PaymentService;
 import org.socialhistoryservices.delivery.api.SharedObjectRepositoryService;
 import org.socialhistoryservices.delivery.user.controller.SecurityToViewInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -20,9 +19,6 @@ import org.springframework.web.util.UrlPathHelper;
 public class RootContextConfiguration implements WebMvcConfigurer {
     @Autowired
     DeliveryProperties deliveryProperties;
-
-    @Autowired
-    BuildProperties buildProperties;
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
@@ -45,13 +41,11 @@ public class RootContextConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public PayWayService payWayService() {
-        return new PayWayService(
-                deliveryProperties.getPayWayAddress(),
-                deliveryProperties.getPayWayPassPhraseIn(),
-                deliveryProperties.getPayWayPassPhraseOut(),
-                deliveryProperties.getPayWayProjectName()
-        );
+    public PaymentService paymentService() {
+        return new PaymentService(
+                deliveryProperties.getUrlSelf(),
+                deliveryProperties.getMollieApiKey(),
+                deliveryProperties.getMollieProfile());
     }
 
     @Bean

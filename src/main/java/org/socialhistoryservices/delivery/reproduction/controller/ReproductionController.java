@@ -3,15 +3,12 @@ package org.socialhistoryservices.delivery.reproduction.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.socialhistoryservices.delivery.request.service.RequestPrintable;
 import org.socialhistoryservices.delivery.reservation.entity.HoldingReservation;
 import org.socialhistoryservices.delivery.reservation.entity.Reservation;
 import org.socialhistoryservices.delivery.reservation.service.ReservationService;
 import org.socialhistoryservices.delivery.util.InvalidRequestException;
 import org.socialhistoryservices.delivery.util.ResourceNotFoundException;
 import org.socialhistoryservices.delivery.util.TemplatePreparationException;
-import org.socialhistoryservices.delivery.api.PayWayMessage;
-import org.socialhistoryservices.delivery.api.PayWayService;
 import org.socialhistoryservices.delivery.record.entity.*;
 import org.socialhistoryservices.delivery.reproduction.entity.*;
 import org.socialhistoryservices.delivery.reproduction.entity.Order;
@@ -68,9 +65,6 @@ public class ReproductionController extends AbstractRequestController {
 
     @Autowired
     private ReproductionMailer reproductionMailer;
-
-    @Autowired
-    private PayWayService payWayService;
 
     @Autowired
     private ReproductionPDF reproductionPDF;
@@ -756,7 +750,7 @@ public class ReproductionController extends AbstractRequestController {
 
                     // If the reproduction is for free, take care of delivery
                     if (reproduction.isForFree()) {
-                        // Determine if we can move up to either 'completed' or 'active' immediatly
+                        // Determine if we can move up to either 'completed' or 'active' immediately
                         changeStatusAfterPayment(reproduction);
 
                         // Show payment accepted page
@@ -764,12 +758,12 @@ public class ReproductionController extends AbstractRequestController {
                     }
                 }
 
-                return "redirect:" + payWayService.getPaymentPageRedirectLink(order.getId());
+                return "redirect:" + order.getCheckoutUrl();
             } catch (IncompleteOrderDetailsException onre) {
                 // We already checked for this one though
                 throw new InvalidRequestException("Reproduction is not ready yet.");
             } catch (OrderRegistrationFailureException orfe) {
-                String msg = msgSource.getMessage("payway.error", null, LocaleContextHolder.getLocale());
+                String msg = msgSource.getMessage("payment.error", null, LocaleContextHolder.getLocale());
                 throw new InvalidRequestException(msg);
             }
         }
@@ -795,7 +789,7 @@ public class ReproductionController extends AbstractRequestController {
 
                 // If the reproduction is for free, take care of delivery
                 if (reproduction.isForFree()) {
-                    // Determine if we can move up to either 'completed' or 'active' immediatly
+                    // Determine if we can move up to either 'completed' or 'active' immediately
                     changeStatusAfterPayment(reproduction);
 
                     // Show payment accepted page
@@ -803,13 +797,13 @@ public class ReproductionController extends AbstractRequestController {
                 }
 
                 // Otherwise redirect the user to the payment page
-                return "redirect:" + payWayService.getPaymentPageRedirectLink(order.getId());
+                return "redirect:" + order.getCheckoutUrl();
             } catch (IncompleteOrderDetailsException onre) {
                 // We already checked for this one though
                 throw new InvalidRequestException("Reproduction is not ready yet.");
             } catch (OrderRegistrationFailureException orfe) {
-                String msg = msgSource.getMessage("payway.error", null, LocaleContextHolder.getLocale());
-                model.addAttribute("paywayError", msg);
+                String msg = msgSource.getMessage("payment.error", null, LocaleContextHolder.getLocale());
+                model.addAttribute("paymentError", msg);
             }
         }
 
@@ -827,36 +821,17 @@ public class ReproductionController extends AbstractRequestController {
     }
 
     /**
-     * PayWay response, payment was accepted.
+     * Payment response.
      *
      * @return The view to resolve.
      */
-    @RequestMapping(value = "/order/accept", method = RequestMethod.GET)
+    @RequestMapping(value = "/order/redirect", method = RequestMethod.GET)
     public String accept() {
-        LOGGER.debug("/reproduction/order/accept : Called order accept.");
-        return "reproduction_order_accept";
+        return "reproduction_order_redirect";
     }
 
     /**
-     * A one time PayWay response after the payment has been made, in our case, to send an email.
-     */
-    @RequestMapping(value = "/order/accept", method = RequestMethod.GET, params = "POST")
-    public ResponseEntity<String> accept(@RequestParam Map<String, String> requestParams) {
-        LOGGER.debug(String.format(
-                "/reproduction/order/accept : Called POST order accept with message %s", requestParams));
-
-        Reproduction reproduction = getPayWayPost(requestParams);
-        if (reproduction != null) {
-            changeStatusAfterPayment(reproduction);
-            reproductions.saveReproduction(reproduction);
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-
-    /**
-     * PayWay response, payment was canceled.
+     * Payment response, payment was canceled.
      *
      * @return The view to resolve.
      */
@@ -866,107 +841,34 @@ public class ReproductionController extends AbstractRequestController {
     }
 
     /**
-     * A one time PayWay response for canceled.
+     * The payment web hook
      */
-    @RequestMapping(value = "/order/cancel", method = RequestMethod.GET, params = "POST")
-    public ResponseEntity<String> cancel(@RequestParam Map<String, String> requestParams) {
-        LOGGER.debug(String.format(
-                "/reproduction/order/cancel : Called POST order cancel with message %s", requestParams));
-
-        Reproduction reproduction = getPayWayPost(requestParams);
-        if (reproduction != null)
-            return new ResponseEntity<>(HttpStatus.OK);
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-
-    /**
-     * PayWay response, payment was declined.
-     *
-     * @return The view to resolve.
-     */
-    @RequestMapping(value = "/order/decline", method = RequestMethod.GET)
-    public String decline() {
-        return "reproduction_order_decline";
-    }
-
-    /**
-     * A one time PayWay response for declined.
-     */
-    @RequestMapping(value = "/order/decline", method = RequestMethod.GET, params = "POST")
-    public ResponseEntity<String> decline(@RequestParam Map<String, String> requestParams) {
-        LOGGER.debug(String.format(
-                "/reproduction/order/cancel : Called POST order decline with message %s", requestParams));
-
-        Reproduction reproduction = getPayWayPost(requestParams);
-        if (reproduction != null)
-            return new ResponseEntity<>(HttpStatus.OK);
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-
-    /**
-     * PayWay response, exception occurred during payment.
-     *
-     * @return The view to resolve.
-     */
-    @RequestMapping(value = "/order/exception", method = RequestMethod.GET)
-    public String exception() {
-        return "reproduction_order_exception";
-    }
-
-    /**
-     * A one time PayWay response for exception.
-     */
-    @RequestMapping(value = "/order/exception", method = RequestMethod.GET, params = "POST")
-    public ResponseEntity<String> exception(@RequestParam Map<String, String> requestParams) {
-        LOGGER.debug(String.format(
-                "/reproduction/order/exception : Called POST order exception with message %s", requestParams));
-
-        Reproduction reproduction = getPayWayPost(requestParams);
-        if (reproduction != null)
-            return new ResponseEntity<>(HttpStatus.OK);
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-
-    /**
-     * Get PayWay post message, validate and refresh order.
-     *
-     * @param requestParams The PayWay message parameters.
-     * @return The reproduction if valid, otherwise null is returned.
-     */
-    private Reproduction getPayWayPost(Map<String, String> requestParams) {
-        PayWayMessage payWayMessage = new PayWayMessage(requestParams);
-
-        // Make sure the message is valid
-        if (!payWayService.isValid(payWayMessage)) {
-            LOGGER.error(String.format(
-                    "/reproduction/order : Invalid signature for message %s", payWayMessage));
-            return null;
-        }
+    @RequestMapping(value = "/order/webhook", method = RequestMethod.POST)
+    public ResponseEntity<String> webhook(@RequestParam String id) {
+        LOGGER.debug("/reproduction/order/webhook : Mollie called webhook with payment id {}", id);
 
         // Check the order ...
-        Long orderId = payWayMessage.getLong("orderid");
-        Order order = reproductions.getOrderById(orderId);
+        Order order = reproductions.getOrderById(id);
         if (order == null) {
-            LOGGER.error(String.format("/reproduction/order : Order not found for message %s", payWayMessage));
-            return null;
+            LOGGER.error("/reproduction/order : Order not found for payment id {}", id);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         // ... and the reproduction
         Reproduction reproduction = order.getReproduction();
         if (reproduction == null) {
-            LOGGER.error(String.format("/reproduction/order : Reproduction not found for order in message %s",
-                    payWayMessage));
-            return null;
+            LOGGER.error("/reproduction/order : Reproduction not found for order with payment id {}", id);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         // Everything is fine, refresh the order
         reproductions.refreshOrder(order);
 
-        return reproduction;
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**
-     * Determine if we can move up to either 'completed' or 'active' immediatly.
+     * Determine if we can move up to either 'completed' or 'active' immediately.
      *
      * @param reproduction The reproduction.
      */

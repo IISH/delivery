@@ -4,7 +4,7 @@ ${_("reproductionMail.activeReproductionMessage", "A reproduction has been confi
 
 
 ${_("reproductionMail.reproductionId", "Reproduction number")}: ${reproduction.id?c}
-<#if reproduction.order??>${_("reproductionMail.orderId", "Order number")}: ${reproduction.order.id?c}</#if>
+<#if reproduction.order??>${_("reproductionMail.orderId", "Payment id")}: ${reproduction.order.id}</#if>
 ${_("reproductionMail.customerName", "Customer")}: ${reproduction.customerName}
 ${_("reproductionMail.customerEmail", "E-mail")}: ${reproduction.customerEmail}
 
