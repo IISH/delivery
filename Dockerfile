@@ -10,6 +10,18 @@ FROM eclipse-temurin:11-jdk
 
 RUN apt-get update -y && apt-get install -y fontconfig libfreetype6 fonts-liberation cups cups-bsd cups-client
 
+RUN printf '%s\n' \
+    '<?xml version="1.0"?>'\
+    '<!DOCTYPE fontconfig SYSTEM "fonts.dtd">' \
+    '<fontconfig>' \
+    ' <alias>' \
+    ' <family>sans-serif</family>' \
+    ' <prefer>' \
+    ' <family>Liberation Sans</family>' \
+    ' </prefer>' \
+    ' </alias>' \
+    '</fontconfig>' > /etc/fonts/local.conf && fc-cache -f -v
+
 COPY --from=build /app/target/dependency/BOOT-INF/classes /app
 COPY --from=build /app/target/dependency/BOOT-INF/lib /app/lib
 COPY --from=build /app/target/dependency/META-INF /app/META-INF
