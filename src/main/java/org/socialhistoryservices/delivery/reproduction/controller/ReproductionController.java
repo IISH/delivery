@@ -865,8 +865,10 @@ public class ReproductionController extends AbstractRequestController {
         reproductions.refreshOrder(order);
 
         // If the order is paid, update the reproduction status
-        changeStatusAfterPayment(reproduction);
-        reproductions.saveReproduction(reproduction);
+        if (order.getPayed() == Order.ORDER_PAYED) {
+            changeStatusAfterPayment(reproduction);
+            reproductions.saveReproduction(reproduction);
+        }
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
