@@ -22,3 +22,12 @@ Deploy image:
 
     docker push "$repo"
 
+# NB Java 11 lokaal build
+
+JAVA_HOME=pad-naar-java-11-sdk ./mvnw clean package -P jar -DskipTests
+
+Voorbeeld:
+
+    JAVA_HOME="${HOME}/.jdks/temurin-11.0.30" ./mvnw clean package -P jar -DskipTests
+
+

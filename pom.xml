@@ -27,6 +27,11 @@
             <id>atlassian-public</id>
             <url>https://maven.atlassian.com/repository/public</url>
         </repository>
+        <repository>
+            <id>central</id>
+            <name>Central Repository</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -190,7 +195,8 @@
                             <prefix>git</prefix>
                             <verbose>false</verbose>
                             <generateGitPropertiesFile>true</generateGitPropertiesFile>
-                            <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+                            <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties
+                            </generateGitPropertiesFilename>
                             <format>text</format>
                             <gitDescribe>
                                 <skip>false</skip>
