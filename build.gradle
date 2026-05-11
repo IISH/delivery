@@ -1,0 +1,53 @@
+plugins {
+    id 'java-library'
+    alias(libs.plugins.org.springframework.boot3)
+    alias(libs.plugins.hibernate)
+    alias(libs.plugins.git.properties)
+}
+
+repositories {
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
+    maven {
+        url "https://maven.artifacts.atlassian.com"
+    }
+    mavenCentral()
+    mavenLocal()
+}
+
+configurations {
+    mockitoAgent
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    configureEach {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+}
+
+dependencies {
+    implementation libs.bundles.delivery
+}
+
+// https://docs.gradle.org/current/userguide/toolchains.html
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(23)
+        vendor = JvmVendorSpec.ADOPTIUM // Adoptium / Eclipse Temurin
+    }
+    tasks.withType(JavaCompile).configureEach {
+        options.release = 23
+    }
+}
+
+tasks.jar {
+    manifest {
+        attributes('Main-Class': 'nl.knaw.huc.di.delivery.Application')
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.bootJar{
+    dependsOn generateGitProperties
+}

@@ -63,8 +63,6 @@
         </ul>
       </div>
     </#if>
-
-    <#if gitCommitId??><div class="release"><a href="https://github.com/IISH/delivery/commit/${gitCommitId}" target="_blank">${gitClosestTagName}</a></div></#if>
   </header>
 
   <nav class="main"></nav>
@@ -80,7 +78,10 @@
         <li><a href="<@paramUrl {"locale" : "en"} />">EN</a></li>
       </ul>
     </div>
-    <#if gitCommitId??><div class="release"><a href="https://github.com/IISH/delivery/commit/${gitCommitId}" target="_blank">${gitClosestTagName}</a></div></#if>
+<#--    <#if git??> <div class="release">-->
+<#--      <a href="https://github.com/IISH/delivery/commit/${git["commit.id.full"]}" target="_blank">${git["closest.tag.name"]}</a>-->
+<#--    </div>-->
+<#--    </#if>-->
   </header>
 
   <nav class="main">
@@ -176,8 +177,16 @@
 
       <#if _sec.ifNotGranted("ROLE_ANONYMOUS")>
         <li>
-          <a href="${rc.contextPath}/user/logout">
+          <a href="${rc.contextPath}/logout">
             ${_("userList.logout", "Logout")}
+          </a>
+        </li>
+      </#if>
+
+      <#if _sec.ifAllGranted("ROLE_ACTUATOR")>
+        <li>
+          <a href="${rc.contextPath}/actuator">
+            ${_("userList.actuator", "Actuator")}
           </a>
         </li>
       </#if>

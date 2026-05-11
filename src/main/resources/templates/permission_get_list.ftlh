@@ -12,7 +12,7 @@
     <form action="" method="GET">
       <#-- Generate hidden input for already existing GET vars -->
       <#list RequestParameters?keys as k>
-          <#if k!="search" && k!="from_date" && k!="to_date" && k!="permission" && k!="page_len" && k!="page">
+          <#if k!="search" && k!="from_date" && k!="to_date" && k!="permission" && k!="size" && k!="page">
             <input type="hidden" name="${k}" value="${RequestParameters[k]}"/>
           </#if>
       </#list>
@@ -73,12 +73,12 @@
           <label for="page_len_filter">
             ${_("pageListHolder.nrResultsPerPage", "Amount of Results per Page")}
           </label>
-          <select id="page_len_filter" name="page_len">
+          <select id="page_len_filter" name="size">
               <#list 1..(delivery.permissionMaxPageLen?number/delivery.permissionPageStepSize?number)?floor as i>
                 <#assign pageSize = (i*delivery.permissionPageStepSize?number)?floor/>
-                <#assign isSelected = (RequestParameters["page_len"]??
-                  && RequestParameters["page_len"]?number == pageSize)
-                  || (!RequestParameters["page_len"]?? && delivery.permissionPageLen?number == pageSize)/>
+                <#assign isSelected = (pagedItem.size??
+                  && pagedItem.size?number == pageSize)
+                  || (!pagedItem.size?? && delivery.permissionPageLen?number == pageSize)/>
 
                 <option value="${pageSize}"<#if isSelected> selected="selected"</#if>>${pageSize}</option>
               </#list>
@@ -90,7 +90,7 @@
     </form>
   </fieldset>
 
-  <#if permissions?size == 0>
+  <#if pagedItem.empty>
     <span class="bignote">${_("search.notfound", "No results...")}</span>
   <#else>
     <table class="overview">
@@ -98,13 +98,13 @@
       <tr>
         <th></th>
         <th>${_("holding.record", "Item")}</th>
-        <th><@sortLink "visitor_name">${_("permission.name", "Name")}</@sortLink></th>
-        <th><@sortLink "permission">${_("permission.permission", "Permission")}</@sortLink></th>
-        <th><@sortLink "date_granted">${_("permission.dateGranted", "Date granted")}</@sortLink></th>
+        <th><@sortLink "name">${_("permission.name", "Name")}</@sortLink></th>
+        <th><@sortLink "granted">${_("permission.permission", "Permission")}</@sortLink></th>
+        <th><@sortLink "dateGranted">${_("permission.dateGranted", "Date granted")}</@sortLink></th>
       </tr>
       </thead>
       <tbody>
-      <#list permissions as permission>
+      <#list pagedItem.content as permission>
         <tr>
           <td>
             <a href="${rc.contextPath}/permission/${permission.id?c}">
@@ -136,6 +136,9 @@
       </tbody>
     </table>
 
-    <@pageLinks permissionsSize RequestParameters["page_len"]!delivery.requestPageLen?number RequestParameters["page"]!1/>
+    <hr/>
+    <!-- Pagination Controls -->
+    <@pageLinks "${pagedItem.sort}" />
+
   </#if>
 </@base>

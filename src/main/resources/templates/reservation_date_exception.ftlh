@@ -54,7 +54,7 @@
 
   <@form "" "reservationDateException" >
     <fieldset class="reservation_form">
-      <#if reservationDateExceptions?has_content>
+      <#if pagedItem?has_content>
         <@border>
           <thead>
             <tr>
@@ -65,7 +65,7 @@
             </tr>
           </thead>
 
-          <#list reservationDateExceptions as exception>
+          <#list pagedItem.content as exception>
             <tr>
               <td><input type="checkbox" name="checked" id=${exception.id?c} value=${exception.id?c}></td>
 

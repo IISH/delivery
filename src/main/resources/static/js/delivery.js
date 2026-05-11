@@ -311,3 +311,35 @@ function addNewStandardOption() {
         .attr('name', newPrefix+"enabled");
     newStandardOption.appendTo("table.reproduction_standard_options tbody");
 }
+
+function getHoldingList(pager) {
+    let formData = $('#webform').serialize();
+    let url = (pager === undefined) ? '?searchSubmit=' : $.trim(pager) + 'searchSubmit=';
+    console.log('formData:');
+    console.log(formData);
+    console.log('url:');
+    console.log(url);
+    $.ajax({
+        url: url,
+        data: formData,
+        type: 'POST',
+        dataType: 'html', // expected response
+        contentType: 'application/x-www-form-urlencoded',
+        success: function (response) {
+            $('#holdingSearchContainer').html(response);
+        },
+
+        error: function (xhr, status) {
+            console.error(xhr);
+            console.error(status);
+            $('#holdingSearchContainer').html('<p>Sorry, there was a problem! Is the server up?</p>');
+        },
+
+        // code to run regardless of success or failure
+        complete: function (xhr, status) {
+            //
+        }
+    })
+
+    return false; // Block the submit form
+}

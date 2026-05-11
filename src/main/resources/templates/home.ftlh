@@ -2,6 +2,7 @@
 
 <@base "Home">
   <form action="" method="POST">
+    <#if _csrf??><input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/></#if>
     <fieldset class="config">
       <legend>${_("printer.title", "Printer configuration")}</legend>
 
@@ -32,6 +33,8 @@
       <span class="note">
         ${_( "printer.note", "Note: requests that were already sent to the printer before changing the printer configuration have to be printed again!")}
       </span>
+
+      <#if _csrf??><input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/></#if>
 
       <input type="submit" name="printerSubmit" value="${_("editrecord.submit", "Submit")}"/>
     </fieldset>

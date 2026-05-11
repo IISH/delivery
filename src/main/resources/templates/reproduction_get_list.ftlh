@@ -52,7 +52,7 @@
       <#-- Generate hidden input for already existing GET vars -->
       <#list RequestParameters?keys as k>
         <#if k!="search" && k!="from_date" && k!="to_date" && k!="status" &&
-        k!="page_len" && k!="date" && k!="page" && k!="printed">
+        k!="size" && k!="date" && k!="page" && k!="printed">
           <input type="hidden" name="${k}" value="${RequestParameters[k]}"/>
         </#if>
       </#list>
@@ -74,7 +74,7 @@
               ${_("reproductionList.allStatus", "Status N/A")}
             </option>
 
-            <#list status_types?keys as k>
+            <#list reproduction_status_types?keys as k>
               <#assign isSelected = (RequestParameters["status"]?? && RequestParameters["status"]?upper_case == k)/>
               <option value="${k?lower_case}"<#if isSelected> selected="selected"</#if>>
                 ${_("reproduction.statusType.${k}", "${k}")}
@@ -129,12 +129,12 @@
             ${_("pageListHolder.nrResultsPerPage", "Amount of Results per Page")}
           </label>
 
-          <select id="page_len_filter" name="page_len">
+          <select id="page_len_filter" name="size">
             <#list 1..(delivery.requestMaxPageLen?number/delivery.requestPageStepSize?number)?floor as i>
               <#assign pageSize = (i*delivery.requestPageStepSize?number)?floor/>
-              <#assign isSelected = (RequestParameters["page_len"]??
-                && RequestParameters["page_len"]?number == pageSize)
-                || (!RequestParameters["page_len"]?? && delivery.requestPageLen?number == pageSize)/>
+              <#assign isSelected = (RequestParameters["size"]??
+                && RequestParameters["size"]?number == pageSize)
+                || (!RequestParameters["size"]?? && delivery.requestPageLen?number == pageSize)/>
 
               <option value="${pageSize}"<#if isSelected> selected="selected"</#if>>${pageSize}</option>
             </#list>
@@ -148,12 +148,13 @@
 
   <#assign submitURL><@paramUrl {} "/reproduction/batchprocess"/></#assign>
 
-  <#if holdingReproductions?size == 0>
+  <#if pagedItem.empty>
     <span class="bignote">
       ${_("search.notfound", "No results...")}
     </span>
   <#else>
     <form action="${submitURL}" method="POST">
+      <#if _csrf??><input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/></#if>
       <table class="overview">
         <thead>
         <tr>
@@ -169,7 +170,7 @@
         </tr>
         </thead>
         <tbody>
-        <#list holdingReproductions as holdingReproduction>
+        <#list pagedItem.content as holdingReproduction>
           <#assign holding = holdingReproduction.holding>
           <#assign reproduction = holdingReproduction.reproduction>
 
@@ -230,7 +231,8 @@
         <input type="button" value="${_("select_none", "Select None")}" class="selectNone"/>
       </div>
 
-      <@pageLinks holdingReproductionsSize RequestParameters["page_len"]!delivery.requestPageLen?number RequestParameters["page"]!1 />
+      <!-- Pagination Controls -->
+      <@pageLinks "${pagedItem.sort}"/>
 
       <#if _sec.ifAnyGranted("ROLE_REPRODUCTION_MODIFY,ROLE_REPRODUCTION_DELETE")>
         <fieldset class="actions">
@@ -240,7 +242,7 @@
             <#if _sec.ifAllGranted("ROLE_REPRODUCTION_MODIFY")>
               <li>
                 <select name="newStatus">
-                    <#list status_types?keys as k>
+                    <#list reproduction_status_types?keys as k>
                       <#if k != "WAITING_FOR_ORDER_DETAILS">
                         <#assign isSelected = RequestParameters["status"]?? && RequestParameters["status"]?upper_case == k/>
                         <option value="${k}"<#if isSelected> selected="selected"</#if>>

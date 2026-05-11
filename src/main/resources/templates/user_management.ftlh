@@ -13,11 +13,12 @@
           ${user.username}
         </span>
 
-        <form method="POST" action="">
-          <input type="hidden" name="action" value="chgrp"/>
+        <form method="POST" action="" <#if user.username == _sec.username> style='background-color: darkgray'</#if>>
+            <#if _csrf??><input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/></#if>
+            <input type="hidden" name="action" value="chgrp"/>
           <input type='hidden' name="user" value="${user.id?c}"/>
 
-          <select multiple name="groups"<#if user.username == _sec.principal.username> disabled="disabled"</#if>>
+          <select multiple name="groups"<#if user.username == _sec.username> disabled="disabled"</#if>>
             <#list groups as group>
               <option value="${group.id?c}"<#if user.groups?seq_contains(group)> selected</#if>>
                 ${group.name}
@@ -25,7 +26,7 @@
             </#list>
           </select>
 
-          <#if user.username != _sec.principal.username>
+          <#if user.username != _sec.username>
             <input type="submit" value="${_("user.chgrp", "Change Groups")}"/>
           </#if>
         </form>
