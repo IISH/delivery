@@ -10,11 +10,11 @@ $(document).ready(function(){
     });
 
     $(".selectAll").click(function() {
-        $(".checkItem").attr("checked", true);
+        $(".checkItem").prop("checked", true);
     });
 
     $(".selectNone").click(function() {
-        $(".checkItem").attr("checked", false);
+        $(".checkItem").prop("checked", false);
     });
 
     $("#scanid").focus();

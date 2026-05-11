@@ -21,8 +21,10 @@ INSERT INTO authorities VALUES (16, 'View date exceptions.', 'ROLE_DATE_EXCEPTIO
 INSERT INTO authorities VALUES (17, 'Create date exceptions.', 'ROLE_DATE_EXCEPTION_CREATE');
 INSERT INTO authorities VALUES (18, 'Modify date exceptions.', 'ROLE_DATE_EXCEPTION_MODIFY');
 INSERT INTO authorities VALUES (19, 'Delete date exceptions.', 'ROLE_DATE_EXCEPTION_DELETE');
-INSERT INTO authorities VALUES (20, 'View home page.', 'ROLE_HOME');
+INSERT INTO authorities VALUES (20, 'View page as an authorized deliver user.', 'ROLE_DELIVERY_USER');
 INSERT INTO authorities VALUES (21, 'View actuator', 'ROLE_ACTUATOR');
+INSERT INTO authorities VALUES (22, 'View printer', 'ROLE_PRINTER_VIEW');
+INSERT INTO authorities VALUES (23, 'Modify printer', 'ROLE_PRINTER_MODIFY');
 
 --
 -- Data for Name: groups; Type: TABLE DATA; Schema: public; Owner: postgres
@@ -42,6 +44,8 @@ INSERT INTO group_permissions VALUES (1, 05);
 INSERT INTO group_permissions VALUES (1, 13);
 INSERT INTO group_permissions VALUES (1, 14);
 INSERT INTO group_permissions VALUES (1, 20);
+INSERT INTO group_permissions VALUES (1, 22);
+INSERT INTO group_permissions VALUES (1, 23);
 INSERT INTO group_permissions VALUES (2, 01);
 INSERT INTO group_permissions VALUES (2, 02);
 INSERT INTO group_permissions VALUES (2, 03);
@@ -63,6 +67,8 @@ INSERT INTO group_permissions VALUES (2, 18);
 INSERT INTO group_permissions VALUES (2, 19);
 INSERT INTO group_permissions VALUES (2, 20);
 INSERT INTO group_permissions VALUES (2, 21);
+INSERT INTO group_permissions VALUES (2, 22);
+INSERT INTO group_permissions VALUES (2, 23);
 INSERT INTO group_permissions VALUES (3, 04);
 INSERT INTO group_permissions VALUES (3, 05);
 INSERT INTO group_permissions VALUES (3, 06);
@@ -76,9 +82,13 @@ INSERT INTO group_permissions VALUES (3, 17);
 INSERT INTO group_permissions VALUES (3, 18);
 INSERT INTO group_permissions VALUES (3, 19);
 INSERT INTO group_permissions VALUES (3, 20);
+INSERT INTO group_permissions VALUES (3, 22);
+INSERT INTO group_permissions VALUES (3, 23);
 INSERT INTO group_permissions VALUES (4, 02);
 INSERT INTO group_permissions VALUES (4, 03);
 INSERT INTO group_permissions VALUES (4, 20);
+INSERT INTO group_permissions VALUES (4, 22);
+INSERT INTO group_permissions VALUES (4, 23);
 
 --
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres

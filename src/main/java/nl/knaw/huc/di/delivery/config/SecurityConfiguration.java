@@ -37,9 +37,9 @@ public class SecurityConfiguration {
         http
                 // URLs are allowed by any authenticated user.
                 .authorizeHttpRequests(authorize ->
-                        authorize.requestMatchers("/css/**", "/js/**", "/logo.ico", "/favicon.ico", "/403").permitAll().
+                        authorize.requestMatchers("/css/**", "/js/**", "/logo.ico", "/favicon.ico", "/403", "/").permitAll().
                                 requestMatchers("/actuator/**").hasRole("ACTUATOR"). // internal monitoring management
-                                anyRequest().hasRole("HOME") // Minimal role
+                                anyRequest().hasRole("DELIVERY_USER") // Minimal role
                 )
                 .exceptionHandling(exceptions -> exceptions
                         .accessDeniedPage("/403") // Redirects 403 to this endpoint

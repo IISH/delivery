@@ -133,7 +133,13 @@
         </li>
       </#if>
 
-      <br>
+      <#if _sec.ifAllGranted("ROLE_PRINTER_MODIFY")>
+        <li>
+          <a href="${rc.contextPath}/printer/">
+            ${_("userList.printer", "Printer")}
+          </a>
+        </li>
+      </#if>
 
       <#if _sec.ifAllGranted("ROLE_REPRODUCTION_VIEW")>
         <li>
@@ -179,6 +185,14 @@
         <li>
           <a href="${rc.contextPath}/logout">
             ${_("userList.logout", "Logout")}
+          </a>
+        </li>
+      </#if>
+
+      <#if _sec.ifNotGranted("ROLE_DELIVERY_USER")>
+        <li>
+          <a href="${rc.contextPath}/login">
+            ${_("userList.login", "Login")}
           </a>
         </li>
       </#if>
