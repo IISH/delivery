@@ -49,6 +49,7 @@ public class SecurityConfiguration {
                                         "/record/10622*",
                                         "/reservation/createform/10622*",
                                         "/reproduction/createform/10622*",
+                                        "/captcha",
                                         "/").permitAll().
                                 requestMatchers("/actuator/**").hasRole("ACTUATOR"). // internal monitoring management
                                 anyRequest().hasRole("DELIVERY_USER") // Minimal role
