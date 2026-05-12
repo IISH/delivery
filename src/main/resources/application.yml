@@ -33,6 +33,10 @@ management:
   info:
     git:
       mode: full
+  endpoint:
+    health:
+      show-details: always  # Valid values: always, never, when_authorized
+      show-components: always
 delivery:
   apiBase: "/solr/all/srw"
   apiDomain: "localhost"
@@ -44,6 +48,7 @@ delivery:
   holdingSeparator: "^"
   itemSeparator: "."
   doNotSentMail: true
+  login-url: oauth2/authorization/satosa
   mailReadingRoom: "mailReadingRoom@iisg.nl"
   mailSystemAddressReadingRoom: "n0r3ply@iisg.nl"
   mailRepro: "mailRepro@iisg.nl"

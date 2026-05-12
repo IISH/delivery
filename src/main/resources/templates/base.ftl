@@ -196,7 +196,7 @@
 
             <#if _sec.ifNotGranted("ROLE_DELIVERY_USER")>
                 <li>
-                    <a href="${rc.contextPath}/login">
+                    <a href="${rc.contextPath}/${delivery.loginUrl}">
                         ${_("userList.login", "Login")}
                     </a>
                 </li>

@@ -5,6 +5,7 @@ import nl.knaw.huc.di.delivery.user.dao.UserRepository;
 import nl.knaw.huc.di.delivery.config.InvalidRequestException;
 import nl.knaw.huc.di.delivery.user.entity.Group;
 import nl.knaw.huc.di.delivery.user.entity.User;
+import org.mockito.internal.exceptions.ExceptionIncludingMockitoWarnings;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -22,9 +24,11 @@ import java.util.Optional;
 @Secured("ROLE_USER_MODIFY")
 public class UserController {
 
+
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
-    public UserController(UserRepository userRepository, GroupRepository groupRepository){
+
+    public UserController(UserRepository userRepository, GroupRepository groupRepository) {
         this.userRepository = userRepository;
         this.groupRepository = groupRepository;
     }
@@ -60,20 +64,21 @@ public class UserController {
      * @return The view to resolve.
      */
     @RequestMapping(value = "/", method = RequestMethod.POST, params = "action=chgrp")
-    public String chgrp(@RequestParam int user, @RequestParam(required = false) int[] groups) {
+    public String chgrp(@RequestParam int user, @RequestParam(defaultValue = "") int[] groups) {
         Optional<User> ou = userRepository.findById(user);
-        User userObj = ou.orElseThrow(()->new InvalidRequestException("Invalid user id specified."));
+        User userObj = ou.orElseThrow(() -> new InvalidRequestException("Invalid user id specified."));
 
         userObj.getGroups().clear();
 
-        if (groups != null) {
+        if (groups.length == 0) {
+            userRepository.delete(userObj);
+        } else {
             for (int grpID : groups) {
                 Optional<Group> ogrp = groupRepository.findById(grpID);
                 ogrp.ifPresent(userObj.getGroups()::add);
             }
+            userRepository.save(userObj);
         }
-
-        userRepository.save(userObj);
         return "redirect:/user/";
     }
 }

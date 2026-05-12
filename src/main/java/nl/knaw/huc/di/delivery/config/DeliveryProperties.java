@@ -14,6 +14,7 @@ public class DeliveryProperties {
     private String holdingSeparator ;
     private String itemSeparator ;
     private boolean doNotSentMail;
+    private String loginUrl;
     private String mailReadingRoom ;
     private String mailSystemAddressReadingRoom ;
     private String mailRepro ;
@@ -409,5 +410,13 @@ public class DeliveryProperties {
 
     public void setNamingAuthorityPrefix(String namingAuthorityPrefix) {
         this.namingAuthorityPrefix = namingAuthorityPrefix;
+    }
+
+    public String getLoginUrl() {
+        return loginUrl;
+    }
+
+    public void setLoginUrl(String loginUrl) {
+        this.loginUrl = loginUrl;
     }
 }
