@@ -38,7 +38,7 @@ public class SecurityConfiguration {
         http
                 // URLs are allowed by any authenticated user.
                 .authorizeHttpRequests(authorize ->
-                        authorize.requestMatchers("/css/**", "/js/**", "/logo.ico", "/favicon.ico", "/favicon-16x16.png", "/favicon-32x32.png", "/403", "/").permitAll().
+                        authorize.requestMatchers("/css/**", "/js/**", "/logo.ico", "/favicon.ico", "/favicon-16x16.png", "/favicon-32x32.png", "/403", "/error", "/").permitAll().
                                 requestMatchers("/actuator/**").hasRole("ACTUATOR"). // internal monitoring management
                                 anyRequest().hasRole("DELIVERY_USER") // Minimal role
                 )
