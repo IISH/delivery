@@ -26,6 +26,7 @@ public class SecurityConfiguration {
     private final CustomOidcUserService oAuth2UserService;
 
     private final LocalUserServiceImpl localUserService;
+
     public SecurityConfiguration(CustomOidcUserService oAuth2UserService, LocalUserServiceImpl localUserService) {
         this.oAuth2UserService = oAuth2UserService;
         this.localUserService = localUserService;
@@ -37,7 +38,7 @@ public class SecurityConfiguration {
         http
                 // URLs are allowed by any authenticated user.
                 .authorizeHttpRequests(authorize ->
-                        authorize.requestMatchers("/css/**", "/js/**", "/logo.ico", "/favicon.ico", "/403", "/").permitAll().
+                        authorize.requestMatchers("/css/**", "/js/**", "/logo.ico", "/favicon.ico", "/favicon-16x16.png", "/favicon-32x32.png", "/403", "/").permitAll().
                                 requestMatchers("/actuator/**").hasRole("ACTUATOR"). // internal monitoring management
                                 anyRequest().hasRole("DELIVERY_USER") // Minimal role
                 )
@@ -46,9 +47,10 @@ public class SecurityConfiguration {
                 )
                 // Disable HTTP Basic authentication
                 .httpBasic(HttpBasicConfigurer::disable)
-                .oauth2Login(oauth2 ->
-                        oauth2.userInfoEndpoint((userInfo) -> userInfo
-                                .oidcUserService(oAuth2UserService)))
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint((userInfo) -> userInfo
+                                .oidcUserService(oAuth2UserService))
+                        .defaultSuccessUrl("/"))
                 .oauth2Client(withDefaults())
                 .logout(withDefaults());
         return http.build();
@@ -63,7 +65,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authorize ->
                         authorize
                                 .dispatcherTypeMatchers(FORWARD, ERROR).permitAll()
-                                .requestMatchers("/css/**", "/js/**", "/logo.ico").permitAll()
+                                .requestMatchers("/css/**", "/js/**", "/logo.ico", "/favicon.ico", "/favicon-16x16.png", "/favicon-32x32.png").permitAll()
                                 .requestMatchers("/h2-console/**").permitAll()
                                 .anyRequest().authenticated()
                 ).formLogin(withDefaults())

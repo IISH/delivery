@@ -1,8 +1,9 @@
 package nl.knaw.huc.di.delivery.config;
 
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.boot.actuate.info.InfoEndpoint;
+import org.springframework.boot.info.GitProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
@@ -15,11 +16,12 @@ import java.util.Map;
 @Configuration
 public class FreemarkerConfiguration implements BeanPostProcessor {
     private final DeliveryProperties deliveryProperties;
-    private final InfoEndpoint infoEndpoint;
+    private final GitProperties gitProperties;
 
-    public FreemarkerConfiguration(DeliveryProperties deliveryProperties, InfoEndpoint infoEndpoint) {
+    public FreemarkerConfiguration(DeliveryProperties deliveryProperties, GitProperties gitProperties
+    ) {
         this.deliveryProperties = deliveryProperties;
-        this.infoEndpoint = infoEndpoint;
+        this.gitProperties = gitProperties;
     }
 
     @Override
@@ -28,10 +30,10 @@ public class FreemarkerConfiguration implements BeanPostProcessor {
             Map<String, Object> sharedVariables = new HashMap<>();
             sharedVariables.put("delivery", deliveryProperties);
 
-            if (infoEndpoint.info().containsKey("git")) {
-                sharedVariables.put("git", infoEndpoint.info().get("git"));
-            }
-
+            Map<String, String> git = new HashMap<>(2);
+            git.put("tag", gitProperties.get("closest.tag.name"));
+            git.put("commit", gitProperties.getCommitId());
+            sharedVariables.put("git", git);
             configurer.setFreemarkerVariables(sharedVariables);
         }
         return bean;

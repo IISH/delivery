@@ -28,6 +28,8 @@ public class TomcatConfig {
     public HttpFirewall allowUrlEncodedSlashHttpFirewall() {
         StrictHttpFirewall firewall = new StrictHttpFirewall();
         firewall.setAllowUrlEncodedSlash(true);
+        // Explicitly allow semicolons for jsessionid support. OpenID adds the semicolon.
+        firewall.setAllowSemicolon(true);
         return firewall;
     }
 }
