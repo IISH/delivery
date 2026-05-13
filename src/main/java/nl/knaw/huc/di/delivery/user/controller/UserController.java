@@ -6,7 +6,6 @@ import nl.knaw.huc.di.delivery.user.dao.UserRepository;
 import nl.knaw.huc.di.delivery.config.InvalidRequestException;
 import nl.knaw.huc.di.delivery.user.entity.Group;
 import nl.knaw.huc.di.delivery.user.entity.User;
-import nl.knaw.huc.di.delivery.user.service.LocalUserServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.annotation.Secured;
