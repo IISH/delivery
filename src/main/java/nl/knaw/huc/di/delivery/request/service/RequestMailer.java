@@ -77,7 +77,7 @@ public abstract class RequestMailer extends Mailer {
         msg.setReplyTo(reply);
         msg.setTo(to);
 
-        msg.setSubject(profile() + subject);
+        msg.setSubject(subject);
         msg.setText(templateToString(templateName, model, locale));
 
         mailSender.send(msg);
@@ -127,7 +127,7 @@ public abstract class RequestMailer extends Mailer {
         msg.setFrom(new InternetAddress(deliveryProperties.getMailRepro()));
         msg.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
         msg.setReplyTo(InternetAddress.parse(deliveryProperties.getMailRepro()));
-        msg.setSubject(profile() + subject);
+        msg.setSubject(subject);
 
         // The mail wil consists of multiple parts, the content and the PDF attachment
         MimeMultipart mimeMultipart = new MimeMultipart();
@@ -147,18 +147,5 @@ public abstract class RequestMailer extends Mailer {
         msg.setContent(mimeMultipart);
 
         mailSender.send(msg);
-    }
-
-    /**
-     * Set a value to indicate the environment
-     *
-     * @return The environment - if any
-     */
-    private String profile() {
-        final String profile = deliveryProperties.getProfile();
-        if (profile == null || profile.isEmpty()) {
-            return "";
-        } else
-            return profile + " ";
     }
 }

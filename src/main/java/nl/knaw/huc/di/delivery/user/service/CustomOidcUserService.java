@@ -1,7 +1,10 @@
 package nl.knaw.huc.di.delivery.user.service;
 
+import jakarta.annotation.PostConstruct;
 import nl.knaw.huc.di.delivery.user.dao.UserRepository;
 import nl.knaw.huc.di.delivery.user.entity.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
@@ -18,13 +21,17 @@ import java.util.Set;
 @Service
 public class CustomOidcUserService extends OidcUserService {
 
+    private final Logger logger = LoggerFactory.getLogger(CustomOidcUserService.class);
+
     /**
      * user DAO, do not autowire unless userServiceDetails bean removed
      */
     private final UserRepository userRepository;
+
     public CustomOidcUserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
+
     @Override
     public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
         OidcUser oidcUser = super.loadUser(userRequest);
@@ -61,5 +68,14 @@ public class CustomOidcUserService extends OidcUserService {
                 oidcUser.getUserInfo(),
                 userNameAttributeName
         );
+    }
+
+    @PostConstruct
+    /*
+     * Remove all users from the database if they are not linked to a group.
+     */
+    private void deleteUsersWithoutGroups() {
+        logger.info("Delete users without groups");
+        userRepository.deleteUsersWithoutGroups();
     }
 }

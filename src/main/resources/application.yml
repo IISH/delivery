@@ -82,5 +82,4 @@ delivery:
   urlSearch: "search-acc.socialhistory.org"
   urlSelf: "http://localhost:8080"
   recordPageLen: 20
-  profile: "white"
   namingAuthorityPrefix: "00000"

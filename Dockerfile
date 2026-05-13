@@ -16,7 +16,8 @@ RUN apt-get update -y && \
         '</fontconfig>' > /etc/fonts/local.conf && \
     fc-cache -f -v && \
     mkdir -p /app/config && \
-    chown 1000:1000 /app
+    chown 1000:1000 /app && \
+    touch /home/ubuntu/.mime.types
 
 VOLUME /app/config
 

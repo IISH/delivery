@@ -48,7 +48,6 @@ public class DeliveryProperties {
     private String urlSearch ;
     private String urlSelf ;
     private int recordPageLen ;
-    private String profile ;
     private String namingAuthorityPrefix ;
 
 
@@ -394,14 +393,6 @@ public class DeliveryProperties {
 
     public void setRecordPageLen(int recordPageLen) {
         this.recordPageLen = recordPageLen;
-    }
-
-    public String getProfile() {
-        return profile;
-    }
-
-    public void setProfile(String profile) {
-        this.profile = profile;
     }
 
     public String getNamingAuthorityPrefix() {

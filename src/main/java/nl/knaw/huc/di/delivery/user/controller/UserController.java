@@ -25,8 +25,6 @@ import java.util.Optional;
 @Secured("ROLE_USER_MODIFY")
 public class UserController {
 
-    private final Logger logger = LoggerFactory.getLogger(UserController.class);
-
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
 
@@ -79,14 +77,5 @@ public class UserController {
             userRepository.save(userObj);
         }
         return "redirect:/user/";
-    }
-
-    @PostConstruct
-    /*
-     * Remove all users from the database if they are not linked to a group.
-     */
-    private void deleteUsersWithoutGroups() {
-        logger.info("Delete users without groups");
-        userRepository.deleteUsersWithoutGroups();
     }
 }
