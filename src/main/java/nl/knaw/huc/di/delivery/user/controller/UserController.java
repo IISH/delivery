@@ -1,11 +1,14 @@
 package nl.knaw.huc.di.delivery.user.controller;
 
+import jakarta.annotation.PostConstruct;
 import nl.knaw.huc.di.delivery.user.dao.GroupRepository;
 import nl.knaw.huc.di.delivery.user.dao.UserRepository;
 import nl.knaw.huc.di.delivery.config.InvalidRequestException;
 import nl.knaw.huc.di.delivery.user.entity.Group;
 import nl.knaw.huc.di.delivery.user.entity.User;
-import org.mockito.internal.exceptions.ExceptionIncludingMockitoWarnings;
+import nl.knaw.huc.di.delivery.user.service.LocalUserServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -24,6 +26,7 @@ import java.util.Optional;
 @Secured("ROLE_USER_MODIFY")
 public class UserController {
 
+    private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
@@ -68,11 +71,8 @@ public class UserController {
         Optional<User> ou = userRepository.findById(user);
         User userObj = ou.orElseThrow(() -> new InvalidRequestException("Invalid user id specified."));
 
-        userObj.getGroups().clear();
-
-        if (groups.length == 0) {
-            userRepository.delete(userObj);
-        } else {
+        if (groups.length != 0) {
+            userObj.getGroups().clear();
             for (int grpID : groups) {
                 Optional<Group> ogrp = groupRepository.findById(grpID);
                 ogrp.ifPresent(userObj.getGroups()::add);
@@ -80,5 +80,14 @@ public class UserController {
             userRepository.save(userObj);
         }
         return "redirect:/user/";
+    }
+
+    @PostConstruct
+    /*
+     * Remove all users from the database if they are not linked to a group.
+     */
+    private void deleteUsersWithoutGroups() {
+        logger.info("Delete users without groups");
+        userRepository.deleteUsersWithoutGroups();
     }
 }
