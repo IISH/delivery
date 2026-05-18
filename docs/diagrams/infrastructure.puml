@@ -1,0 +1,43 @@
+@startuml
+!theme plain
+title Kubernetes Deployment Infrastructure Diagram
+
+cloud "Internet" as internet
+
+node "Public Subnet / DMZ" {
+    node "Edge Proxy" {
+        component "Nginx Proxy" as nginx
+    }
+}
+
+node "Private Kubernetes Subnet" {
+    node "Kubernetes Cluster" {
+
+        node "Namespace: ingress-nginx" {
+            component "K8s Ingress Controller" as ingress
+        }
+
+        node "Namespace: delivery" {
+            component "K8s Service\n(ClusterIP)" as svc
+
+            node "K8s Pod" {
+                node "Java JVM" {
+                    component "Spring Boot 3 App\n(Port 8080)" as app
+                }
+            }
+        }
+    }
+}
+
+node "Private Database Subnet" {
+    node "Database Server" {
+        database "PostgreSQL 16" as db
+    }
+}
+
+internet --> nginx : HTTPS (delivery.iisg.amsterdam:443)
+nginx --> ingress : HTTP (Forwarded 80:80)
+ingress --> svc : Routing Rule
+svc --> app : Pod TargetPort (8080)
+app --> db : JDBC / TCP (5432)
+@enduml
