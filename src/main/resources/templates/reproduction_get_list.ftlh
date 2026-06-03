@@ -10,11 +10,6 @@
   <ul class="filter-buttons">
     <li>
       <a href="${rc.contextPath}/reproduction/?date=${today?string("yyyy-MM-dd")}">
-        <@spring.message "reproductionList.filterToday"/>
-      </a>
-    </li>
-    <li>
-      <a href="${rc.contextPath}/reproduction/?date=${today?string("yyyy-MM-dd")}">
         ${_("reproductionList.filterToday", "Show today's reproductions")}
       </a>
     </li>
@@ -161,11 +156,11 @@
           <th></th>
           <th></th>
           <th>${_("holding.record", "Item")}</th>
-          <th><@sortLink "signature">${_("holding.signature", "Call nr.")}</@sortLink></th>
-          <th><@sortLink "customerName">${_("reproduction.customerName", "Name")}</@sortLink></th>
-          <th><@sortLink "date">${_("reproduction.date", "Date")}</@sortLink></th>
+          <th><@sortLink "holding.signature">${_("holding.signature", "Call nr.")}</@sortLink></th>
+          <th><@sortLink "reproduction.customerName">${_("reproduction.customerName", "Name")}</@sortLink></th>
+          <th><@sortLink "reproduction.date">${_("reproduction.date", "Date")}</@sortLink></th>
           <th><@sortLink "printed">${_("reproduction.printed", "Printed")}</@sortLink></th>
-          <th><@sortLink "status">${_("reproduction.extended.status.status", "Reproduction status")}</@sortLink></th>
+          <th><@sortLink "reproduction.status">${_("reproduction.extended.status.status", "Reproduction status")}</@sortLink></th>
           <th><@sortLink "holdingStatus">${_("holding.extended.status", "Item status")}</@sortLink></th>
         </tr>
         </thead>

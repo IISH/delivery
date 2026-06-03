@@ -64,6 +64,8 @@ psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "ALTER TABLE users ADD sub VARCHAR
 # todo: voor iedere bestaande gebruiker inloggen en deze vul de admin de juiste rechten toekennen.
 # De oude accounts mogen in de prullenbak.
 
+# Een nieuwe groep: developer
+
 # Nieuwe rol voor aanschouwen van de home page.
 psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "INSERT INTO authorities VALUES (20, 'View page as an authorized deliver user.', 'ROLE_DELIVERY_USER');"
 psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "INSERT INTO authorities VALUES (21, 'View actuator', 'ROLE_ACTUATOR');"
@@ -82,14 +84,17 @@ psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "INSERT INTO group_permissions VAL
 psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "INSERT INTO group_permissions VALUES (3, 22);"
 psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "INSERT INTO group_permissions VALUES (4, 22);"
 
-# Modify printern
+# Modify printer
 psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "INSERT INTO group_permissions VALUES (1, 23);"
 psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "INSERT INTO group_permissions VALUES (2, 23);"
 psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "INSERT INTO group_permissions VALUES (3, 23);"
 psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "INSERT INTO group_permissions VALUES (4, 23);"
 
-# Actuator for admins
-psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "INSERT INTO group_permissions VALUES (2, 21);"
+# Nieuwe groep: developers
+psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "INSERT INTO groups VALUES (5, 'Developers', 'Monitoring en onderhoud');"
+
+# Actuator for developers
+psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "INSERT INTO group_permissions VALUES (5, 21);"
 
 
 # year is een reserved field. Wordt display_year
