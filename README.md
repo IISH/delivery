@@ -27,6 +27,7 @@ Username and password are the same:
     metadatabeheer
     delivery (is also in the admins group)
     guest (does not belong to any group - use case here is the OpenID login without additional roles)
+    developer
 
 Also see application-development.yml
 
