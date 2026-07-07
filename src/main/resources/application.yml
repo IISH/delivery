@@ -14,6 +14,21 @@ spring:
     properties:
       hibernate:
         id.new_generator_mappings: true
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          satosa:
+#            provider: oicd
+#            client-id: the client id
+#            client-secret: the secret
+#            authorization-grant-type: authorization_code
+#            scope:
+#              - openid
+#              - email
+#        provider:
+#          oicd:
+#            issuer-uri: https://authentication.clariah.nl
   freemarker:
     settings.url_escaping_charset: utf-8
     cache: true
