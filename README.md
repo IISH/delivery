@@ -17,7 +17,7 @@
     bootRun --args='--spring.profiles.active=development'
 
 Uses the internal in memory H2 database with skeletal data.sql setup.
-Uses the internal database for user management.
+Uses this database for user management.
 This will setup five test users, once for each use case group:
 
 Username and password are the same:
@@ -41,3 +41,7 @@ Will use the OpenID authentication.
 Use the docker-compose.yml file to spinup a database. Place a database dump in the restore folder in the root of the project
 
 Also see application-production.yml
+
+## Integration with OpenID Satosa
+
+The client identifier and secret was set in the OpenID provider Satosa - this is needed for development and production.
