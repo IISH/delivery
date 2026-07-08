@@ -15,7 +15,7 @@ public class PrinterConfiguration {
     @Autowired
     private DeliveryProperties deliveryProperties;
 
-    private PrinterState state = PrinterState.ARCHIVE;
+    private PrinterState state = PrinterState.READING_ROOM;
 
     public PrinterState getState() {
         return state;
