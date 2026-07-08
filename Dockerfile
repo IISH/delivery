@@ -2,6 +2,7 @@ FROM eclipse-temurin:23.0.2_7-jdk as delivery
 
 RUN apt-get update -y && \
     apt-get upgrade -y && \
+    apt-get install -y fontconfig libfreetype6 fonts-liberation cups-client && \
     fc-cache -f -v && \
     mkdir -p /app/config && \
     chown 1000:1000 /app && \
