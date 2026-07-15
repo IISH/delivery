@@ -68,14 +68,12 @@ public class UserController {
         Optional<User> ou = userRepository.findById(user);
         User userObj = ou.orElseThrow(() -> new InvalidRequestException("Invalid user id specified."));
 
-        if (groups.length != 0) {
-            userObj.getGroups().clear();
-            for (int grpID : groups) {
-                Optional<Group> ogrp = groupRepository.findById(grpID);
-                ogrp.ifPresent(userObj.getGroups()::add);
-            }
-            userRepository.save(userObj);
+        userObj.getGroups().clear();
+        for (int grpID : groups) {
+            Optional<Group> ogrp = groupRepository.findById(grpID);
+            ogrp.ifPresent(userObj.getGroups()::add);
         }
+        userRepository.save(userObj);
         return "redirect:/user/";
     }
 }

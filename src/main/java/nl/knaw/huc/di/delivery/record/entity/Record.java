@@ -105,7 +105,7 @@ public class Record {
         this.pid = pid;
     }
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "external_info_id")
     private ExternalRecordInfo externalInfo;
 
@@ -247,7 +247,7 @@ public class Record {
     /**
      * The Record's parent.
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_id")
     private Record parent;
 

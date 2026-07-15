@@ -563,7 +563,7 @@ public class Reproduction extends Request {
         return holdingReproductions;
     }
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "order_id")
     private Order order;
 
