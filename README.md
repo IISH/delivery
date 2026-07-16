@@ -1,33 +1,47 @@
-# Delivery
+## Changelog
 
-## config
+### v5.2.3
+    - Mollie payments
 
-    -Dspring.config.additional-location=/path/to/folder/with/config
+### V5.3.0
+    - Migration Spring boot 2 to 3.5.10
+    - ldap authentication removed
+    - OpenID authentication added
+    - Database MUST be postgresql 14 or higher. Sample database in docker-compose.yml file
+    - maven builder removed
+    - gradle builder added
+    - two profiles: development and production
 
-## Bouw de image
+## profile 'development'
 
-Maak een git tag voor de versie
+    bootRun --args='--spring.profiles.active=development'
 
-    git tag -a vVersiepunten -m "vVersiepunten"
+Uses the internal in memory H2 database with skeletal data.sql setup.
+Uses this database for user management.
+This will setup five test users, once for each use case group:
 
-En bouw:
+Username and password are the same:
+    magazijnmedewerker
+    admins
+    infobalie
+    metadatabeheer
+    delivery (is also in the admins group)
+    guest (does not belong to any group - use case here is the OpenID login without additional roles)
+    developer
 
-    version=$(git rev-parse master)
-    tag=$(git describe --tags)
-    name="registry.diginfra.net/${USER}/delivery"
-    repo="${name}:${tag}"
-    docker build --tag="$repo" .
+Also see application-development.yml
 
-Deploy image:
+## profile 'production'
 
-    docker push "$repo"
+    bootRun --args='--spring.profiles.active=production'
 
-# NB Java 11 lokaal build
+Will use the postgresql driver to connect to postgres.
+Will use the OpenID authentication.
 
-JAVA_HOME=pad-naar-java-11-sdk ./mvnw clean package -P jar -DskipTests
+Use the docker-compose.yml file to spinup a database. Place a database dump in the restore folder in the root of the project
 
-Voorbeeld:
+Also see application-production.yml
 
-    JAVA_HOME="${HOME}/.jdks/temurin-11.0.30" ./mvnw clean package -P jar -DskipTests
+## Integration with OpenID Satosa
 
-
+The client identifier and secret was set in the OpenID provider Satosa - this is needed for development and production.

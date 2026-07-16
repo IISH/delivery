@@ -21,6 +21,10 @@ INSERT INTO authorities VALUES (16, 'View date exceptions.', 'ROLE_DATE_EXCEPTIO
 INSERT INTO authorities VALUES (17, 'Create date exceptions.', 'ROLE_DATE_EXCEPTION_CREATE');
 INSERT INTO authorities VALUES (18, 'Modify date exceptions.', 'ROLE_DATE_EXCEPTION_MODIFY');
 INSERT INTO authorities VALUES (19, 'Delete date exceptions.', 'ROLE_DATE_EXCEPTION_DELETE');
+INSERT INTO authorities VALUES (20, 'View page as an authorized deliver user.', 'ROLE_DELIVERY_USER');
+INSERT INTO authorities VALUES (21, 'View actuator', 'ROLE_ACTUATOR');
+INSERT INTO authorities VALUES (22, 'View printer', 'ROLE_PRINTER_VIEW');
+INSERT INTO authorities VALUES (23, 'Modify printer', 'ROLE_PRINTER_MODIFY');
 
 --
 -- Data for Name: groups; Type: TABLE DATA; Schema: public; Owner: postgres
@@ -30,20 +34,28 @@ INSERT INTO groups VALUES (1, 'Magazijnmedewerkers', 'Levering');
 INSERT INTO groups VALUES (2, 'Admins', 'Administrator');
 INSERT INTO groups VALUES (3, 'Infobalie', 'Infobalie');
 INSERT INTO groups VALUES (4, 'Metadata beheer', 'Metadata beheer');
+INSERT INTO groups VALUES (5, 'Developers', 'Monitoring en onderhoud');
 
 --
 -- Data for Name: group_permissions; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO group_permissions VALUES (2, 1);
-INSERT INTO group_permissions VALUES (2, 2);
-INSERT INTO group_permissions VALUES (2, 3);
-INSERT INTO group_permissions VALUES (2, 4);
-INSERT INTO group_permissions VALUES (2, 5);
-INSERT INTO group_permissions VALUES (2, 6);
-INSERT INTO group_permissions VALUES (2, 7);
-INSERT INTO group_permissions VALUES (2, 8);
-INSERT INTO group_permissions VALUES (2, 9);
+INSERT INTO group_permissions VALUES (1, 04);
+INSERT INTO group_permissions VALUES (1, 05);
+INSERT INTO group_permissions VALUES (1, 13);
+INSERT INTO group_permissions VALUES (1, 14);
+INSERT INTO group_permissions VALUES (1, 20);
+INSERT INTO group_permissions VALUES (1, 22);
+INSERT INTO group_permissions VALUES (1, 23);
+INSERT INTO group_permissions VALUES (2, 01);
+INSERT INTO group_permissions VALUES (2, 02);
+INSERT INTO group_permissions VALUES (2, 03);
+INSERT INTO group_permissions VALUES (2, 04);
+INSERT INTO group_permissions VALUES (2, 05);
+INSERT INTO group_permissions VALUES (2, 06);
+INSERT INTO group_permissions VALUES (2, 07);
+INSERT INTO group_permissions VALUES (2, 08);
+INSERT INTO group_permissions VALUES (2, 09);
 INSERT INTO group_permissions VALUES (2, 10);
 INSERT INTO group_permissions VALUES (2, 11);
 INSERT INTO group_permissions VALUES (2, 12);
@@ -54,42 +66,73 @@ INSERT INTO group_permissions VALUES (2, 16);
 INSERT INTO group_permissions VALUES (2, 17);
 INSERT INTO group_permissions VALUES (2, 18);
 INSERT INTO group_permissions VALUES (2, 19);
-INSERT INTO group_permissions VALUES (1, 4);
-INSERT INTO group_permissions VALUES (1, 5);
-INSERT INTO group_permissions VALUES (3, 7);
-INSERT INTO group_permissions VALUES (3, 6);
+INSERT INTO group_permissions VALUES (2, 20);
+INSERT INTO group_permissions VALUES (2, 22);
+INSERT INTO group_permissions VALUES (2, 23);
+INSERT INTO group_permissions VALUES (3, 04);
+INSERT INTO group_permissions VALUES (3, 05);
+INSERT INTO group_permissions VALUES (3, 06);
+INSERT INTO group_permissions VALUES (3, 07);
 INSERT INTO group_permissions VALUES (3, 11);
-INSERT INTO group_permissions VALUES (3, 4);
-INSERT INTO group_permissions VALUES (3, 5);
-INSERT INTO group_permissions VALUES (4, 2);
-INSERT INTO group_permissions VALUES (4, 3);
-
-INSERT INTO group_permissions VALUES (1, 13);
-INSERT INTO group_permissions VALUES (1, 14);
-
 INSERT INTO group_permissions VALUES (3, 12);
 INSERT INTO group_permissions VALUES (3, 13);
 INSERT INTO group_permissions VALUES (3, 14);
-
 INSERT INTO group_permissions VALUES (3, 16);
 INSERT INTO group_permissions VALUES (3, 17);
 INSERT INTO group_permissions VALUES (3, 18);
 INSERT INTO group_permissions VALUES (3, 19);
+INSERT INTO group_permissions VALUES (3, 20);
+INSERT INTO group_permissions VALUES (3, 22);
+INSERT INTO group_permissions VALUES (3, 23);
+INSERT INTO group_permissions VALUES (4, 02);
+INSERT INTO group_permissions VALUES (4, 03);
+INSERT INTO group_permissions VALUES (4, 20);
+INSERT INTO group_permissions VALUES (4, 22);
+INSERT INTO group_permissions VALUES (4, 23);
+INSERT INTO group_permissions VALUES (5, 01);
+INSERT INTO group_permissions VALUES (5, 02);
+INSERT INTO group_permissions VALUES (5, 03);
+INSERT INTO group_permissions VALUES (5, 04);
+INSERT INTO group_permissions VALUES (5, 05);
+INSERT INTO group_permissions VALUES (5, 06);
+INSERT INTO group_permissions VALUES (5, 07);
+INSERT INTO group_permissions VALUES (5, 08);
+INSERT INTO group_permissions VALUES (5, 09);
+INSERT INTO group_permissions VALUES (5, 10);
+INSERT INTO group_permissions VALUES (5, 11);
+INSERT INTO group_permissions VALUES (5, 12);
+INSERT INTO group_permissions VALUES (5, 13);
+INSERT INTO group_permissions VALUES (5, 14);
+INSERT INTO group_permissions VALUES (5, 15);
+INSERT INTO group_permissions VALUES (5, 16);
+INSERT INTO group_permissions VALUES (5, 17);
+INSERT INTO group_permissions VALUES (5, 18);
+INSERT INTO group_permissions VALUES (5, 19);
+INSERT INTO group_permissions VALUES (5, 20);
+INSERT INTO group_permissions VALUES (5, 21);
+INSERT INTO group_permissions VALUES (5, 22);
+INSERT INTO group_permissions VALUES (5, 23);
+
 
 --
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO users VALUES (2, 'lwo@iisg.nl');
-INSERT INTO users VALUES (3, 'etu@iisg.nl');
-INSERT INTO users VALUES (4, 'kerim');
+
+INSERT INTO users VALUES (1, 'magazijnmedewerker@localhost', '00', 'magazijnmedewerker');
+INSERT INTO users VALUES (2, 'admins@localhost', '00', 'admins');
+INSERT INTO users VALUES (3, 'infobalie@localhost', '00', 'infobalie');
+INSERT INTO users VALUES (4, 'metadatabeheer@localhost', '00', 'metadatabeheer');
+INSERT INTO users VALUES (5, 'developer@localhost', '00', 'developer');
+INSERT INTO users VALUES (6, 'guest@localhost', '00', 'guest');
 
 --
 -- Data for Name: user_groups; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO user_groups VALUES (2, 2);
-INSERT INTO user_groups VALUES (3, 2);
-INSERT INTO user_groups VALUES (4, 2);
+INSERT INTO user_groups SET user_id = 1, group_id = 1;
+INSERT INTO user_groups SET user_id = 2, group_id = 2;
+INSERT INTO user_groups SET user_id = 3, group_id = 3;
+INSERT INTO user_groups SET user_id = 4, group_id = 4;
+INSERT INTO user_groups SET user_id = 5, group_id = 5;
 
-ALTER SEQUENCE HIBERNATE_SEQUENCE RESTART WITH 100

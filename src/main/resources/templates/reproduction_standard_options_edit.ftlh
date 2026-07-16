@@ -32,7 +32,7 @@
               <input type="hidden" name="options[${idx}].id" value="${standardOptions.options[idx].id?c}" class="id"/>
               <input type="hidden" name="options[${idx}].materialType"
                      value="${standardOptions.options[idx].materialType}"/>
-              ${_("record.externalInfo.materialType." + materialTypes[standardOptions.options[idx].materialType] "")}
+              ${_("record.externalInfo.materialType." + material_types[standardOptions.options[idx].materialType] "")}
             </td>
 
             <td>
@@ -124,11 +124,11 @@
         <tr id="newStandardOption" class="hidden">
           <td>
             <select id="new.materialType" name="new.materialType" class="field">
-                <#list materialTypes?keys as value>
-                  <#assign label = "record.externalInfo.materialType." + materialTypes[value]/>
+                <#list material_types?keys as value>
+                  <#assign label = "record.externalInfo.materialType." + material_types[value]/>
 
                   <option value="${value}">
-                    ${_(label materialTypes[value]?string)}
+                    ${_(label material_types[value]?string)}
                   </option>
                 </#list>
             </select>
@@ -220,7 +220,7 @@
                      class="id"/>
               <input type="hidden" name="customNotes[${idx}].materialType"
                      value="${standardOptions.customNotes[idx].materialType}"/>
-              ${_("record.externalInfo.materialType." + materialTypes[standardOptions.customNotes[idx].materialType] "")}
+              ${_("record.externalInfo.materialType." + material_types[standardOptions.customNotes[idx].materialType] "")}
             </td>
 
             <td>

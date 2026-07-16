@@ -1,0 +1,100 @@
+server:
+  servlet:
+    session:
+      timeout: 1h
+spring:
+  web:
+    locale: en_US
+    locale-resolver: fixed
+  main:
+    allow-circular-references: false
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        id.new_generator_mappings: true
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          satosa:
+#            provider: oicd
+#            client-id: the client id
+#            client-secret: the secret
+#            authorization-grant-type: authorization_code
+#            scope:
+#              - openid
+#              - email
+#        provider:
+#          oicd:
+#            issuer-uri: https://authentication.clariah.nl
+  freemarker:
+    settings.url_escaping_charset: utf-8
+    cache: true
+  mail:
+    host: localhost
+    username: ""
+    password: ""
+    port: 25
+    protocol: smtp
+management:
+  endpoints:
+    web:
+      exposure:
+        include: # https://docs.spring.io/spring-boot/reference/actuator/endpoints.html
+          - health
+          - info
+  info:
+    git:
+      mode: full
+  endpoint:
+    health:
+      show-details: always  # Valid values: always, never, when_authorized
+      show-components: always
+delivery:
+  apiBase: "/solr/all/srw"
+  apiDomain: "localhost"
+  apiPort: 443
+  apiProto: "https"
+  timezone: "Europe/Amsterdam"
+  dateFormat: "yyyy-MM-dd"
+  externalInfoMinDaysCache: 30
+  holdingSeparator: "^"
+  itemSeparator: "."
+  doNotSentMail: true
+  login-url: oauth2/authorization/satosa
+  mailReadingRoom: "mailReadingRoom@iisg.nl"
+  mailSystemAddressReadingRoom: "n0r3ply@iisg.nl"
+  mailRepro: "mailRepro@iisg.nl"
+  mailSystemAddressRepro: "n0r3ply@iisg.nl"
+  mollieApiKey: "bla"
+  mollieProfile: "bla"
+  permissionMaxPageLen: 100
+  permissionPageLen: 20
+  permissionPageStepSize: 10
+  pidSeparator: ","
+  copyrightYear: 70
+  reproductionAdministrationCosts: 6
+  reproductionAdministrationCostsMinPages: 50
+  reproductionMaxDaysPayment: 21
+  reproductionMaxDaysReminder: 14
+  reproductionBtwPercentage: 21
+  requestAutoPrintStartTime: "9:00"
+  requestLatestTime: "15:00"
+  requestMaxPageLen: 100
+  requestPageLen: 20
+  requestPageStepSize: 10
+  reservationMaxDaysInAdvance: 31
+  reservationMaxItems: 3
+  reservationMaxChildren: 10
+  printEnabled: true
+  printerArchive: "delivery-archive"
+  printerReadingRoom: "delivery-reading-room"
+  sorAccessToken: "bla"
+  sorAddress: "http://disseminate.objectrepository.org"
+  timeFormat: "HH:mm:ss"
+  urlSearch: "search-acc.socialhistory.org"
+  urlSelf: "http://localhost:8080"
+  recordPageLen: 20
+  namingAuthorityPrefix: "00000"

@@ -1,0 +1,30 @@
+logging:
+  level:
+    root: DEBUG
+server:
+  servlet:
+    session:
+      timeout: 10m
+spring:
+  freemarker:
+    settings.url_escaping_charset: utf-8
+    cache: false
+  # https://www.baeldung.com/spring-boot-h2-database
+  # https://www.h2database.com/html/features.html#connection_modes
+  datasource:
+    url: jdbc:h2:mem:delivery;DATABASE_TO_UPPER=FALSE;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+    show-sql: true
+  h2:
+    console:
+      enabled: true
+  sql:
+    init:
+      data-locations: classpath:/data.sql

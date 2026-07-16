@@ -1,0 +1,45 @@
+# https://docs.gradle.org/current/userguide/best_practices_dependencies.html#use_version_catalogs
+[versions]
+spring-boot = "3.5.10"
+mollie = "1.5.5"
+h2 = "2.2.220"
+h2-utils = "3.15.2"
+postgresql = "42.7.7"
+jcaptcha = "1.0"
+org-apache-commons = "3.20.0"
+org-apache-poi = "4.1.2"
+org-apache-fop = "2.11"
+barcode4j = "2.1"
+jakarta_activation = "2.0.1"
+
+[libraries]
+mollie = { module = "com.mollie:mollie", version.ref = "mollie" }
+
+spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "spring-boot" }
+spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation", version.ref = "spring-boot" }
+spring-boot-starter-freemarker = { module = "org.springframework.boot:spring-boot-starter-freemarker", version.ref = "spring-boot" }
+spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "spring-boot" }
+spring-boot-starter-security = { module = "org.springframework.boot:spring-boot-starter-security", version.ref = "spring-boot" }
+spring-boot-starter-oauth2-client = { module = "org.springframework.boot:spring-boot-starter-oauth2-client", version.ref = "spring-boot" }
+spring-boot-starter-mail = { module = "org.springframework.boot:spring-boot-starter-mail", version.ref = "spring-boot" }
+spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa", version.ref = "spring-boot" }
+spring-boot-devtools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "spring-boot" }
+spring-boot-actuator = { module = 'org.springframework.boot:spring-boot-starter-actuator', version.ref = "spring-boot" }
+com-h2database-h2 = { module = "com.h2database:h2", version.ref = "h2" }
+com-h2database-utils = { module = "io.hypersistence:hypersistence-utils-hibernate-63", version.ref = "h2-utils" }
+org-postgresql-postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+com-octo-captcha-jcaptcha = { module = "com.octo.captcha:jcaptcha", version.ref = "jcaptcha" }
+org-apache-commons-commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "org-apache-commons" }
+org-apache-poi = { module = "org.apache.poi:poi", version.ref = "org-apache-poi" }
+org-apache-fop = { module = "org.apache.xmlgraphics:fop", version.ref = "org-apache-fop" }
+net-sf-barcode4j = { module = "net.sf.barcode4j:barcode4j", version.ref = "barcode4j" }
+
+jakarta-activation-mail = { module = "org.eclipse.angus:angus-activation", version.ref = "jakarta_activation" }
+
+[bundles]
+delivery = ["spring-boot-starter-web", "spring-boot-starter-validation", "spring-boot-starter-freemarker", "spring-boot-devtools", "spring-boot-starter-data-jpa", "spring-boot-starter-mail", "spring-boot-starter-security", "spring-boot-starter-oauth2-client", "com-h2database-h2", "com-h2database-utils", "org-postgresql-postgresql", "spring-boot-actuator", "com-octo-captcha-jcaptcha", "spring-boot-starter-test", "org-apache-commons-commons-lang3", "org-apache-poi", "org-apache-fop", "net-sf-barcode4j", "mollie", "jakarta-activation-mail"]
+
+[plugins]
+org-springframework-boot3 = { id = "org.springframework.boot", version = "3.5.10" }
+hibernate = { id = 'org.hibernate.tool.hibernate-tools-gradle', version = '7.3.1.Final' }
+git-properties = { id = 'com.gorylenko.gradle-git-properties', version = '2.5.7' }

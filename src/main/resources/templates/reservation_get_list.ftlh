@@ -26,7 +26,7 @@
     </li>
 
     <li>
-      <a href="${rc.contextPath}/reservation/?date=${today?string("yyyy-MM-dd")}&status=pending&printed=false&page_len=100">
+      <a href="${rc.contextPath}/reservation/?date=${today?string("yyyy-MM-dd")}&status=pending&printed=false&size=100">
         ${_("reservationList.filterNotPrinted", "Show today's not printed reservations")}
       </a>
     </li>
@@ -51,7 +51,7 @@
       <#-- Generate hidden input for already existing GET vars -->
       <#list RequestParameters?keys as k>
           <#if k!="search" && k!="from_date" && k!="to_date" && k!="status" &&
-          k!="page_len" && k!="date" && k!="page" && k!="printed">
+          k!="size" && k!="date" && k!="page" && k!="printed">
             <input type="hidden" name="${k}" value="${RequestParameters[k]}"/>
           </#if>
       </#list>
@@ -72,7 +72,7 @@
               ${_("reservationList.allStatus", "Status N/A")}
             </option>
 
-            <#list status_types?keys as k>
+            <#list reservation_status_types?keys as k>
               <#assign isSelected = (RequestParameters["status"]?? && RequestParameters["status"]?upper_case == k)/>
               <option value="${k?lower_case}"<#if isSelected> selected="selected"</#if>>
                 ${_("reservation.statusType.${k}", "${k}")}
@@ -127,12 +127,12 @@
             ${_("pageListHolder.nrResultsPerPage", "Amount of Results per Page")}
           </label>
 
-          <select id="page_len_filter" name="page_len">
+          <select id="page_len_filter" name="size">
             <#list 1..(delivery.requestMaxPageLen?number/delivery.requestPageStepSize?number)?floor as i>
               <#assign pageSize = (i*delivery.requestPageStepSize?number)?floor/>
-              <#assign isSelected = (RequestParameters["page_len"]??
-                && RequestParameters["page_len"]?number == pageSize)
-                || (!RequestParameters["page_len"]?? && delivery.requestPageLen?number == pageSize)/>
+              <#assign isSelected = (RequestParameters["size"]??
+                && RequestParameters["size"]?number == pageSize)
+                || (!RequestParameters["size"]?? && delivery.requestPageLen?number == pageSize)/>
 
               <option value="${pageSize}"<#if isSelected> selected="selected"</#if>>${pageSize}</option>
             </#list>
@@ -146,27 +146,28 @@
 
   <#assign submitURL><@paramUrl {} "/reservation/batchprocess"/></#assign>
 
-  <#if holdingReservations?size == 0>
+  <#if pagedItem.empty>
     <span class="bignote">${_("search.notfound", "No results...")}</span>
   <#else>
     <form action="${submitURL}" method="POST">
+    <#if _csrf??><input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/></#if>
       <table class="overview">
         <thead>
           <tr>
             <th></th>
             <th></th>
             <th>${_("holding.record", "Item")}</th>
-            <th><@sortLink "signature">${_("holding.signature", "Call nr.")}</@sortLink></th>
-            <th><@sortLink "visitorName">${_("reservation.visitorName", "Name")}</@sortLink></th>
-            <th><@sortLink "date">${_("reservation.date", "Date")}</@sortLink></th>
+            <th><@sortLink "holding.signature">${_("holding.signature", "Call nr.")}</@sortLink></th>
+            <th><@sortLink "reservation.visitorName">${_("reservation.visitorName", "Name")}</@sortLink></th>
+            <th><@sortLink "reservation.date">${_("reservation.date", "Date")}</@sortLink></th>
             <th><@sortLink "printed">${_("reservation.printed", "Printed")}</@sortLink></th>
-            <th><@sortLink "status">${_("reservation.extended.status", "Reservation status")}</@sortLink></th>
-            <th><@sortLink "holdingStatus">${_("holding.extended.status", "Item status")}</@sortLink></th>
+            <th><@sortLink "reservation.status">${_("reservation.extended.status", "Reservation status")}</@sortLink></th>
+            <th><@sortLink "holding.status">${_("holding.extended.status", "Item status")}</@sortLink></th>
           </tr>
         </thead>
 
         <tbody>
-          <#list holdingReservations as holdingReservation>
+          <#list pagedItem.content as holdingReservation>
             <#assign holding = holdingReservation.holding>
             <#assign reservation = holdingReservation.reservation>
 
@@ -210,7 +211,8 @@
         <input type="button" value="${_("select_none", "Select None")}" class="selectNone"/>
       </div>
 
-      <@pageLinks holdingReservationsSize RequestParameters["page_len"]!delivery.requestPageLen RequestParameters["page"]!1/>
+    <!-- Pagination Controls -->
+    <@pageLinks "${pagedItem.sort}"/>
 
       <#if _sec.ifAnyGranted("ROLE_RESERVATION_MODIFY,ROLE_RESERVATION_DELETE")>
         <fieldset class="actions">
@@ -220,7 +222,7 @@
             <#if _sec.ifAllGranted("ROLE_RESERVATION_MODIFY")>
               <li>
                 <select name="newStatus">
-                  <#list status_types?keys  as k>
+                  <#list reservation_status_types?keys  as k>
                     <#if k != "PENDING">
                       <#assign isSelected = RequestParameters["status"]?? && RequestParameters["status"]?upper_case == k/>
                       <option value="${k}"<#if isSelected> selected="selected"</#if>>

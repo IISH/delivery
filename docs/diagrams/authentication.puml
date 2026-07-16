@@ -1,0 +1,40 @@
+@startuml
+autonumber
+skinparam BoxPadding 10
+skinparam ParticipantPadding 10
+
+actor "Staff Browser" as User
+box "Your Infrastructure" #LightBlue
+    participant "Spring Boot 3 App\n(OAuth2 Client)" as App
+    database "Local Database\n(Users/Groups/Authorities)" as DB
+end box
+participant "SATOSA IdP\n(https://authentication.clariah.nl)" as IDP
+
+' Step 1: Initial Unauthenticated Request
+User -> App : 1. Request Protected Resource (/record|/reservation|/replica)
+note over App : SecurityFilterChain detects\nunauthenticated session
+App --> User : 2. Redirect (302) to SATOSA Authorization Endpoint\nwith client_id, redirect_uri, scope, state, code_challenge
+
+' Step 2: User Authenticates at IdP
+User -> IDP : 3. Access Authorization Endpoint
+note over IDP : Authenticates user &\nobtains consent
+IDP --> User : 4. Redirect (302) back to App redirect_uri\nwith ?code=AUTHORIZATION_CODE&state=STATE
+
+' Step 3: Token Exchange
+User -> App : 5. Send Authorization Code to /login/oauth2/code/satosa
+App -> IDP : 6. POST /oauth2/token\n(code, client_id, client_secret, code_verifier)
+IDP --> App : 7. Return Tokens (ID Token, Access Token)
+note over App : Validates ID Token (JWT)\nvia SATOSA jwk-set-uri
+
+' Step 4: Local Database Enrichment (RBAC)
+note over App : CustomOidcUserService intercepts\nExtracts unique identifier ('sub' and 'email')
+App -> DB : 8. Query User, Groups, and Authorities by Identifier
+DB --> App : 9. Return user record, joined groups, and assigned authorities
+note over App : Maps DB records to GrantedAuthority list\nCreates SecurityContext (Authentication Principal)
+
+' Step 5: Session Established & Response
+App --> User : 10. Establish Session (Set Session Cookie) & Redirect to /dashboard
+User -> App : 11. Request /[any]] (with Session Cookie)
+App --> User : 12. HTTP 200 OK (Protected Content Rendered)
+
+@enduml

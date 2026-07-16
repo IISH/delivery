@@ -385,7 +385,7 @@ nav.main {
 
 nav.main ul {
     list-style: none;
-    margin: 0 10%;
+    margin: 0 5%;
     padding: 0;
 }
 
@@ -395,7 +395,7 @@ nav.main div {
 
 nav.main li {
     display: inline-block;
-    min-width: 16%;
+    min-width: 14%;
     padding: 0;
     margin: 0;
     text-align: center;

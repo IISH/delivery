@@ -84,6 +84,7 @@
   </ul>
 
   <form action="process" method="POST">
+    <#if _csrf??><input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/></#if>
     <input type="hidden" name="id" value="${permission.id?c}"/>
 
     <fieldset class="permissionDetails">

@@ -6,13 +6,14 @@
 *_.java
 
 # IntelliJ
-/.idea
+.idea/
 *.iws
 *.iml
 *.ipr
 
 # Builds
-/target
+target/
 
 # Other
-/config
+config/
+restore/
