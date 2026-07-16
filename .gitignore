@@ -1,18 +1,6 @@
-# Java
-*.class
-*.jar
-*.war
-*.ear
-*_.java
-
-# IntelliJ
-/.idea
-*.iws
-*.iml
-*.ipr
-
-# Builds
+.gradle/
+.idea/
 target/
-
-# Other
-config/
+build/
+postgres/
+application-production.yml

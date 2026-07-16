@@ -12,6 +12,7 @@
     <#if e??><p>${e}</p></#if>
 
     <form action="" method="POST">
+        <#if _csrf??><input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/></#if>
         <fieldset class="record_form">
             <ul class="form">
                 <li><label for="title" class="field">${_("record.title")}</label><input type="text" name="title" id="title" value=""/></li>

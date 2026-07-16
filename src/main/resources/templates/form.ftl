@@ -1,5 +1,6 @@
 <#macro form page bind action="">
-  <form action="${page}" method="POST">
+  <form action="${page}" method="POST" id="webform">
+    <#if _csrf??><input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/></#if>
     <@spring.bind bind/>
 
     <#if spring.status.errorMessages?size != 0>
@@ -20,6 +21,7 @@
 
 <#macro form_plain page action="">
   <form action="${page}" method="POST">
+    <#if _csrf??><input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/></#if>
     <#if action != "">
       <input type="hidden" name="action" value="${action}"/>
     </#if>
@@ -127,11 +129,12 @@
 <#macro submit prefix>
   <#assign msgName = prefix + ".submit"/>
 
-  <input type="submit" name="${prefix}" value="<@spring.messageText msgName "Submit"/>"/>
+  <button type="submit" name="${prefix}"><@spring.messageText msgName "Submit"/></button>
 </#macro>
 
 <#macro button page action name onclick="">
   <form action="${page}" method="POST">
+    <#if _csrf??><input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/></#if>
     <#if action??>
       <input type="hidden" name="action" value="${action}"/>
     </#if>

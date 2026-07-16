@@ -1,32 +1,27 @@
-FROM eclipse-temurin:11-jdk AS build
+FROM eclipse-temurin:23.0.2_7-jdk as delivery
 
-COPY . /app
+RUN apt-get update -y && \
+    apt-get upgrade -y && \
+    apt-get install -y fontconfig libfreetype6 fonts-liberation cups-bsd cups-client && \
+    fc-cache -f -v && \
+    mkdir -p /app/config && \
+    chown 1000:1000 /app && \
+    touch /home/ubuntu/.mime.types
+
+VOLUME /app/config
+
 WORKDIR /app
 
-RUN ./mvnw install -P jar -DskipTests
-RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
+USER ubuntu
 
-FROM eclipse-temurin:11-jdk
+ENV SPRING_PROFILES_ACTIVE=development
+ENV JAVA_OPTS='-Dhello=world'
 
-RUN apt-get update -y && apt-get install -y fontconfig libfreetype6 fonts-liberation cups cups-bsd cups-client
+ENTRYPOINT ["/entrypoint.sh"]
 
-RUN printf '%s\n' \
-    '<?xml version="1.0"?>'\
-    '<!DOCTYPE fontconfig SYSTEM "fonts.dtd">' \
-    '<fontconfig>' \
-    ' <alias>' \
-    ' <family>sans-serif</family>' \
-    ' <prefer>' \
-    ' <family>Liberation Sans</family>' \
-    ' </prefer>' \
-    ' </alias>' \
-    '</fontconfig>' > /etc/fonts/local.conf && fc-cache -f -v
+CMD [""]
 
-COPY --from=build /app/target/dependency/BOOT-INF/classes /app
-COPY --from=build /app/target/dependency/BOOT-INF/lib /app/lib
-COPY --from=build /app/target/dependency/META-INF /app/META-INF
+COPY entrypoint.sh /entrypoint.sh
 
-COPY run.sh /opt
-RUN chmod +x /opt/run.sh && [ -f '/app/git.properties' ] && grep -E 'tag|version|id' /app/git.properties > d && mv d /app/git.properties
-
-ENTRYPOINT ["/opt/run.sh"]
+# via  ./gradlew clean bootJar
+COPY build/libs/delivery.jar /app/delivery.jar
