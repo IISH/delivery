@@ -1,0 +1,8 @@
+[#ftl]
+[#-- @implicitly included --]
+[#-- @ftlvariable name="_sec" type="nl.knaw.huc.di.delivery.user.controller.SecurityToViewInterceptor.UserExposer" --]
+[#-- @ftlvariable name="pagedItem" type="org.springframework.data.domain.Pageable" --]
+[#-- @ftlvariable name="holdingActiveRequests" type="java.util.Map<String, nl.knaw.huc.di.delivery.request.entity.Request>" --]
+[#-- @ftlvariable name="rc" type="org.springframework.web.servlet.support.RequestContext" --]
+[#-- @ftlvariable name="delivery" type="nl.knaw.huc.di.delivery.config.DeliveryProperties" --]
+[#-- @ftlvariable name="git" type="java.util.LinkedHashMap<String, String>" --]
