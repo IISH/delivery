@@ -1,7 +1,7 @@
 # https://docs.gradle.org/current/userguide/best_practices_dependencies.html#use_version_catalogs
 [versions]
 spring-boot = "3.5.10"
-mollie = "1.5.5"
+mollie = "1.8.17"
 h2 = "2.2.220"
 h2-utils = "3.15.2"
 postgresql = "42.7.7"
