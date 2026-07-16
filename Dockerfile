@@ -1,4 +1,4 @@
-FROM eclipse-temurin:23.0.2_7-jdk as delivery
+FROM eclipse-temurin:23.0.2_7-jdk AS delivery
 
 RUN apt-get update -y && \
     apt-get upgrade -y && \

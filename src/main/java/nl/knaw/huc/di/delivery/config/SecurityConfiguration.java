@@ -47,6 +47,7 @@ public class SecurityConfiguration {
                                         "/403",
                                         "/error",
                                         "/record/10622*",
+                                        "/permission/createform/10622*",
                                         "/reservation/createform/10622*",
                                         "/reproduction/createform/10622*",
                                         "/captcha",
