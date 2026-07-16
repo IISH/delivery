@@ -22,7 +22,7 @@ public class Permission {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "global_sequence_generator")
     @SequenceGenerator(
             name = "global_sequence_generator",
-            sequenceName = "permission_id_seq",
+            sequenceName = "permissions_id_seq",
             allocationSize = 50
     )
     @Column(name = "id")
