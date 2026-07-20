@@ -47,9 +47,11 @@ public class SecurityConfiguration {
                                         "/403",
                                         "/error",
                                         "/record/10622*",
-                                        "/permission/createform/10622*",
-                                        "/reservation/createform/10622*",
-                                        "/reproduction/createform/10622*",
+                                        "/permission/createform/*",
+                                        "/reservation/createform/*",
+                                        "/reproduction/createform/*",
+                                        "/reproduction/confirm/*",
+                                        "/reproduction/order/*",
                                         "/captcha",
                                         "/").permitAll().
                                 requestMatchers("/actuator/**").hasRole("ACTUATOR"). // internal monitoring management
