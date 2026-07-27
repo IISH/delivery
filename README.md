@@ -38,10 +38,33 @@ Also see application-development.yml
 Will use the postgresql driver to connect to postgres.
 Will use the OpenID authentication.
 
-Use the docker-compose.yml file to spinup a database. Place a database dump in the restore folder in the root of the project
+Use the docker-compose.yml file to spinup a database. Place a database dump in the **restore** folder in the root of the project together with any upgrade bash scripts. Delivery required postgresql 16 or higher.
 
-Also see application-production.yml
+    docker compose up -d
+
+Also see application-production.yml for the database settings.
 
 ## Integration with OpenID Satosa
 
 The client identifier and secret was set in the OpenID provider Satosa - this is needed for development and production.
+
+## Develop JDK
+
+The JDK target is jdk-23. The gradle.properties assumes these SDKs:
+
+    org.gradle.java.installations.paths=/Users/jdks/jdk-23.0.2,/Users/jdks/jdk-25.0.2
+
+See the current Spring Boot version and other dependencies:
+
+    gradle/libs.versions.toml
+
+## Build the application
+
+Merge feature branch into master.
+Tag the master:
+    
+    git tag -a v1.2.3 -m "Release v1.2.3"
+
+Then build:
+
+    ./build.sh
