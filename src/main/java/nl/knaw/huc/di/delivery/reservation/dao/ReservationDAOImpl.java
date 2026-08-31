@@ -30,7 +30,7 @@ public class ReservationDAOImpl implements ReservationDAO {
      *
      * @param obj Reservation to add.
      */
-    public synchronized void add(Reservation obj) {
+    public void add(Reservation obj) {
         reservationRepository.save(obj);
     }
 

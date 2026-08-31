@@ -27,7 +27,7 @@ public class ReproductionDAOImpl implements ReproductionDAO {
      *
      * @param obj Reproduction to add.
      */
-    public synchronized void add(Reproduction obj) {
+    public void add(Reproduction obj) {
         reproductionRepository.save(obj);
     }
 

@@ -57,27 +57,23 @@ public class RecordController extends ErrorHandlingController {
         Map<String, List<Record>> reservedChilds = new HashMap<>();
 
         for (String pid : pids) {
-            // Issue #139: Make sure that when A enters, B has to wait,
-            // and will detect the insert into the database by B when entering
-            synchronized (this) {
-                Record rec = null;
-                try {
-                    rec = recordService.getRecordByPidAndCreate(pid);
-                }
-                catch (NoSuchPidException e) {
-                    // Pass, catch if no of the requested PIDs are available below.
-                }
+            Record rec = null;
+            try {
+                rec = recordService.getRecordByPidAndCreate(pid);
+            }
+            catch (NoSuchPidException e) {
+                // Pass, catch if no of the requested PIDs are available below.
+            }
 
-                if (rec != null) {
-                    recs.add(rec);
+            if (rec != null) {
+                recs.add(rec);
 
-                    List<Record> reserved = recordService.getReservedChildRecords(rec);
-                    reservedChilds.put(rec.getPid(), reserved);
-                }
+                List<Record> reserved = recordService.getReservedChildRecords(rec);
+                reservedChilds.put(rec.getPid(), reserved);
             }
         }
 
-        if (recs.isEmpty())
+       if (recs.isEmpty())
             throw new ResourceNotFoundException();
 
         model.addAttribute("records", recs);
