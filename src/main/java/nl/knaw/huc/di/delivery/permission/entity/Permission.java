@@ -6,6 +6,8 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.NotBlank;
+
+import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -375,6 +377,16 @@ public class Permission {
      */
     public void setDateGranted(Date dateGranted) {
         this.dateGranted = dateGranted;
+    }
+
+    /**
+     * The date for when the permission was made. Immutable.
+     */
+    @Column(name = "date_created", nullable = false, updatable = false)
+    private LocalDate dateCreated = LocalDate.now();
+
+    public LocalDate getDateCreated() {
+        return dateCreated;
     }
 
     /**
