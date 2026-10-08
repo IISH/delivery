@@ -1,4 +1,16 @@
-FROM eclipse-temurin:23.0.2_7-jdk AS delivery
+FROM eclipse-temurin:25.0.4.1_1-jdk-noble AS build
+RUN apt-get update -y && \
+    apt-get upgrade -y
+
+#RUN javac --version
+
+COPY ./ /delivery
+
+WORKDIR /delivery
+
+RUN ./gradlew clean bootJar
+
+FROM eclipse-temurin:25.0.4.1_1-jdk-noble AS delivery
 
 RUN apt-get update -y && \
     apt-get upgrade -y && \
@@ -21,7 +33,7 @@ ENTRYPOINT ["/entrypoint.sh"]
 
 CMD [""]
 
-COPY entrypoint.sh /entrypoint.sh
+COPY --from=build /delivery/entrypoint.sh /entrypoint.sh
 
 # via  ./gradlew clean bootJar
-COPY build/libs/delivery.jar /app/delivery.jar
+COPY --from=build /delivery/build/libs/delivery.jar /app/delivery.jar

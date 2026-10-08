@@ -33,11 +33,11 @@ dependencies {
 // https://docs.gradle.org/current/userguide/toolchains.html
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(23)
+        languageVersion = JavaLanguageVersion.of(25)
         vendor = JvmVendorSpec.ADOPTIUM // Adoptium / Eclipse Temurin
     }
     tasks.withType(JavaCompile).configureEach {
-        options.release = 23
+        options.release = 25
     }
 }
 
