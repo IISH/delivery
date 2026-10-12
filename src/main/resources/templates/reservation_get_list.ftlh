@@ -119,7 +119,7 @@
           </label>
 
           <input type="text" maxlength="10" id="to_date_filter" name="to_date" class="filter_date"
-                 value="${(RequestParameters["date"]!RequestParameters["from_date"]!"")?trim}"/>
+                 value="${(RequestParameters["date"]!RequestParameters["to_date"]!"")?trim}"/>
         </li>
 
         <li>
