@@ -72,7 +72,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    @Profile("development")
+    @Profile({"development", "demo"})
     public SecurityFilterChain securityFilterChainLocal(HttpSecurity http, LocalUserServiceImpl localUserServiceImpl) throws Exception {
 
         http
