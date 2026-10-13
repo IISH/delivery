@@ -483,7 +483,7 @@ public class ReservationController extends AbstractRequestController {
      * @param newStatus The status the selected reservations should be set to.
      * @return The view to resolve.
      */
-    @RequestMapping(value = "/batchprocess", method = RequestMethod.POST, params = "changeStatus")
+    @RequestMapping(value = "/batchprocess", method = RequestMethod.POST, params = "changeReservationStatus")
     @PreAuthorize("hasRole('RESERVATION_MODIFY')")
     public String batchProcessChangeStatus(HttpServletRequest req, @RequestParam(required = false) List<String> checked,
                                            @RequestParam Reservation.Status newStatus) {
