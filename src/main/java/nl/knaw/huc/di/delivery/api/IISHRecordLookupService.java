@@ -183,8 +183,11 @@ public class IISHRecordLookupService implements RecordLookupService {
             LOGGER.debug(String.format("doSearch(): Querying SRW API: %s", req));
             URLConnection conn = req.openConnection();
 
-            BufferedReader rdr = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            return (Node) xpAll.evaluate(new InputSource(rdr), XPathConstants.NODE);
+            try (BufferedReader rdr = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                return (Node) xpAll.evaluate(new InputSource(rdr), XPathConstants.NODE);
+            }
+
+
         }
         catch (IOException ex) {
             LOGGER.debug("doSearch(): API Connect Failed", ex);
@@ -307,8 +310,9 @@ public class IISHRecordLookupService implements RecordLookupService {
                     conn = (HttpURLConnection) redirectUrl.openConnection();
                 }
 
-                BufferedReader rdr = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                return (Node) xpOAI.evaluate(new InputSource(rdr), XPathConstants.NODE);
+                try (BufferedReader rdr = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                    return (Node) xpOAI.evaluate(new InputSource(rdr), XPathConstants.NODE);
+                }
             }
             return null;
         }
