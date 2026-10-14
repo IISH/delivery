@@ -79,8 +79,23 @@ public class SecurityConfiguration {
                 // URLs are allowed by any authenticated user.
                 .authorizeHttpRequests(authorize ->
                         authorize
-                                .dispatcherTypeMatchers(FORWARD, ERROR).permitAll()
-                                .requestMatchers("/css/**", "/js/**", "/logo.ico", "/favicon.ico", "/favicon-16x16.png", "/favicon-32x32.png").permitAll()
+                            .dispatcherTypeMatchers(FORWARD, ERROR).permitAll()
+                            .requestMatchers("/css/**",
+                                "/js/**",
+                                "/logo.ico",
+                                "/favicon.ico",
+                                "/favicon-16x16.png",
+                                "/favicon-32x32.png",
+                                "/403",
+                                "/error",
+                                "/record/10622*",
+                                "/permission/createform/**",
+                                "/reservation/createform/**",
+                                "/reproduction/createform/**",
+                                "/reproduction/confirm/**",
+                                "/reproduction/order/**",
+                                "/captcha",
+                                "/").permitAll()
                                 .requestMatchers("/h2-console/**").permitAll()
                                 .anyRequest().authenticated()
                 ).formLogin(withDefaults())
