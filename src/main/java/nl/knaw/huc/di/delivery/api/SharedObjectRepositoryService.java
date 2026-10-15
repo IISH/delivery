@@ -10,6 +10,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
@@ -131,9 +132,11 @@ public class SharedObjectRepositoryService {
 
             LOGGER.debug(String.format("getFilesMETS(): Obtain METS document: %s", req));
             HttpURLConnection conn = (HttpURLConnection) req.openConnection();
-            Document document = documentBuilder.parse(conn.getInputStream());
+            try (final InputStream inputStream = conn.getInputStream()) {
+                Document document = documentBuilder.parse(inputStream);
 
-            return getFilesMETSFromDocument(document);
+                return getFilesMETSFromDocument(document);
+            }
         }
         catch (IOException ioe) {
             LOGGER.error("getFilesMETS(): Could not obtain METS document", ioe);
