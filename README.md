@@ -31,6 +31,14 @@ Username and password are the same:
 
 Also see application-development.yml
 
+### Setup local database
+
+```
+create database delivery;
+create user delivery with password '{password}';
+alter database delivery owner to delivery;
+```
+
 ## profile 'production'
 
     bootRun --args='--spring.profiles.active=production'
