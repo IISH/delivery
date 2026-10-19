@@ -31,6 +31,20 @@ Username and password are the same:
 
 Also see application-development.yml
 
+### Setup local database
+
+```
+create database delivery;
+create user delivery with password '{password}';
+alter database delivery owner to delivery;
+```
+
+Or use docker compose file to start a local postgresql server:
+
+    docker compose up
+
+Place a database dump (but comment out the CREATE USER, ALTER ROLE or CREATE DATABASE).
+
 ## profile 'production'
 
     bootRun --args='--spring.profiles.active=production'
