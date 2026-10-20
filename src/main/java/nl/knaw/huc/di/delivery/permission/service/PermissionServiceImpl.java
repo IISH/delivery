@@ -10,8 +10,6 @@ import org.springframework.stereotype.Service;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +17,6 @@ import java.util.Optional;
  * Represent the service of the permission package.
  */
 @Service
-@Transactional(readOnly = true)
 public class PermissionServiceImpl implements PermissionService {
     private final PermissionDAO permissionDAO;
 

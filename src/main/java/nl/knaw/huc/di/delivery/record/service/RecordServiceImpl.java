@@ -13,7 +13,6 @@ import nl.knaw.huc.di.delivery.record.entity.ExternalRecordInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
 
@@ -24,7 +23,6 @@ import java.util.*;
  * Represents the service of the record package.
  */
 @Service
-@Transactional(readOnly = true)
 public class RecordServiceImpl implements RecordService {
     private final RecordDAO recordDAO;
 

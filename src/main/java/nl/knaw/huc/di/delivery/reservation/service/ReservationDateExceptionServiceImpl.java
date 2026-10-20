@@ -7,7 +7,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
@@ -20,7 +19,6 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 @Service
-@Transactional(readOnly = true)
 public class ReservationDateExceptionServiceImpl implements ReservationDateExceptionService {
     private final ReservationDateExceptionDAO reservationDateExceptionDAO;
     private final MessageSource messageSource;

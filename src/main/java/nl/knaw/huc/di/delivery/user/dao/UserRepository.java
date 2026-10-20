@@ -1,6 +1,6 @@
 package nl.knaw.huc.di.delivery.user.dao;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import nl.knaw.huc.di.delivery.user.entity.User;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
