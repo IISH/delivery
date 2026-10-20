@@ -103,7 +103,7 @@ public class Holding {
      * The Holding's record.
      */
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "record_id")
     private Record record;
 
@@ -174,7 +174,7 @@ public class Holding {
         this.status = status;
     }
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "external_info_id")
     private ExternalHoldingInfo externalInfo;
 
@@ -196,7 +196,7 @@ public class Holding {
         this.externalInfo = info;
     }
 
-    @OneToMany(mappedBy = "holding", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "holding", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<HoldingReservation> holdingReservations;
 
     public void setHoldingReservations(List<HoldingReservation> hrs) {
@@ -207,7 +207,7 @@ public class Holding {
         return holdingReservations;
     }
 
-    @OneToMany(mappedBy = "holding", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "holding", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<HoldingReproduction> holdingReproductions;
 
     public List<HoldingReproduction> getHoldingReproductions() {

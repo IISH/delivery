@@ -231,7 +231,7 @@ public class Reservation extends Request {
         this.status = status;
     }
 
-    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<HoldingReservation> holdingReservations;
 
     public void setHoldingReservations(List<HoldingReservation> hrs) {

@@ -284,7 +284,7 @@ public class Permission {
     /**
      * The Permission's record.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "record_id")
     private Record record;
 

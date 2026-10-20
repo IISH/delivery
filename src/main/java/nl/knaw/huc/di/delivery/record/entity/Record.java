@@ -105,7 +105,7 @@ public class Record {
         this.pid = pid;
     }
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "external_info_id")
     private ExternalRecordInfo externalInfo;
 
@@ -219,7 +219,7 @@ public class Record {
         return externalInfo.getPhysicalDescription();
     }
 
-    @OneToMany(mappedBy = "record", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "record", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ArchiveHoldingInfo> archiveHoldingInfo = new ArrayList<>();
 
     /**
@@ -247,7 +247,7 @@ public class Record {
     /**
      * The Record's parent.
      */
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Record parent;
 
@@ -285,7 +285,7 @@ public class Record {
      * Child records in this parent.
      */
     @OrderBy("pid asc")
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Record> children;
 
     /**
@@ -329,7 +329,7 @@ public class Record {
      */
     @NotNull
     @OrderBy
-    @OneToMany(mappedBy = "record", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "record", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Holding> holdings;
 
     /**

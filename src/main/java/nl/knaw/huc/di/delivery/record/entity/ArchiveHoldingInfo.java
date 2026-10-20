@@ -89,7 +89,7 @@ public class ArchiveHoldingInfo {
     }
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "record_id", nullable = false)
     private Record record;
 

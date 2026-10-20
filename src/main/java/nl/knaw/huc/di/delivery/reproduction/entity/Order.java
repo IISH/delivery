@@ -290,7 +290,7 @@ public class Order {
         this.checkoutUrl = checkoutUrl;
     }
 
-    @OneToOne(mappedBy = "order")
+    @OneToOne(mappedBy = "order", fetch = FetchType.EAGER)
     private Reproduction reproduction;
 
     public Reproduction getReproduction() {

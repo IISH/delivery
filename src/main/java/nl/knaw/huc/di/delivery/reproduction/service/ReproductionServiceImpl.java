@@ -35,6 +35,7 @@ import org.springframework.mail.MailException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import jakarta.persistence.Tuple;
@@ -141,28 +142,34 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
      *
      * @param standardOptions The standard reproduction options.
      */
-    private void addOrUpdateStandardOptions(ReproductionStandardOptions standardOptions) {
+    public void addOrUpdateStandardOptions(ReproductionStandardOptions standardOptions) {
+        List<ReproductionStandardOption> allExisting = getAllReproductionStandardOptions();
         for (ReproductionStandardOption option1 : standardOptions.getOptions()) {
             boolean has = false;
-            for (ReproductionStandardOption option2 : getAllReproductionStandardOptions()) {
+
+            for (ReproductionStandardOption option2 : allExisting) {
                 if (option1.getId() == option2.getId()) {
                     option2.mergeWith(option1);
                     reproductionStandardOptionDAO.save(option2);
                     has = true;
+                    break;
                 }
             }
 
-            if (!has)
+            if (!has) {
                 reproductionStandardOptionDAO.add(option1);
+            }
         }
 
         for (ReproductionCustomNote customNote : standardOptions.getCustomNotes()) {
-            if (customNote.getId() > 0)
+            if (customNote.getId() > 0) {
                 reproductionCustomNoteDAO.save(customNote);
-            else
+            } else {
                 reproductionCustomNoteDAO.add(customNote);
+            }
         }
     }
+
 
     /**
      * Retrieve the Reproduction matching the given id.

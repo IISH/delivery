@@ -525,7 +525,7 @@ public class Reproduction extends Request {
         return token;
     }
 
-    @OneToMany(mappedBy = "reproduction", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "reproduction", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<HoldingReproduction> holdingReproductions;
 
     public List<HoldingReproduction> getHoldingReproductions() {
@@ -563,7 +563,7 @@ public class Reproduction extends Request {
         return holdingReproductions;
     }
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "order_id")
     private Order order;
 

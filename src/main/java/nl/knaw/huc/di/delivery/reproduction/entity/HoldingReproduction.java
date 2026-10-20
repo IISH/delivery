@@ -373,7 +373,7 @@ public class HoldingReproduction extends HoldingRequest {
     /**
      * The HoldingReproduction's reproduction.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reproduction_id")
     private Reproduction reproduction;
 
@@ -418,7 +418,7 @@ public class HoldingReproduction extends HoldingRequest {
     /**
      * The HoldingReproduction's holding.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "holding_id")
     private Holding holding;
 
@@ -445,7 +445,7 @@ public class HoldingReproduction extends HoldingRequest {
     /**
      * The HoldingReproduction's standard option (if chosen).
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reproduction_standard_option_id")
     private ReproductionStandardOption standardOption;
 

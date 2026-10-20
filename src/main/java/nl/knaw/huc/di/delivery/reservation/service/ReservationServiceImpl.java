@@ -23,6 +23,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import jakarta.persistence.Tuple;
@@ -38,6 +39,7 @@ import java.util.*;
  * Represents the service of the reservation package.
  */
 @Service
+@Transactional(readOnly = true)
 public class ReservationServiceImpl extends AbstractRequestService implements ReservationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReservationServiceImpl.class);
 
