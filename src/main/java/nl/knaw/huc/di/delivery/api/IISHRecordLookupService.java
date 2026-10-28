@@ -182,6 +182,7 @@ public class IISHRecordLookupService implements RecordLookupService {
             URL req = uri.toURL();
             LOGGER.debug(String.format("doSearch(): Querying SRW API: %s", req));
             URLConnection conn = req.openConnection();
+            conn.setReadTimeout(deliveryProperties.getApiTimeout());
 
             try (BufferedReader rdr = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
                 return (Node) xpAll.evaluate(new InputSource(rdr), XPathConstants.NODE);
@@ -190,15 +191,15 @@ public class IISHRecordLookupService implements RecordLookupService {
 
         }
         catch (IOException ex) {
-            LOGGER.debug("doSearch(): API Connect Failed", ex);
+            LOGGER.warn("doSearch(): API Connect Failed", ex);
             return null;
         }
         catch (URISyntaxException ex) {
-            LOGGER.debug("doSearch(): Invalid URI syntax", ex);
+            LOGGER.warn("doSearch(): Invalid URI syntax", ex);
             return null;
         }
         catch (XPathExpressionException e) {
-            LOGGER.debug("doSearch(): Invalid XPath", e);
+            LOGGER.warn("doSearch(): Invalid XPath", e);
             return null;
         }
     }
@@ -233,13 +234,13 @@ public class IISHRecordLookupService implements RecordLookupService {
             search = (NodeList) xpSearchMeta.evaluate(all, XPathConstants.NODESET);
         }
         catch (XPathExpressionException e) {
-            LOGGER.debug("searchByPid(): Invalid XPath", e);
+            LOGGER.warn("searchByPid(): Invalid XPath", e);
             throw new NoSuchPidException();
             // Handle this in case the IISH API is down.
         }
 
         if (resultCount == 0 || search == null) {
-            LOGGER.debug("searchByPid(): Zero results");
+            LOGGER.info("searchByPid(): Zero results");
             throw new NoSuchPidException();
         }
 
@@ -301,6 +302,7 @@ public class IISHRecordLookupService implements RecordLookupService {
                 URL eadUrl = new URI(url).toURL();
                 LOGGER.debug(String.format("getEADNode(): Querying EAD URL: %s", eadUrl));
                 HttpURLConnection conn = (HttpURLConnection) eadUrl.openConnection();
+                conn.setConnectTimeout(deliveryProperties.getApiTimeout());
 
                 int status = conn.getResponseCode();
                 if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM
@@ -317,14 +319,14 @@ public class IISHRecordLookupService implements RecordLookupService {
             return null;
         }
         catch (IOException ex) {
-            LOGGER.debug("getEADNode(): API Connect Failed", ex);
+            LOGGER.warn("getEADNode(): API Connect Failed", ex);
             throw new NoSuchPidException();
         }
         catch (XPathExpressionException ex) {
-            LOGGER.debug("getEADNode(): Invalid XPath", ex);
+            LOGGER.warn("getEADNode(): Invalid XPath", ex);
             throw new NoSuchPidException();
         } catch (URISyntaxException e) {
-            LOGGER.error("getEADNode(): Invalid URI", e);
+            LOGGER.warn("getEADNode(): Invalid URI", e);
             throw new RuntimeException(e);
         }
     }
