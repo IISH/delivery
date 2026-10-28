@@ -32,6 +32,12 @@ public class RootContextConfiguration implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(secIntercept());
         registry.addInterceptor(reqIntercept());
+        registry.addInterceptor(requestLoggingInterceptor());
+    }
+
+    @Bean
+    public RequestLoggingInterceptor requestLoggingInterceptor() {
+        return new RequestLoggingInterceptor();
     }
 
     @Bean
