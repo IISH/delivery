@@ -57,6 +57,7 @@ delivery:
   apiDomain: "localhost"
   apiPort: 443
   apiProto: "https"
+  apiTimeout: 5000 # milliseconds
   timezone: "Europe/Amsterdam"
   dateFormat: "yyyy-MM-dd"
   externalInfoMinDaysCache: 30

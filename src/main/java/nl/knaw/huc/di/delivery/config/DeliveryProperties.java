@@ -49,6 +49,7 @@ public class DeliveryProperties {
     private String urlSelf ;
     private int recordPageLen ;
     private String namingAuthorityPrefix ;
+    private int apiTimeout;
 
 
     public String getApiBase() {
@@ -81,6 +82,17 @@ public class DeliveryProperties {
 
     public void setApiProto(String apiProto) {
         this.apiProto = apiProto;
+    }
+
+    /**
+     * @return the API timeout in milliseconds
+     */
+    public int getApiTimeout() {
+        return apiTimeout;
+    }
+
+    public void setApiTimeout(int apiTimeout) {
+        this.apiTimeout = apiTimeout;
     }
 
     public String getTimezone() {
@@ -410,4 +422,5 @@ public class DeliveryProperties {
     public void setLoginUrl(String loginUrl) {
         this.loginUrl = loginUrl;
     }
+
 }
