@@ -7,10 +7,10 @@ plugins {
 
 repositories {
     maven {
-        url "https://oss.sonatype.org/content/repositories/snapshots/"
+        url = "https://oss.sonatype.org/content/repositories/snapshots/"
     }
     maven {
-        url "https://maven.artifacts.atlassian.com"
+        url = "https://maven.artifacts.atlassian.com"
     }
     mavenCentral()
     mavenLocal()
