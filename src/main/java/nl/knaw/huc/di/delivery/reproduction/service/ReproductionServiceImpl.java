@@ -452,6 +452,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
             reproductionMailer.mailPayedAndActive(reproduction);
         }
         catch (MailException me) {
+            LOGGER.warn("Sending email failed.", me);
             // Do nothing
         }
     }
@@ -466,6 +467,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
             reproductionMailer.mailCancelled(reproduction);
         }
         catch (MailException me) {
+            LOGGER.warn("Sending email failed.", me);
             // Do nothing
         }
     }
@@ -688,7 +690,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
             if (!hr.isInSor() && (hr.getHolding().getStatus() == Holding.Status.AVAILABLE)) {
                 final String parentPid = hr.getHolding().getRecord().getParentPid();
                 if (parentPid.endsWith("/" + hr.getHolding().getSignature())) {
-                    LOGGER.info("Ignore archival collection level identifier " + parentPid);
+                    LOGGER.info("Ignore archival collection level identifier {}", parentPid);
                 } else {
                     recordService.updateHoldingStatus(hr.getHolding(), Holding.Status.RESERVED);
                 }
@@ -850,7 +852,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
         for (Reproduction reproduction : listReproductions(query)) {
             updateStatusAndAssociatedHoldingStatus(reproduction, Reproduction.Status.CANCELLED);
             saveReproduction(reproduction);
-            LOGGER.info("Cancelled unpayed reproduction with id " + reproduction.getId());
+            LOGGER.info("Cancelled unpayed reproduction with id {}", reproduction.getId());
         }
 
         LOGGER.info("Finish run: cancel old unpayed reproductions");
@@ -898,11 +900,11 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
                 reproductionMailer.mailReminder(reproduction);
                 reproduction.setOfferMailReminderSent(true);
                 saveReproduction(reproduction);
-                LOGGER.info("Mailed reminder unpayed reproduction with id " + reproduction.getId());
+                LOGGER.info("Mailed reminder unpayed reproduction with id {}", reproduction.getId());
             }
             catch (MailException me) {
                 // Don't do anything... we'll try again tomorrow
-                LOGGER.warn("Failed to mail reminder unpayed reproduction with id " + reproduction.getId(), me);
+                LOGGER.warn("Failed to mail reminder unpayed reproduction with id {}", reproduction.getId(), me);
             }
         }
 
@@ -965,7 +967,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
             return order;
         }
         catch (PaymentException pe) {
-            LOGGER.error(String.format("refreshOrder() : Failed to refresh the order with id %s", order.getId()));
+            LOGGER.error("refreshOrder() : Failed to refresh the order with id {}", order.getId());
             return null;
         }
     }

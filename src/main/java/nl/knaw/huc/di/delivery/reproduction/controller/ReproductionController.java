@@ -244,6 +244,7 @@ public class ReproductionController extends AbstractRequestController {
             try {
                 reproductionService.printItems(hrs, false);
             } catch (PrinterException e) {
+                LOGGER.error("Printing failed", e);
                 return "reproduction_print_failure";
             }
         }
@@ -266,6 +267,7 @@ public class ReproductionController extends AbstractRequestController {
             try {
                 reproductionService.printItems(hrs, true);
             } catch (PrinterException e) {
+                LOGGER.error("Printing failed", e);
                 return "reproduction_print_failure";
             }
         }
@@ -570,7 +572,7 @@ public class ReproductionController extends AbstractRequestController {
             reproductionService.printReproduction(reproduction);
         } catch (PrinterException e) {
             // Do nothing, let an employee print it later on
-            LOGGER.warn("Printing reproduction failed", e);
+            LOGGER.error("Printing reproduction failed", e);
         }
     }
 
@@ -591,6 +593,7 @@ public class ReproductionController extends AbstractRequestController {
             try {
                 reproductionMailer.mailOfferReady(reproduction);
             } catch (MailException me) {
+                LOGGER.error("Sending email failed", me);
                 model.addAttribute("error", "mail");
             }
 
@@ -600,6 +603,7 @@ public class ReproductionController extends AbstractRequestController {
             try {
                 reproductionMailer.mailPending(reproduction);
             } catch (MailException me) {
+                LOGGER.error("Sending email failed", me);
                 model.addAttribute("error", "mail");
             }
 
@@ -703,6 +707,7 @@ public class ReproductionController extends AbstractRequestController {
                 // We already checked for this one though
                 throw new InvalidRequestException("Reproduction is not ready yet.");
             } catch (OrderRegistrationFailureException orfe) {
+                LOGGER.error("Order registration failed", orfe);
                 String msg = messageSource.getMessage("payment.error", null, LocaleContextHolder.getLocale());
                 throw new InvalidRequestException(msg);
             }
@@ -742,6 +747,7 @@ public class ReproductionController extends AbstractRequestController {
                 // We already checked for this one though
                 throw new InvalidRequestException("Reproduction is not ready yet.");
             } catch (OrderRegistrationFailureException orfe) {
+                LOGGER.error("Order registration failed", orfe);
                 String msg = messageSource.getMessage("payment.error", null, LocaleContextHolder.getLocale());
                 model.addAttribute("paymentError", msg);
             }
@@ -886,6 +892,7 @@ public class ReproductionController extends AbstractRequestController {
                     try {
                         reproductionMailer.mailOfferReady(originalReproduction);
                     } catch (MailException me) {
+                        LOGGER.error("Sending email failed", me);
                         mailSuccess = false;
                     }
                 }
@@ -1002,6 +1009,7 @@ public class ReproductionController extends AbstractRequestController {
                     try {
                         reproductionMailer.mailOfferReady(newReproduction);
                     } catch (MailException me) {
+                        LOGGER.error("Sending email failed", me);
                         mailSuccess = false;
                     }
                 }

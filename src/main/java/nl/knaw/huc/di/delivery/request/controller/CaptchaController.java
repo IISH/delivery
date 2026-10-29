@@ -2,6 +2,8 @@ package nl.knaw.huc.di.delivery.request.controller;
 
 import com.octo.captcha.service.CaptchaServiceException;
 import com.octo.captcha.service.image.ImageCaptchaService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +18,7 @@ import java.io.ByteArrayOutputStream;
 @Controller
 public class CaptchaController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CaptchaController.class);
     private final ImageCaptchaService captchaService;
 
     public CaptchaController(ImageCaptchaService captchaService) {
@@ -32,10 +35,12 @@ public class CaptchaController {
             ImageIO.write(imageChallenge, "jpeg", outputStream);
         }
         catch (IllegalArgumentException e) {
+            LOGGER.info("Could not create captcha", e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
         catch (CaptchaServiceException e) {
+            LOGGER.info("Could not create captcha", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         }

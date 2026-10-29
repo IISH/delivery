@@ -204,6 +204,7 @@ public class PermissionController extends AbstractRequestController {
                 return "permission_error";
             }
         } catch (NoSuchPidException e) {
+            LOGGER.info("Could not find record for pid '{}'", pid);
             model.addAttribute("error", "invalid");
             return "permission_error";
         }

@@ -1,6 +1,8 @@
 package nl.knaw.huc.di.delivery.reservation.util;
 
 import nl.knaw.huc.di.delivery.config.DeliveryProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,6 +14,8 @@ import java.util.GregorianCalendar;
  * Various date utility functions.
  */
 public class DateUtils {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DateUtils.class);
 
     /**
      * Determine if the given time is between today->open and today->close of the reading room.
@@ -30,6 +34,7 @@ public class DateUtils {
             close = format.parse(properties.getRequestLatestTime());
         }
         catch (ParseException e) {
+            LOGGER.warn("Could not parse date", e);
             throw new RuntimeException("Failed parsing necessary open and " +
                     "closing dates for auto printing. Are they in the " +
                     "correct HH:mm format in your properties file?");

@@ -162,7 +162,7 @@ public class MARCMetadataRecordExtractor implements MetadataRecordExtractor {
             }
         }
         catch (XPathExpressionException ignored) {
-            LOGGER.debug("getHoldingMetadata(): Invalid XPath", ignored);
+            LOGGER.warn("getHoldingMetadata(): Invalid XPath", ignored);
         }
 
         return retMap;
@@ -195,6 +195,7 @@ public class MARCMetadataRecordExtractor implements MetadataRecordExtractor {
             return leaderToMaterialType(leader, titleForm);
         }
         catch (XPathExpressionException e) {
+            LOGGER.warn("xpath expression failed", e);
             return ExternalRecordInfo.MaterialType.OTHER;
         }
     }
@@ -260,6 +261,7 @@ public class MARCMetadataRecordExtractor implements MetadataRecordExtractor {
             return (!genres.isEmpty()) ? StringUtils.collectionToDelimitedString(genres, ",") : null;
         }
         catch (XPathExpressionException e) {
+            LOGGER.warn("Genre xpath expression failed", e);
             return null;
         }
     }
@@ -291,6 +293,7 @@ public class MARCMetadataRecordExtractor implements MetadataRecordExtractor {
             return title;
         }
         catch (XPathExpressionException e) {
+            LOGGER.warn("Title xpath expression failed", e);
             return null;
         }
     }
@@ -312,6 +315,7 @@ public class MARCMetadataRecordExtractor implements MetadataRecordExtractor {
             return author;
         }
         catch (XPathExpressionException ex) {
+            LOGGER.warn("Author xpath expression failed", ex);
             return null;
         }
     }
@@ -342,6 +346,7 @@ public class MARCMetadataRecordExtractor implements MetadataRecordExtractor {
             return publicationStatus;
         }
         catch (XPathExpressionException ex) {
+            LOGGER.warn("Publication status xpath expression failed", ex);
             return ExternalRecordInfo.PublicationStatus.UNKNOWN;
         }
     }

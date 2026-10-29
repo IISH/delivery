@@ -13,6 +13,8 @@ import nl.knaw.huc.di.delivery.record.entity.ExternalRecordInfo;
 import nl.knaw.huc.di.delivery.record.entity.ExternalHoldingInfo;
 import nl.knaw.huc.di.delivery.record.service.NoSuchParentException;
 import nl.knaw.huc.di.delivery.record.service.RecordService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,6 +33,7 @@ import java.util.*;
 @Controller
 @RequestMapping(value = "/record")
 public class RecordController extends ErrorHandlingController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RecordController.class);
     private final RecordService recordService;
 
     private final DeliveryProperties deliveryProperties;
@@ -62,6 +65,7 @@ public class RecordController extends ErrorHandlingController {
                 rec = recordService.getRecordByPidAndCreate(pid);
             }
             catch (NoSuchPidException e) {
+                LOGGER.info("No record found for pid '{}'", pid);
                 // Pass, catch if no of the requested PIDs are available below.
             }
 
@@ -174,6 +178,7 @@ public class RecordController extends ErrorHandlingController {
                     return "redirect:/record/editform/" + URLEncoder.encode(pid, StandardCharsets.UTF_8);
             }
             catch (NoSuchPidException ignored) {
+                LOGGER.info("No record found for pid '{}'", pid);
             }
         }
         Map<String, String> results = new HashMap<>();
@@ -268,6 +273,7 @@ public class RecordController extends ErrorHandlingController {
             r = recordService.getRecordByPidAndCreate(pid);
         }
         catch (NoSuchPidException e) {
+            LOGGER.warn("No record found for pid '{}'", pid);
             throw new InvalidRequestException(
                     "No such PID. Are you sure the record you want to add is available in the SRW API?");
         }
@@ -306,6 +312,7 @@ public class RecordController extends ErrorHandlingController {
                 try {
                     recordService.createOrEdit(newRecord, oldRecord, result);
                 } catch (NoSuchParentException e) {
+                    LOGGER.warn("Expected a parent but none found", e);
                     // Cannot get here with normal use.
                     throw new InvalidRequestException(e.getMessage());
                 }

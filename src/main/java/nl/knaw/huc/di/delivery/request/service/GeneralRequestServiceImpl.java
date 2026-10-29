@@ -51,6 +51,6 @@ public class GeneralRequestServiceImpl implements GeneralRequestService {
     @Override
     public void addRequest(RequestService requestService) {
         requestServices.add(requestService);
-        LOGGER.info("Added request service " + requestService);
+        LOGGER.info("Added request service {}", requestService);
     }
 }

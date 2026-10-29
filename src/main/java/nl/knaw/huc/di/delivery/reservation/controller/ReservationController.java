@@ -409,6 +409,8 @@ public class ReservationController extends AbstractRequestController {
             try {
                 reservations.printItems(hrs, false);
             } catch (PrinterException e) {
+                LOGGER.warn("Printing batch failed.", e);
+
                 return "reservation_print_failure";
             }
         }
@@ -431,6 +433,7 @@ public class ReservationController extends AbstractRequestController {
             try {
                 reservations.printItems(hrs, true);
             } catch (PrinterException e) {
+                LOGGER.warn("Printing batch failed.", e);
                 return "reservation_print_failure";
             }
         }

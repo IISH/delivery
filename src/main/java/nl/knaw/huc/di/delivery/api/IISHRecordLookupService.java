@@ -88,7 +88,7 @@ public class IISHRecordLookupService implements RecordLookupService {
             pc.setTotalResultCount(((Double) xpNumberOfRecords.evaluate(out, XPathConstants.NUMBER)).intValue());
         }
         catch (XPathExpressionException e) {
-            LOGGER.debug("getRecordsByTitle(): Invalid XPath", e);
+            LOGGER.info("getRecordsByTitle(): Invalid XPath", e);
             return pc;
         }
 
@@ -106,6 +106,7 @@ public class IISHRecordLookupService implements RecordLookupService {
                 recTitle = evaluateSearchTitle(node);
             }
             catch (XPathExpressionException ex) {
+                LOGGER.info("Problem with xpath expression, continuing", ex);
                 continue;
             }
 
@@ -114,6 +115,7 @@ public class IISHRecordLookupService implements RecordLookupService {
                 recSubTitle = " " + xpSearch245bSubTitle.evaluate(node).trim().replaceAll("[/:]$", "");
             }
             catch (XPathExpressionException ignored) {
+                LOGGER.info("Problem with xpath expression", ignored);
             }
 
             if (recTitle != null && recPid != null) {
@@ -134,7 +136,7 @@ public class IISHRecordLookupService implements RecordLookupService {
      */
     @Override
     public MetadataRecordExtractor getRecordExtractorByPid(String pid) throws NoSuchPidException {
-        LOGGER.debug(String.format("getRecordExtractorByPid(%s)", pid));
+        LOGGER.debug("getRecordExtractorByPid({})", pid);
 
         String[] parentPidAndItem = getParentPidAndItem(pid);
         Node node = searchByPid(parentPidAndItem[0], true);
@@ -180,7 +182,7 @@ public class IISHRecordLookupService implements RecordLookupService {
 
             URI uri = new URI(apiProto, null, apiDomain, apiPort, apiBase, search, null);
             URL req = uri.toURL();
-            LOGGER.debug(String.format("doSearch(): Querying SRW API: %s", req));
+            LOGGER.debug("doSearch(): Querying SRW API: {}", req);
             URLConnection conn = req.openConnection();
             conn.setReadTimeout(deliveryProperties.getApiTimeout());
 
@@ -300,7 +302,7 @@ public class IISHRecordLookupService implements RecordLookupService {
             String url = xp856uUrl.evaluate(node);
             if (url.endsWith("?locatt=view:ead")) {
                 URL eadUrl = new URI(url).toURL();
-                LOGGER.debug(String.format("getEADNode(): Querying EAD URL: %s", eadUrl));
+                LOGGER.debug("getEADNode(): Querying EAD URL: {}}", eadUrl);
                 HttpURLConnection conn = (HttpURLConnection) eadUrl.openConnection();
                 conn.setConnectTimeout(deliveryProperties.getApiTimeout());
 
