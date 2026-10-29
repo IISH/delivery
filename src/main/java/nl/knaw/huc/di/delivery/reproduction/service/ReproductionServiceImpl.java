@@ -452,6 +452,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
             reproductionMailer.mailPayedAndActive(reproduction);
         }
         catch (MailException me) {
+            LOGGER.warn("Sending email failed.", me);
             // Do nothing
         }
     }
@@ -466,6 +467,7 @@ public class ReproductionServiceImpl extends AbstractRequestService implements R
             reproductionMailer.mailCancelled(reproduction);
         }
         catch (MailException me) {
+            LOGGER.warn("Sending email failed.", me);
             // Do nothing
         }
     }

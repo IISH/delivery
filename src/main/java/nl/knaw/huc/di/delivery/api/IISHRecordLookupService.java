@@ -106,6 +106,7 @@ public class IISHRecordLookupService implements RecordLookupService {
                 recTitle = evaluateSearchTitle(node);
             }
             catch (XPathExpressionException ex) {
+                LOGGER.info("Problem with xpath expression, continuing", ex);
                 continue;
             }
 
@@ -114,6 +115,7 @@ public class IISHRecordLookupService implements RecordLookupService {
                 recSubTitle = " " + xpSearch245bSubTitle.evaluate(node).trim().replaceAll("[/:]$", "");
             }
             catch (XPathExpressionException ignored) {
+                LOGGER.info("Problem with xpath expression", ignored);
             }
 
             if (recTitle != null && recPid != null) {

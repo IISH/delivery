@@ -10,6 +10,8 @@ import nl.knaw.huc.di.delivery.record.entity.Record;
 import nl.knaw.huc.di.delivery.record.entity.Holding;
 import nl.knaw.huc.di.delivery.record.entity.ExternalHoldingInfo;
 import nl.knaw.huc.di.delivery.record.entity.ExternalRecordInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ import java.util.*;
  */
 @Service
 public class RecordServiceImpl implements RecordService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RecordServiceImpl.class);
     private final RecordDAO recordDAO;
 
     private final HoldingDAO holdingDAO;
@@ -316,6 +319,7 @@ public class RecordServiceImpl implements RecordService {
             return true;
         }
         catch (NoSuchPidException nspe) {
+            LOGGER.info("No external data found for record with pid '{}'", record.getPid());
             // PID not found, or API down, then just skip the record
             return false;
         }

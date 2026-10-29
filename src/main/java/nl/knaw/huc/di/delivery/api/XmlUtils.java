@@ -1,5 +1,7 @@
 package nl.knaw.huc.di.delivery.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 import javax.xml.xpath.XPath;
@@ -7,6 +9,9 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
 public class XmlUtils {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(XmlUtils.class);
+
     public static XPathExpression getXPathForMarc(XPath xpath, String tag, char code) throws XPathExpressionException {
         return getXPathForMarc(xpath, tag, code, "");
     }
@@ -31,6 +36,7 @@ public class XmlUtils {
             return value.isEmpty() ? null : value;
         }
         catch (XPathExpressionException ex) {
+            LOGGER.warn("Expression failed", ex);
             return null;
         }
     }

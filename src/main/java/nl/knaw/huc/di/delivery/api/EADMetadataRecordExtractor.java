@@ -176,7 +176,7 @@ public class EADMetadataRecordExtractor implements MetadataRecordExtractor {
             retMap.put((item != null) ? item : barcode, eh);
         }
         catch (XPathExpressionException ignored) {
-            LOGGER.debug("getHoldingMetadata(): Invalid XPath", ignored);
+            LOGGER.warn("getHoldingMetadata(): Invalid XPath", ignored);
         }
 
         return retMap;
@@ -214,7 +214,7 @@ public class EADMetadataRecordExtractor implements MetadataRecordExtractor {
                 }
             }
             catch (XPathExpressionException ignored) {
-                LOGGER.debug("getArchiveHoldingInfo(): Invalid XPath", ignored);
+                LOGGER.warn("getArchiveHoldingInfo(): Invalid XPath", ignored);
             }
         }
 
