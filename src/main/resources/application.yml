@@ -51,6 +51,10 @@ management:
         include: # https://docs.spring.io/spring-boot/reference/actuator/endpoints.html
           - health
           - info
+          - env
+    endpoint:
+      env:
+        show-values: always
   info:
     git:
       mode: full
