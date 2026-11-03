@@ -14,6 +14,7 @@ spring:
     properties:
       hibernate:
         id.new_generator_mappings: true
+        default_batch_fetch_size: 100
 #  security:
 #    oauth2:
 #      client:
@@ -38,6 +39,11 @@ spring:
     password: ""
     port: 25
     protocol: smtp
+  data:
+    web:
+      pageable:
+        max-page-size: 100
+        default-page-size: 20
 management:
   endpoints:
     web:
@@ -45,6 +51,7 @@ management:
         include: # https://docs.spring.io/spring-boot/reference/actuator/endpoints.html
           - health
           - info
+          - env
   info:
     git:
       mode: full
@@ -52,6 +59,8 @@ management:
     health:
       show-details: always  # Valid values: always, never, when_authorized
       show-components: always
+    env:
+      show-values: always
 delivery:
   apiBase: "/solr/all/srw"
   apiDomain: "localhost"
