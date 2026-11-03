@@ -14,6 +14,7 @@ spring:
     properties:
       hibernate:
         id.new_generator_mappings: true
+        default_batch_fetch_size: 100
 #  security:
 #    oauth2:
 #      client:
@@ -38,6 +39,11 @@ spring:
     password: ""
     port: 25
     protocol: smtp
+  data:
+    web:
+      pageable:
+        max-page-size: 100
+        default-page-size: 20
 management:
   endpoints:
     web:
