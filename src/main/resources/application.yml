@@ -52,9 +52,6 @@ management:
           - health
           - info
           - env
-    endpoint:
-      env:
-        show-values: always
   info:
     git:
       mode: full
@@ -62,6 +59,8 @@ management:
     health:
       show-details: always  # Valid values: always, never, when_authorized
       show-components: always
+    env:
+      show-values: always
 delivery:
   apiBase: "/solr/all/srw"
   apiDomain: "localhost"
