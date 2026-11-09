@@ -83,7 +83,7 @@
           <fo:table-row>
             <fo:table-cell>
               <fo:block>
-                ${_("reproductionInvoice.terms" "The KNAW is under the Sales Tax Act 1968 c.a. exempt from sales tax in respect of government
+                ${_("reproductionInvoice.terms", "The KNAW is under the Sales Tax Act 1968 c.a. exempt from sales tax in respect of government
                     designated services and supplies of social and cultural nature, including research. On supplies and services of the
                     KNAW which are not subject to that, tax is calculated.")}
               </fo:block>
