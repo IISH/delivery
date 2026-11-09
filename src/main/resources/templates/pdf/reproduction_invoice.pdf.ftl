@@ -24,7 +24,7 @@
             </fo:table-cell>
             <fo:table-cell>
               <fo:block text-align="left">
-                ${(reproduction.orderId?c)!_("reproductionInvoice.noOrder", "No order")}
+                ${(reproduction.orderId?xml)!_("reproductionInvoice.noOrder", "No order")}
               </fo:block>
             </fo:table-cell>
           </fo:table-row>
@@ -102,9 +102,9 @@
         </fo:table-cell>
       </fo:table-header>
 
+      <#assign btwPrices = reproduction.totalBTW/>
       <#if btwPrices?has_content>
         <fo:table-footer font-weight="bold" border-top="0.5pt solid black">
-          <#assign btwPrices = reproduction.totalBTW/>
           <#list btwPrices?keys as btwPercentage>
             <#if btwPercentage?is_first>
               <fo:table-row>

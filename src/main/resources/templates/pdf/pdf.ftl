@@ -102,7 +102,7 @@
         <fo:table-column column-width="15%"/>
         <fo:table-column column-width="8%"/>
         <fo:table-column column-width="23%"/>
-        <fo:table-column column-width="8%"/>
+        <fo:table-column column-width="3%"/>
 
         <fo:table-body>
           <fo:table-row>
