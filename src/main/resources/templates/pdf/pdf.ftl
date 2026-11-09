@@ -45,7 +45,7 @@
       <!-- Payment information -->
       <fo:table table-layout="fixed" width="100%" display-align="center" font-size="0.6em" space-before="0.5cm">
         <fo:table-column column-width="3cm"/>
-        <fo:table-column/>
+        <fo:table-column column-width="proportional-column-width(1)"/>
 
         <fo:table-body>
           <fo:table-row>
@@ -77,7 +77,7 @@
 
       <!-- General Terms -->
       <fo:table table-layout="fixed" width="100%" display-align="center" font-size="0.6em" space-before="0.5cm">
-        <fo:table-column/>
+        <fo:table-column column-width="proportional-column-width(1)" />
 
         <fo:table-body>
           <fo:table-row>

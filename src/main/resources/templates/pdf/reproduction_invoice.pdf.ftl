@@ -13,7 +13,7 @@
     <fo:block margin-bottom="2mm" font-weight="normal">
       <fo:table table-layout="fixed" width="80%" display-align="center">
         <fo:table-column column-width="15%"/>
-        <fo:table-column/>
+        <fo:table-column column-width="proportional-column-width(1)"/>
 
         <fo:table-body>
           <fo:table-row>
@@ -62,7 +62,7 @@
   <!-- summary of items -->
   <fo:block margin-top="1cm">
     <fo:table table-layout="fixed" width="100%" display-align="center">
-      <fo:table-column/>
+      <fo:table-column column-width="proportional-column-width(1)"/>
       <fo:table-column column-width="1.6cm"/>
       <fo:table-column column-width="1.6cm"/>
       <fo:table-column column-width="1.6cm"/>
