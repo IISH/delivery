@@ -60,7 +60,7 @@ public class SecurityConfiguration {
                 .exceptionHandling(exceptions -> exceptions
                         .accessDeniedPage("/403") // Redirects 403 to this endpoint
                 )
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/403", "/error", "/reproduction/order/**"))
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/403", "/error", "/reproduction/order/webhook"))
                 // Disable HTTP Basic authentication
                 .httpBasic(HttpBasicConfigurer::disable)
                 .oauth2Login(oauth2 -> oauth2
