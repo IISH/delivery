@@ -1,16 +1,20 @@
 package nl.knaw.huc.di.delivery.request.service;
 
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import nl.knaw.huc.di.delivery.util.TemplatePreparation;
 import nl.knaw.huc.di.delivery.config.TemplatePreparationException;
 import org.springframework.ui.Model;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.*;
 import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.sax.SAXSource;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -66,18 +70,23 @@ public abstract class RequestPDF extends TemplatePreparation {
         try (BufferedOutputStream bufOut = new BufferedOutputStream(out)) {
             Fop fop = FOP_FACTORY.newFop(MimeConstants.MIME_PDF, bufOut);
 
+            SAXParserFactory spf = SAXParserFactory.newInstance();
+            spf.setNamespaceAware(true);
+            XMLReader xmlReader = spf.newSAXParser().getXMLReader();
+
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
 
             Result result = new SAXResult(fop.getDefaultHandler());
-            Source source = new StreamSource(new StringReader(view));
+            Source source = new SAXSource(xmlReader, new InputSource(new StringReader(view)));
 
             transformer.transform(source, result);
         }
-        catch (FOPException | TransformerException | IOException e) {
+        catch (TransformerException | IOException | ParserConfigurationException | SAXException e) {
             throw new TemplatePreparationException(e);
         }
 
         return out.toByteArray();
     }
+
 }

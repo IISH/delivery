@@ -13,7 +13,7 @@
     <fo:block margin-bottom="2mm" font-weight="normal">
       <fo:table table-layout="fixed" width="80%" display-align="center">
         <fo:table-column column-width="15%"/>
-        <fo:table-column/>
+        <fo:table-column column-width="proportional-column-width(1)"/>
 
         <fo:table-body>
           <fo:table-row>
@@ -24,11 +24,7 @@
             </fo:table-cell>
             <fo:table-cell>
               <fo:block text-align="left">
-                <#if !reproduction.orderId??>
-                  No order ID
-                <#else>
-                  ${reproduction.orderId?c}
-                </#if>
+                ${(reproduction.orderId?xml)!_("reproductionInvoice.noOrder", "No order")}
               </fo:block>
             </fo:table-cell>
           </fo:table-row>
@@ -66,7 +62,7 @@
   <!-- summary of items -->
   <fo:block margin-top="1cm">
     <fo:table table-layout="fixed" width="100%" display-align="center">
-      <fo:table-column/>
+      <fo:table-column column-width="proportional-column-width(1)"/>
       <fo:table-column column-width="1.6cm"/>
       <fo:table-column column-width="1.6cm"/>
       <fo:table-column column-width="1.6cm"/>
@@ -106,53 +102,55 @@
         </fo:table-cell>
       </fo:table-header>
 
-      <fo:table-footer font-weight="bold" border-top="0.5pt solid black">
-        <#assign btwPrices = reproduction.totalBTW/>
-        <#list btwPrices?keys as btwPercentage>
-          <#if btwPercentage?is_first>
-            <fo:table-row>
-              <fo:table-cell padding="1mm" number-rows-spanned="${btwPrices?size}">
-                <fo:block text-align="right">
-                  ${_("total", "Total")}:
-                </fo:block>
-              </fo:table-cell>
-              <fo:table-cell padding="1mm" number-rows-spanned="${btwPrices?size}">
-                <fo:block>
-                  &#8364; ${reproduction.totalPrice?string("0.00")}
-                </fo:block>
-              </fo:table-cell>
-              <fo:table-cell padding="1mm" number-rows-spanned="${btwPrices?size}">
-                <fo:block>
-                  &#8364; -${reproduction.totalDiscount?string("0.00")}
-                </fo:block>
-              </fo:table-cell>
-              <fo:table-cell padding="1mm" number-rows-spanned="${btwPrices?size}">
-                <fo:block>
-                  &#8364; ${reproduction.totalPriceWithDiscount?string("0.00")}
-                </fo:block>
-              </fo:table-cell>
-              <fo:table-cell padding="1mm">
-                <fo:block>
-                  &#8364; ${btwPrices[btwPercentage]?string("0.00")} (${btwPercentage}&#37;)
-                </fo:block>
-              </fo:table-cell>
-              <fo:table-cell padding="1mm" number-rows-spanned="${btwPrices?size}">
-                <fo:block>
-                  ${reproduction.getEstimatedDeliveryTime()?xml} ${_("days", "days")}
-                </fo:block>
-              </fo:table-cell>
-            </fo:table-row>
-          <#else>
-            <fo:table-row>
-              <fo:table-cell padding="1mm">
-                <fo:block>
-                  &#8364; ${btwPrices[btwPercentage]?string("0.00")} (${btwPercentage}&#37;)
-                </fo:block>
-              </fo:table-cell>
-            </fo:table-row>
-          </#if>
-        </#list>
-      </fo:table-footer>
+      <#assign btwPrices = reproduction.totalBTW/>
+      <#if btwPrices?has_content>
+        <fo:table-footer font-weight="bold" border-top="0.5pt solid black">
+          <#list btwPrices?keys as btwPercentage>
+            <#if btwPercentage?is_first>
+              <fo:table-row>
+                <fo:table-cell padding="1mm" number-rows-spanned="${btwPrices?size}">
+                  <fo:block text-align="right">
+                    ${_("total", "Total")}:
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding="1mm" number-rows-spanned="${btwPrices?size}">
+                  <fo:block>
+                    &#8364; ${reproduction.totalPrice?string("0.00")}
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding="1mm" number-rows-spanned="${btwPrices?size}">
+                  <fo:block>
+                    &#8364; -${reproduction.totalDiscount?string("0.00")}
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding="1mm" number-rows-spanned="${btwPrices?size}">
+                  <fo:block>
+                    &#8364; ${reproduction.totalPriceWithDiscount?string("0.00")}
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding="1mm">
+                  <fo:block>
+                    &#8364; ${btwPrices[btwPercentage]?string("0.00")} (${btwPercentage}&#37;)
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding="1mm" number-rows-spanned="${btwPrices?size}">
+                  <fo:block>
+                    ${reproduction.getEstimatedDeliveryTime()?xml} ${_("days", "days")}
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            <#else>
+              <fo:table-row>
+                <fo:table-cell padding="1mm">
+                  <fo:block>
+                    &#8364; ${btwPrices[btwPercentage]?string("0.00")} (${btwPercentage}&#37;)
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </#if>
+          </#list>
+        </fo:table-footer>
+      </#if>
 
       <fo:table-body>
         <#list reproduction.holdingReproductions as hr>

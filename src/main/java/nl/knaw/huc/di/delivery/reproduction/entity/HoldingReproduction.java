@@ -40,7 +40,7 @@ public class HoldingReproduction extends HoldingRequest {
      */
     @Override
     public int getId() {
-        return id;
+        return (id == null) ? -1 : id;
     }
 
     @Digits(integer = 5, fraction = 2)

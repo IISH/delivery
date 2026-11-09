@@ -45,7 +45,7 @@
       <!-- Payment information -->
       <fo:table table-layout="fixed" width="100%" display-align="center" font-size="0.6em" space-before="0.5cm">
         <fo:table-column column-width="3cm"/>
-        <fo:table-column/>
+        <fo:table-column column-width="proportional-column-width(1)"/>
 
         <fo:table-body>
           <fo:table-row>
@@ -77,13 +77,13 @@
 
       <!-- General Terms -->
       <fo:table table-layout="fixed" width="100%" display-align="center" font-size="0.6em" space-before="0.5cm">
-        <fo:table-column/>
+        <fo:table-column column-width="proportional-column-width(1)" />
 
         <fo:table-body>
           <fo:table-row>
             <fo:table-cell>
               <fo:block>
-                ${_("reproductionInvoice.terms" "The KNAW is under the Sales Tax Act 1968 c.a. exempt from sales tax in respect of government
+                ${_("reproductionInvoice.terms", "The KNAW is under the Sales Tax Act 1968 c.a. exempt from sales tax in respect of government
                     designated services and supplies of social and cultural nature, including research. On supplies and services of the
                     KNAW which are not subject to that, tax is calculated.")}
               </fo:block>
@@ -102,7 +102,7 @@
         <fo:table-column column-width="15%"/>
         <fo:table-column column-width="8%"/>
         <fo:table-column column-width="23%"/>
-        <fo:table-column column-width="8%"/>
+        <fo:table-column column-width="3%"/>
 
         <fo:table-body>
           <fo:table-row>

@@ -575,12 +575,12 @@ public class Reproduction extends Request {
         this.order = order;
     }
 
-    // For reading purposes only, to prevent loading the complete order entity
-//    @Column(name = "order_id", insertable = false, updatable = false)
-//    private String orderId;
-
+    /**
+     * Return the order id. If no payment via de paymentservice started, the order is null.
+     * @return The order id or null.
+     */
     public String getOrderId() {
-        return order.getId();
+        return (order == null)? null : order.getId();
     }
 
     /**

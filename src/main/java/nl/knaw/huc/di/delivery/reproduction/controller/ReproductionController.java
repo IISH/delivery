@@ -132,6 +132,7 @@ public class ReproductionController extends AbstractRequestController {
 
             return new ResponseEntity<>(pdf, headers, HttpStatus.OK);
         } catch (TemplatePreparationException tpe) {
+            LOGGER.error("Failed to generate invoice PDF for reproduction {}", id, tpe);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
