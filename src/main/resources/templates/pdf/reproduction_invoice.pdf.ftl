@@ -24,11 +24,7 @@
             </fo:table-cell>
             <fo:table-cell>
               <fo:block text-align="left">
-                <#if !reproduction.orderId??>
-                  No order ID
-                <#else>
-                  ${reproduction.orderId?c}
-                </#if>
+                ${(reproduction.orderId?c)!_("reproductionInvoice.noOrder", "No order")}
               </fo:block>
             </fo:table-cell>
           </fo:table-row>
