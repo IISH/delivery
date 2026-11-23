@@ -1,8 +1,7 @@
-FROM eclipse-temurin:25.0.4.1_1-jdk-noble AS build
+FROM eclipse-temurin:25-jdk-noble AS build
+
 RUN apt-get update -y && \
     apt-get upgrade -y
-
-#RUN javac --version
 
 COPY ./ /delivery
 
