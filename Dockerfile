@@ -9,7 +9,7 @@ WORKDIR /delivery
 
 RUN ./gradlew clean bootJar
 
-FROM eclipse-temurin:25.0.4.1_1-jdk-noble AS delivery
+FROM eclipse-temurin:25-jdk-noble AS delivery
 
 RUN apt-get update -y && \
     apt-get upgrade -y && \
